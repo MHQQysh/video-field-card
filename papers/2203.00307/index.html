@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-03-01 · arXiv 2203.00307</span>
+    <h1>Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection</h1>
+    <p class="detail-meta">Tan, Jing、Wang, Yuhong、Wu, Gangshan、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">视频数据集与评测</span><span class="chip">数据集与评测</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2203.00307" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Generic Boundary Detection (GBD) aims at locating the general boundaries that divide videos into semantically coherent and taxonomy-free units, and could serve as an important pre-processing step for long-form video understanding. Previous works often separately handle these different types of generic boundaries with specific designs of deep networks from simple CNN to LSTM. Instead, in this paper, we present Temporal Perceiver, a general architecture with Transformer, offering a unified solution to the detection of arbitrary generic boundaries, ranging from shot-level, event-level, to scene-level GBDs. The core design is to introduce a small set of latent feature queries as anchors to compress the redundant video input into a fixed dimension via cross-attention blocks. Thanks to this fixed number of latent units, it greatly reduces the quadratic complexity of attention operation to a linear form of input frames. Specifically, to explicitly leverage the temporal structure of videos, we construct two types of latent feature queries: boundary queries and context queries, which handle the semantic incoherence and coherence accordingly. Moreover, to guide the learning of latent feature queries, we propose an alignment loss on the cross-attention maps to explicitly encourage the boundary queries to attend on the top boundary candidates. Finally, we present a sparse detection head on the compressed representation, and directly output the final boundary detection results without any post-processing module. We test our Temporal Perceiver on a variety of GBD benchmarks. Our method obtains the state-of-the-art results on all benchmarks with RGB single-stream features: SoccerNet-v2 (81.9% avg-mAP), Kinetics-GEBD (86.0% avg-f1), TAPOS (73.2% avg-f1), MovieScenes (51.9% AP and 53.1% Miou) and MovieNet (53.3% AP and 53.2% Miou), demonstrating the generalization ability of our Temporal Perceiver.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2022-03-01 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection》聚焦视频数据集与评测：输入侧是视频样本、任务标注或模型输出，目标是形成数据集、基准、指标或评测协议。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection》以 Temporal Perceiver 为核心方案，将Transformer 时空建模、时空卷积用于视频数据集与评测。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection》采用Transformer 时空建模、时空卷积处理视频样本、任务标注或模型输出，其输出任务是形成数据集、基准、指标或评测协议。摘要能确认的技术组合为Transformer 时空建模、时空卷积；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection》摘要明确点名的数据集或评测集合包括：Kinetics。 摘要未报告独立代码、模型或数据下载地址。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection》摘要报告了定量实验，涉及指标 mAP；摘要中的关键数值为 81.9%、86.0%、73.2%、51.9%、53.1%、53.3%、53.2%。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Temporal Perceiver: A General Architecture for Arbitrary Boundary Detection》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2203.00307" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2203.00307</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

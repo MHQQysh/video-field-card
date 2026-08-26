@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Make Your Training Flexible: Towards Deployment-Efficient Video Models</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-03-18 · arXiv 2503.14237</span>
+    <h1>Make Your Training Flexible: Towards Deployment-Efficient Video Models</h1>
+    <p class="detail-meta">Wang, Chenting、Li, Kunchang、Jiang, Tianxiang、Zeng, Xiangyu、Wang, Yi、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip lab">OpenGVLab</span><span class="chip">视频表征预训练与高效建模</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2503.14237" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenGVLab/FluxViT" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenGVLab/FluxViT" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Popular video training methods mainly operate on a fixed number of tokens sampled from a predetermined spatiotemporal grid, resulting in sub-optimal accuracy-computation trade-offs due to inherent video redundancy. They also lack adaptability to varying computational budgets for downstream tasks, hindering applications of the most competitive model in real-world scenes. We thus propose a new test setting, Token Optimization, for maximized input information across budgets, which optimizes the size-limited set of input tokens through token selection from more suitably sampled videos. To this end, we propose a novel augmentation tool termed Flux. By making the sampling grid flexible and leveraging token selection, it is easily adopted in most popular video training frameworks, boosting model robustness with nearly no additional cost. We integrate Flux in large-scale video pre-training, and the resulting FluxViT establishes new state-of-the-art results across extensive tasks at standard costs. Notably, with 1/4 tokens only, it can still match the performance of previous state-of-the-art models with Token Optimization, yielding nearly 90\% savings. All models and data are available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Make Your Training Flexible: Towards Deployment-Efficient Video Models》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文；《Make Your Training Flexible: Towards Deployment-Efficient Video Models》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/FluxViT 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。本卡 date=2025-03-18 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Make Your Training Flexible: Towards Deployment-Efficient Video Models》聚焦视频表征预训练与高效建模：输入侧是视频帧、片段或视频文本对，目标是学习可迁移的时空表示并降低训练/推理成本。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Make Your Training Flexible: Towards Deployment-Efficient Video Models》以 Make Your Training Flexible 为核心方案，将摘要所述的任务专用时序模块用于视频表征预训练与高效建模。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Make Your Training Flexible: Towards Deployment-Efficient Video Models》采用摘要所述的任务专用时序模块处理视频帧、片段或视频文本对，其输出任务是学习可迁移的时空表示并降低训练/推理成本。摘要未完整报告可拆分的核心模块、损失函数或推理步骤，具体实现需查正文方法章节。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Make Your Training Flexible: Towards Deployment-Efficient Video Models》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/OpenGVLab/FluxViT。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Make Your Training Flexible: Towards Deployment-Efficient Video Models》摘要报告了定量实验，涉及指标 accuracy。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Make Your Training Flexible: Towards Deployment-Efficient Video Models》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li><li>《Make Your Training Flexible: Towards Deployment-Efficient Video Models》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/FluxViT 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2503.14237" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2503.14237</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li><li><a href="https://github.com/OpenGVLab/FluxViT" target="_blank" rel="noopener noreferrer">https://github.com/OpenGVLab/FluxViT</a></li></ul></section>
+</main>
+
+</body>
+</html>

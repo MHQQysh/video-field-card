@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-03-23 · arXiv 2203.12602</span>
+    <h1>VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training</h1>
+    <p class="detail-meta">Tong, Zhan、Song, Yibing、Wang, Jue、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">视频数据集与评测</span><span class="chip">高效与流式视频</span><span class="chip">数据集与评测</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2203.12602" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/MCG-NJU/VideoMAE" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/MCG-NJU/VideoMAE" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Pre-training video transformers on extra large-scale datasets is generally required to achieve premier performance on relatively small datasets. In this paper, we show that video masked autoencoders (VideoMAE) are data-efficient learners for self-supervised video pre-training (SSVP). We are inspired by the recent ImageMAE and propose customized video tube masking with an extremely high ratio. This simple design makes video reconstruction a more challenging self-supervision task, thus encouraging extracting more effective video representations during this pre-training process. We obtain three important findings on SSVP: (1) An extremely high proportion of masking ratio (i.e., 90% to 95%) still yields favorable performance of VideoMAE. The temporally redundant video content enables a higher masking ratio than that of images. (2) VideoMAE achieves impressive results on very small datasets (i.e., around 3k-4k videos) without using any extra data. (3) VideoMAE shows that data quality is more important than data quantity for SSVP. Domain shift between pre-training and target datasets is an important issue. Notably, our VideoMAE with the vanilla ViT can achieve 87.4% on Kinetics-400, 75.4% on Something-Something V2, 91.3% on UCF101, and 62.6% on HMDB51, without using any extra data. Code is available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2022-03-23 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training》聚焦视频数据集与评测：输入侧是视频样本、任务标注或模型输出，目标是形成数据集、基准、指标或评测协议。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training》以 VideoMAE 为核心方案，将掩码视频建模、Transformer 时空建模、自监督学习用于视频数据集与评测。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training》采用掩码视频建模、Transformer 时空建模、自监督学习处理视频样本、任务标注或模型输出，其输出任务是形成数据集、基准、指标或评测协议。摘要能确认的技术组合为掩码视频建模、Transformer 时空建模、自监督学习；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training》摘要明确点名的数据集或评测集合包括：Something-Something V2、Kinetics-400、UCF101、HMDB51。 已核到论文级项目/代码链接：https://github.com/MCG-NJU/VideoMAE。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training》摘要报告了定量实验；摘要中的关键数值为 87.4%、75.4%、91.3%、62.6%。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2203.12602" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2203.12602</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li><li><a href="https://github.com/MCG-NJU/VideoMAE" target="_blank" rel="noopener noreferrer">https://github.com/MCG-NJU/VideoMAE</a></li></ul></section>
+</main>
+
+</body>
+</html>

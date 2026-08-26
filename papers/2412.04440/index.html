@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>GenMAC: Compositional Text-to-Video Generation with Multi-Agent Collaboration</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-12-05 · arXiv 2412.04440</span>
+    <h1>GenMAC: Compositional Text-to-Video Generation with Multi-Agent Collaboration</h1>
+    <p class="detail-meta">Huang, Kaiyi、Huang, Yukun、Ning, Xuefei、Lin, Zinan、Wang, Yu、Liu, Xihui</p>
+    <div class="chips"><span class="chip lab">MMLab@HKU</span><span class="chip">组合视频生成</span><span class="chip">多智能体</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2412.04440" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://mmlab.hk/publication" target="_blank" rel="noopener noreferrer">项目主页</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Text-to-video generation models have shown significant progress in the recent years. However, they still struggle with generating complex dynamic scenes based on compositional text prompts, such as attribute binding for multiple objects, temporal dynamics associated with different objects, and interactions between objects. Our key motivation is that complex tasks can be decomposed into simpler ones, each handled by a role-specialized MLLM agent. Multiple agents can collaborate together to achieve collective intelligence for complex goals. We propose GenMAC, an iterative, multi-agent framework that enables compositional text-to-video generation. The collaborative workflow includes three stages: Design, Generation, and Redesign, with an iterative loop between the Generation and Redesign stages to progressively verify and refine the generated videos. The Redesign stage is the most challenging stage that aims to verify the generated videos, suggest corrections, and redesign the text prompts, frame-wise layouts, and guidance scales for the next iteration of generation. To avoid hallucination of a single MLLM agent, we decompose this stage to four sequentially-executed MLLM-based agents: verification agent, suggestion agent, correction agent, and output structuring agent. Furthermore, to tackle diverse scenarios of compositional text-to-video generation, we design a self-routing mechanism to adaptively select the proper correction agent from a collection of correction agents each specialized for one scenario. Extensive experiments demonstrate the effectiveness of GenMAC, achieving state-of-the art performance in compositional text-to-video generation.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>GenMAC: Compositional Text-to-Video Generation with Multi-Agent Collaboration：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@HKU；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>GenMAC: Compositional Text-to-Video Generation with Multi-Agent Collaboration：近年来，文本到视频生成模型取得了重大进展。然而，他们仍然难以根据组合文本提示生成复杂的动态场景，例如多个对象的属性绑定、与不同对象关联的时间动态以及对象之间的交互。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>GenMAC: Compositional Text-to-Video Generation with Multi-Agent Collaboration：然而，他们仍然难以根据组合文本提示生成复杂的动态场景，例如多个对象的属性绑定、与不同对象关联的时间动态以及对象之间的交互。我们提出了 GenMAC，这是一个迭代的多代理框架，可以生成组合文本到视频。</p></section><section class="analysis-section"><h2>方法描述</h2><p>GenMAC: Compositional Text-to-Video Generation with Multi-Agent Collaboration：然而，他们仍然难以根据组合文本提示生成复杂的动态场景，例如多个对象的属性绑定、与不同对象关联的时间动态以及对象之间的交互。我们提出了 GenMAC，这是一个迭代的多代理框架，可以生成组合文本到视频。协作工作流程包括三个阶段：设计、生成和重新设计，并在生成和重新设计阶段之间进行迭代循环，以逐步验证和完善生成的视频。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>GenMAC: Compositional Text-to-Video Generation with Multi-Agent Collaboration：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>GenMAC: Compositional Text-to-Video Generation with Multi-Agent Collaboration：多个代理可以共同协作，实现复杂目标的集体智慧。大量实验证明了 GenMAC 的有效性，在组合文本到视频生成方面实现了最先进的性能。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@HKU 官方 Publication 页面列出“GenMAC”及其作者，并标注实验室 PI/成员；arXiv 作者信息与页面相符。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2412.04440" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2412.04440</a></li><li><a href="https://mmlab.hk/publication" target="_blank" rel="noopener noreferrer">https://mmlab.hk/publication</a></li></ul></section>
+</main>
+
+</body>
+</html>

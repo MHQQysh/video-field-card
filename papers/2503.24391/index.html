@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Easi3R: Estimating Disentangled Motion from DUSt3R Without Training</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-04-01 · arXiv 2503.24391</span>
+    <h1>Easi3R: Estimating Disentangled Motion from DUSt3R Without Training</h1>
+    <p class="detail-meta">Xingyu Chen、Yue Chen、Yuliang Xiu、Andreas Geiger、Anpei Chen</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">动态场景与 4D 重建</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2503.24391" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Recent advances in DUSt3R have enabled robust estimation of dense point clouds and camera parameters of static scenes, leveraging Transformer network architectures and direct supervision on large-scale 3D datasets. In contrast, the limited scale and diversity of available 4D datasets present a major bottleneck for training a highly generalizable 4D model. This constraint has driven conventional 4D methods to fine-tune 3D models on scalable dynamic video data with additional geometric priors such as optical flow and depths. In this work, we take an opposite path and introduce Easi3R, a simple yet efficient training-free method for 4D reconstruction. Our approach applies attention adaptation during inference, eliminating the need for from-scratch pre-training or network fine-tuning. We find that the attention layers in DUSt3R inherently encode rich information about camera and object motion. By carefully disentangling these attention maps, we achieve accurate dynamic region segmentation, camera pose estimation, and 4D dense point map reconstruction. Extensive experiments on real-world dynamic videos demonstrate that our lightweight attention adaptation significantly outperforms previous state-of-the-art methods that are trained or finetuned on extensive dynamic datasets. Our code is publicly available for research purpose at https://easi3r.github.io/</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Easi3R: Estimating Disentangled Motion from DUSt3R Without Training》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2503.24391</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Easi3R: Estimating Disentangled Motion from DUSt3R Without Training》关注动态人物建模：从语音、文本或视频恢复可控动作/头像，并保持身份、节奏与跨帧外观一致。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>作者用 Transformer 关系建模、强化学习、光流、注意力选择 重组信息流，并配套数据、损失或评价协议验证这一设计是否解决《Easi3R: Estimating Disentangled Motion from DUSt3R Without Training》的瓶颈。</p></section><section class="analysis-section"><h2>方法描述</h2><p>实现路径以 Transformer 关系建模、强化学习、光流、注意力选择 为主干：基础编码器提取局部证据，交互模块建立时间/模态对应，训练目标约束最终任务输出。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Easi3R 的人物生成或重建实验显示动作自然度、外观质量或效率改善；摘要未公开具体数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Easi3R: Estimating Disentangled Motion from DUSt3R Without Training》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2503.24391</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2503.24391" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2503.24391</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

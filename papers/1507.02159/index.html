@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Towards Good Practices for Very Deep Two-Stream ConvNets</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2015-07-08 · arXiv 1507.02159</span>
+    <h1>Towards Good Practices for Very Deep Two-Stream ConvNets</h1>
+    <p class="detail-meta">Wang, Limin、Xiong, Yuanjun、Wang, Zhe、Qiao, Yu</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">动作识别、检测与时间定位</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/1507.02159" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Deep convolutional networks have achieved great success for object recognition in still images. However, for action recognition in videos, the improvement of deep convolutional networks is not so evident. We argue that there are two reasons that could probably explain this result. First the current network architectures (e.g. Two-stream ConvNets) are relatively shallow compared with those very deep models in image domain (e.g. VGGNet, GoogLeNet), and therefore their modeling capacity is constrained by their depth. Second, probably more importantly, the training dataset of action recognition is extremely small compared with the ImageNet dataset, and thus it will be easy to over-fit on the training dataset. To address these issues, this report presents very deep two-stream ConvNets for action recognition, by adapting recent very deep architectures into video domain. However, this extension is not easy as the size of action recognition is quite small. We design several good practices for the training of very deep two-stream ConvNets, namely (i) pre-training for both spatial and temporal nets, (ii) smaller learning rates, (iii) more data augmentation techniques, (iv) high drop out ratio. Meanwhile, we extend the Caffe toolbox into Multi-GPU implementation with high computational efficiency and low memory consumption. We verify the performance of very deep two-stream ConvNets on the dataset of UCF101 and it achieves the recognition accuracy of $91.4\%$.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Towards Good Practices for Very Deep Two-Stream ConvNets》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2015-07-08 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Towards Good Practices for Very Deep Two-Stream ConvNets》聚焦动作识别、检测与时间定位：输入侧是裁剪或未裁剪视频，目标是识别动作类别并定位其时间或空间边界。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Towards Good Practices for Very Deep Two-Stream ConvNets》以 Towards Good Practices for Very 为核心方案，将时空卷积、显式记忆机制用于动作识别、检测与时间定位。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Towards Good Practices for Very Deep Two-Stream ConvNets》采用时空卷积、显式记忆机制处理裁剪或未裁剪视频，其输出任务是识别动作类别并定位其时间或空间边界。摘要能确认的技术组合为时空卷积、显式记忆机制；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Towards Good Practices for Very Deep Two-Stream ConvNets》摘要明确点名的数据集或评测集合包括：ImageNet、UCF101。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Towards Good Practices for Very Deep Two-Stream ConvNets》摘要报告了定量实验，涉及指标 accuracy；摘要中的关键数值为 91.4。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Towards Good Practices for Very Deep Two-Stream ConvNets》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/1507.02159" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1507.02159</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

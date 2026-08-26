@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-01-08 · arXiv 2301.03046</span>
+    <h1>STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition</h1>
+    <p class="detail-meta">Li, Ming、Xu, Xiangyu、Fan, Hehe、Zhou, Pan、Liu, Jun、Liu, Jia-Wei、Li, Jiahe、Keppo, Jussi、Shou, Mike Zheng、Yan, Shuicheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">动作识别、检测与时间定位</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2301.03046" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Existing methods of privacy-preserving action recognition (PPAR) mainly focus on frame-level (spatial) privacy removal through 2D CNNs. Unfortunately, they have two major drawbacks. First, they may compromise temporal dynamics in input videos, which are critical for accurate action recognition. Second, they are vulnerable to practical attacking scenarios where attackers probe for privacy from an entire video rather than individual frames. To address these issues, we propose a novel framework STPrivacy to perform video-level PPAR. For the first time, we introduce vision Transformers into PPAR by treating a video as a tubelet sequence, and accordingly design two complementary mechanisms, i.e., sparsification and anonymization, to remove privacy from a spatio-temporal perspective. In specific, our privacy sparsification mechanism applies adaptive token selection to abandon action-irrelevant tubelets. Then, our anonymization mechanism implicitly manipulates the remaining action-tubelets to erase privacy in the embedding space through adversarial learning. These mechanisms provide significant advantages in terms of privacy preservation for human eyes and action-privacy trade-off adjustment during deployment. We additionally contribute the first two large-scale PPAR benchmarks, VP-HMDB51 and VP-UCF101, to the community. Extensive evaluations on them, as well as two other tasks, validate the effectiveness and generalization capability of our framework.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2023-01-08 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition》聚焦动作识别、检测与时间定位：输入侧是裁剪或未裁剪视频，目标是识别动作类别并定位其时间或空间边界。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition》以 STPrivacy 为核心方案，将Transformer 时空建模用于动作识别、检测与时间定位。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition》采用Transformer 时空建模处理裁剪或未裁剪视频，其输出任务是识别动作类别并定位其时间或空间边界。摘要只明确到上述主要技术路线，其余网络结构、损失和训练细节需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition》摘要明确点名的数据集或评测集合包括：UCF101、HMDB51。 摘要未报告独立代码、模型或数据下载地址。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《STPrivacy: Spatio-Temporal Privacy-Preserving Action Recognition》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2301.03046" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2301.03046</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

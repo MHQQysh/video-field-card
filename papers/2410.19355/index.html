@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-10-25 · arXiv 2410.19355</span>
+    <h1>FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality</h1>
+    <p class="detail-meta">Lv, Zhengyao、Si, Chenyang、Song, Junhao、Yang, Zhenyu、Qiao, Yu、Liu, Ziwei、Wong, Kwan-Yee K.</p>
+    <div class="chips"><span class="chip lab">MMLab@NTU / S-Lab</span><span class="chip">视频生成加速</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2410.19355" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/Vchitect/FasterCache" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/Vchitect/FasterCache" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>In this paper, we present \textbf{\textit{FasterCache}}, a novel training-free strategy designed to accelerate the inference of video diffusion models with high-quality generation. By analyzing existing cache-based methods, we observe that \textit{directly reusing adjacent-step features degrades video quality due to the loss of subtle variations}. We further perform a pioneering investigation of the acceleration potential of classifier-free guidance (CFG) and reveal significant redundancy between conditional and unconditional features within the same timestep. Capitalizing on these observations, we introduce FasterCache to substantially accelerate diffusion-based video generation. Our key contributions include a dynamic feature reuse strategy that preserves both feature distinction and temporal continuity, and CFG-Cache which optimizes the reuse of conditional and unconditional outputs to further enhance inference speed without compromising video quality. We empirically evaluate FasterCache on recent video diffusion models. Experimental results show that FasterCache can significantly accelerate video generation (\eg 1.67$\times$ speedup on Vchitect-2.0) while keeping video quality comparable to the baseline, and consistently outperform existing methods in both inference speed and video quality.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@NTU / S-Lab；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality：在本文中，我们提出了 \textbf{\textit{FasterCache}}，这是一种新颖的免训练策略，旨在加速高质量生成的视频扩散模型的推理。通过分析现有的基于缓存的方法，我们观察到 \textit{直接重用相邻步骤特征会由于丢失细微变化而降低视频质量}。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality：在本文中，我们提出了 \textbf{\textit{FasterCache}}，这是一种新颖的免训练策略，旨在加速高质量生成的视频扩散模型的推理。利用这些观察结果，我们引入 FasterCache 来大幅加速基于扩散的视频生成。</p></section><section class="analysis-section"><h2>方法描述</h2><p>FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality：在本文中，我们提出了 \textbf{\textit{FasterCache}}，这是一种新颖的免训练策略，旨在加速高质量生成的视频扩散模型的推理。利用这些观察结果，我们引入 FasterCache 来大幅加速基于扩散的视频生成。我们的主要贡献包括动态特征重用策略，可保留特征区别和时间连续性，以及 CFG-Cache，可优化条件和无条件输出的重用，以在不影响视频质量的情况下进一步提高推理速度。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。 卡片已记录官方代码链接：https://github.com/Vchitect/FasterCache。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality：实验结果表明，FasterCache 可以显着加速视频生成（例如，在 Vchitect-2.0 上加速 1.67$\times$），同时保持视频质量与基线相当，并且在推理速度和视频质量方面始终优于现有方法。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Vchitect 官方仓库 FasterCache 直接收录该论文；论文作者/项目页包含 S-Lab, Nanyang Technological University 的成员或单位署名。</li><li>MMLab@NTU 官方 publication_year 年表逐条列出“FasterCache: Training-Free Video Diffusion Model Acceleration with High Quality”（arXiv:2410.19355），该官方年表是本条 ntu-s-lab 归属证据。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2410.19355" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2410.19355</a></li><li><a href="https://github.com/Vchitect/FasterCache" target="_blank" rel="noopener noreferrer">https://github.com/Vchitect/FasterCache</a></li><li><a href="https://www.mmlab-ntu.com/publication_year.html" target="_blank" rel="noopener noreferrer">https://www.mmlab-ntu.com/publication_year.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

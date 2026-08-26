@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-12-04 · arXiv 2312.02015</span>
+    <h1>ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy</h1>
+    <p class="detail-meta">Shi, Yufei、Lu, Beijia、Liu, Jia-Wei、Li, Ming、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">长序列内窥镜视频三维重建</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2312.02015" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://showlab.github.io/ColonNeRF/" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://showlab.github.io/ColonNeRF/" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Colonoscopy reconstruction is pivotal for diagnosing colorectal cancer. However, accurate long-sequence colonoscopy reconstruction faces three major challenges: (1) dissimilarity among segments of the colon due to its meandering and convoluted shape; (2) co-existence of simple and intricately folded geometry structures; (3) sparse viewpoints due to constrained camera trajectories. To tackle these challenges, we introduce a new reconstruction framework based on neural radiance field (NeRF), named ColonNeRF, which leverages neural rendering for novel view synthesis of long-sequence colonoscopy. Specifically, to reconstruct the entire colon in a piecewise manner, our ColonNeRF introduces a region division and integration module, effectively reducing shape dissimilarity and ensuring geometric consistency in each segment. To learn both the simple and complex geometry in a unified framework, our ColonNeRF incorporates a multi-level fusion module that progressively models the colon regions from easy to hard. Additionally, to overcome the challenges from sparse views, we devise a DensiNet module for densifying camera poses under the guidance of semantic consistency. We conduct extensive experiments on both synthetic and real-world datasets to evaluate our ColonNeRF. Quantitatively, ColonNeRF exhibits a 67%-85% increase in LPIPS-ALEX scores. Qualitatively, our reconstruction visualizations show much clearer textures and more accurate geometric details. These sufficiently demonstrate our superior performance over the state-of-the-art methods.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://showlab.github.io/ColonNeRF/。本卡 date=2023-12-04 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy》聚焦长序列内窥镜视频三维重建：输入侧是长结肠镜视频序列，目标是重建连续、可渲染的结肠三维场景。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy》以 ColonNeRF 为核心方案，将神经辐射场用于长序列内窥镜视频三维重建。其贡献按摘要中明确描述的模型、数据流程和任务设定概括，未在摘要出现的能力不作外推。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy》采用神经辐射场处理长结肠镜视频序列，其输出任务是重建连续、可渲染的结肠三维场景。摘要只支持上述技术路线；未报告的模块细节、损失权重和训练超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://showlab.github.io/ColonNeRF/。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy》摘要报告了定量实验，涉及指标 LPIPS；摘要中的关键数值为 67%、85%。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《ColonNeRF: High-Fidelity Neural Reconstruction of Long Colonoscopy》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://showlab.github.io/ColonNeRF/。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2312.02015" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2312.02015</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li><li><a href="https://showlab.github.io/ColonNeRF/" target="_blank" rel="noopener noreferrer">https://showlab.github.io/ColonNeRF/</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>PRISM: Privileged Probabilistic Latent Supervision for End-to-End Autonomous Driving Motion Planning</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-08-02 · arXiv 2608.01201</span>
+    <h1>PRISM: Privileged Probabilistic Latent Supervision for End-to-End Autonomous Driving Motion Planning</h1>
+    <p class="detail-meta">Volodymyr Havrylov、Faris Janjoš、Andreas Look、Jürgen Mathes、Andreas Geiger</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2608.01201" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>End-to-end autonomous driving (E2E AD) systems integrate perception, prediction, and planning into a single differentiable architecture. While these models show great promise, their standard training often relies on output-only supervision, which can lead to weak gradients for the hidden layers of increasingly complex models. Recent works have integrated vision-language model (VLM) supervision for latent features to address this, yielding substantial empirical gains, yet leaving the underlying theoretical mechanisms poorly understood. Our investigation into this methodology reveals that the resulting performance gains stem not from VLM reasoning capabilities, as previously assumed, but rather from the latent connections forged between the E2E AD model and ground-truth (GT) data during training. Building on this insight, we propose a probabilistic deep supervision framework that regularizes intermediate latent representations directly from GT data. By treating model latents as reparameterizable distributions, we optimize the architecture via the Evidence Lower Bound (ELBO). Our evaluations conducted on the nuScenes dataset demonstrate that supervising trajectory-related latents with future GT paths consistently improves planning performance. Using identical training data and E2E architectures, our method achieves an 8% reduction in planning L2 error and a 3% decrease in collision rates compared to competitive vectorized baselines, all while incurring negligible computational overhead.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《PRISM: Privileged Probabilistic Latent Supervision for End-to-End Autonomous Driving Motion Planning》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2608.01201</p></section><section class="analysis-section"><h2>论文概述</h2><p>研究端到端驾驶规划中的教师—学生信息差：训练阶段可见的特权信息被压缩成概率潜变量，部署时仍只依赖车载观测。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>PRISM 的关键发现是：既有 VLM 潜特征监督的收益主要来自与未来真值轨迹建立潜在连接，而非语言推理本身；据此提出直接监督中间表示的概率深监督。</p></section><section class="analysis-section"><h2>方法描述</h2><p>模型把轨迹相关潜特征参数化为可重参数化分布，以未来真值路径提供训练期监督，并通过证据下界（ELBO）优化；部署时不增加特权输入，计算开销近乎不变。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 nuScenes。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>实验比较标准端到端规划器、确定性潜变量监督与 PRISM，并同时统计规划轨迹 L2 误差和碰撞率。 PRISM 将 planning L2 降低 8%，同时把 collision rate 降低 3%；两项分别反映轨迹精度与安全性改善。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《PRISM: Privileged Probabilistic Latent Supervision for End-to-End Autonomous Driving Motion Planning》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2608.01201</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2608.01201" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2608.01201</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

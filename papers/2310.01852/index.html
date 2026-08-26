@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>LanguageBind: Extending Video-Language Pretraining to N-modality by Language-based Semantic Alignment</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-10-03 · arXiv 2310.01852</span>
+    <h1>LanguageBind: Extending Video-Language Pretraining to N-modality by Language-based Semantic Alignment</h1>
+    <p class="detail-meta">Zhu, Bin、Lin, Bin、Ning, Munan、Yan, Yang、Cui, Jiaxi、Wang, HongFa、Pang, Yatian、Jiang, Wenhao、Zhang, Junwu、Li, Zongwei、Zhang, Wancai、Li, Zhifeng、Liu, Wei、Yuan, Li</p>
+    <div class="chips"><span class="chip lab">PKU-YuanGroup / 兔展 AIGC 联合实验室</span><span class="chip">视频语言预训练</span><span class="chip">多模态理解</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2310.01852" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/PKU-YuanGroup/LanguageBind" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>The video-language (VL) pretraining has achieved remarkable improvement in multiple downstream tasks. However, the current VL pretraining framework is hard to extend to multiple modalities (N modalities, N&gt;=3) beyond vision and language. We thus propose LanguageBind, taking the language as the bind across different modalities because the language modality is well-explored and contains rich semantics. Specifically, we freeze the language encoder acquired by VL pretraining, then train encoders for other modalities with contrastive learning. As a result, all modalities are mapped to a shared feature space, implementing multi-modal semantic alignment. While LanguageBind ensures that we can extend VL modalities to N modalities, we also need a high-quality dataset with alignment data pairs centered on language. We thus propose VIDAL-10M with Video, Infrared, Depth, Audio and their corresponding Language, naming as VIDAL-10M. In our VIDAL-10M, all videos are from short video platforms with complete semantics rather than truncated segments from long videos, and all the video, depth, infrared, and audio modalities are aligned to their textual descriptions. LanguageBind has achieved superior performance on a wide range of 15 benchmarks covering video, audio, depth, and infrared. Moreover, multiple experiments have provided evidence for the effectiveness of LanguageBind in achieving indirect alignment and complementarity among diverse modalities. Code address: this https URL</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>LanguageBind: Extending Video-Language Pretraining to N-modality by Language-based Semantic Alignment：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 PKU-YuanGroup / 兔展 AIGC；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>LanguageBind: Extending Video-Language Pretraining to N-modality by Language-based Semantic Alignment：视频语言（VL）预训练在多个下游任务中取得了显着的改进。然而，当前的VL预训练框架很难扩展到视觉和语言之外的多种模态（N模态，N&gt;=3）。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>LanguageBind: Extending Video-Language Pretraining to N-modality by Language-based Semantic Alignment：然而，当前的 VL 预训练框架很难扩展到视觉和语言之外的多种模态（N 模态，N&gt;=3）。因此，我们提出LanguageBind，将语言作为不同模态的绑定，因为语言模态已经被充分探索并包含丰富的语义。</p></section><section class="analysis-section"><h2>方法描述</h2><p>LanguageBind: Extending Video-Language Pretraining to N-modality by Language-based Semantic Alignment：然而，当前的 VL 预训练框架很难扩展到视觉和语言之外的多种模态（N 模态，N&gt;=3）。因此，我们提出LanguageBind，将语言作为不同模态的绑定，因为语言模态已经被充分探索并包含丰富的语义。因此我们提出了具有视频、红外、深度、音频及其相应语言的VIDAL-10M，命名为VIDAL-10M。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>LanguageBind: Extending Video-Language Pretraining to N-modality by Language-based Semantic Alignment：具体来说，我们冻结通过 VL 预训练获得的语言编码器，然后通过对比学习来训练其他模式的编码器。虽然 LanguageBind 确保我们可以将 VL 模态扩展到 N 模态，但我们还需要一个高质量的数据集，其中包含以语言为中心的对齐数据对。 卡片已记录官方代码链接：https://github.com/PKU-YuanGroup/LanguageBind。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>LanguageBind: Extending Video-Language Pretraining to N-modality by Language-based Semantic Alignment：因此，所有模态都映射到共享特征空间，实现多模态语义对齐。 LanguageBind 在涵盖视频、音频、深度和红外的 15 项基准测试中取得了卓越的性能。此外，多项实验为 LanguageBind 在实现不同模式之间的间接对齐和互补方面的有效性提供了证据。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>PKU-YuanGroup 官方仓库 LanguageBind 的 README/引用信息直接关联该 arXiv 论文，并表明 YuanGroup 或北大-兔展 AIGC 团队贡献。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2310.01852" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2310.01852</a></li><li><a href="https://github.com/PKU-YuanGroup/LanguageBind" target="_blank" rel="noopener noreferrer">https://github.com/PKU-YuanGroup/LanguageBind</a></li></ul></section>
+</main>
+
+</body>
+</html>

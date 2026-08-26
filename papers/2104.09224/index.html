@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Multi-Modal Fusion Transformer for End-to-End Autonomous Driving</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2021-04-19 · arXiv 2104.09224</span>
+    <h1>Multi-Modal Fusion Transformer for End-to-End Autonomous Driving</h1>
+    <p class="detail-meta">Aditya Prakash、Kashyap Chitta、Andreas Geiger</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2104.09224" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>How should representations from complementary sensors be integrated for autonomous driving? Geometry-based sensor fusion has shown great promise for perception tasks such as object detection and motion forecasting. However, for the actual driving task, the global context of the 3D scene is key, e.g. a change in traffic light state can affect the behavior of a vehicle geometrically distant from that traffic light. Geometry alone may therefore be insufficient for effectively fusing representations in end-to-end driving models. In this work, we demonstrate that imitation learning policies based on existing sensor fusion methods under-perform in the presence of a high density of dynamic agents and complex scenarios, which require global contextual reasoning, such as handling traffic oncoming from multiple directions at uncontrolled intersections. Therefore, we propose TransFuser, a novel Multi-Modal Fusion Transformer, to integrate image and LiDAR representations using attention. We experimentally validate the efficacy of our approach in urban settings involving complex scenarios using the CARLA urban driving simulator. Our approach achieves state-of-the-art driving performance while reducing collisions by 76% compared to geometry-based fusion.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Multi-Modal Fusion Transformer for End-to-End Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2104.09224</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Multi-Modal Fusion Transformer for End-to-End Autonomous Driving》研究 时序自动驾驶与规划，重点考察连续传感器信息如何支持驾驶感知、预测、规划或闭环评价。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>作者用 Transformer 关系建模、注意力选择、多传感器融合、世界模型/仿真 重组信息流，并配套数据、损失或评价协议验证这一设计是否解决《Multi-Modal Fusion Transformer for End-to-End Autonomous Driving》的瓶颈。</p></section><section class="analysis-section"><h2>方法描述</h2><p>实现路径以 Transformer 关系建模、注意力选择、多传感器融合、世界模型/仿真 为主干：基础编码器提取局部证据，交互模块建立时间/模态对应，训练目标约束最终任务输出。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 CARLA。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>多模态融合 Transformer 相比几何式融合把碰撞降低 76%，并达到当时最佳闭环驾驶表现。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Multi-Modal Fusion Transformer for End-to-End Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2104.09224</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2104.09224" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2104.09224</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

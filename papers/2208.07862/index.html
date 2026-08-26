@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-08-16 · arXiv 2208.07862</span>
+    <h1>StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3</h1>
+    <p class="detail-meta">Qiu, Haonan、Jiang, Yuming、Zhou, Hang、Wu, Wayne、Liu, Ziwei</p>
+    <div class="chips"><span class="chip lab">MMLab@NTU / S-Lab</span><span class="chip">视频生成</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2208.07862" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/arthur-qiu/StyleFaceV" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/arthur-qiu/StyleFaceV" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Realistic generative face video synthesis has long been a pursuit in both computer vision and graphics community. However, existing face video generation methods tend to produce low-quality frames with drifted facial identities and unnatural movements. To tackle these challenges, we propose a principled framework named StyleFaceV, which produces high-fidelity identity-preserving face videos with vivid movements. Our core insight is to decompose appearance and pose information and recompose them in the latent space of StyleGAN3 to produce stable and dynamic results. Specifically, StyleGAN3 provides strong priors for high-fidelity facial image generation, but the latent space is intrinsically entangled. By carefully examining its latent properties, we propose our decomposition and recomposition designs which allow for the disentangled combination of facial appearance and movements. Moreover, a temporal-dependent model is built upon the decomposed latent features, and samples reasonable sequences of motions that are capable of generating realistic and temporally coherent face videos. Particularly, our pipeline is trained with a joint training strategy on both static images and high-quality video data, which is of higher data efficiency. Extensive experiments demonstrate that our framework achieves state-of-the-art face video generation results both qualitatively and quantitatively. Notably, StyleFaceV is capable of generating realistic $1024\times1024$ face videos even without high-resolution training videos.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@NTU / S-Lab；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3：StyleFaceV 面向高保真、身份保持的人脸视频生成，解决已有方法的身份漂移、低帧质量与不自然运动。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3：论文提出 StyleFaceV，通过分解并重组外观和姿态信息，在 StyleGAN3 潜空间中实现身份与运动的解耦组合。</p></section><section class="analysis-section"><h2>方法描述</h2><p>StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3：框架联合使用静态图像与高质量视频训练，将外观和运动因素分解后在 StyleGAN3 潜空间重组，以生成稳定且动态的人脸视频。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。 卡片已记录官方代码链接：https://github.com/arthur-qiu/StyleFaceV。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3：大量实验在定性和定量层面达到摘要所称的先进人脸视频生成效果；摘要未报告具体数据集、指标或结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@NTU 官方 publication_year 年表逐条列出“StyleFaceV: Face Video Generation via Decomposing and Recomposing Pretrained StyleGAN3”（arXiv:2208.07862），该官方年表是本条 ntu-s-lab 归属证据。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2208.07862" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2208.07862</a></li><li><a href="https://www.mmlab-ntu.com/publication_year.html" target="_blank" rel="noopener noreferrer">https://www.mmlab-ntu.com/publication_year.html</a></li><li><a href="https://github.com/arthur-qiu/StyleFaceV" target="_blank" rel="noopener noreferrer">https://github.com/arthur-qiu/StyleFaceV</a></li></ul></section>
+</main>
+
+</body>
+</html>

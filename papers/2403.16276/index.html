@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Empowering LLMs with Pseudo-Untrimmed Videos for Audio-Visual Temporal Understanding</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-03-25 · arXiv 2403.16276</span>
+    <h1>Empowering LLMs with Pseudo-Untrimmed Videos for Audio-Visual Temporal Understanding</h1>
+    <p class="detail-meta">Yolo Yunlong Tang、Daiki Shimada、Jing Bi、Mingqian Feng、Hang Hua、Chenliang Xu</p>
+    <div class="chips"><span class="chip lab">Chenliang Xu Group</span><span class="chip">Video-LLM 与视频理解</span><span class="chip">音视频多模态</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2403.16276" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Large language models (LLMs) have demonstrated remarkable capabilities in natural language and multimodal domains. By fine-tuning multimodal LLMs with temporal annotations from well-annotated datasets, e.g., dense video captioning datasets, their temporal understanding capacity in video-language tasks can be obtained. However, there is a notable lack of untrimmed audio-visual video datasets with precise temporal annotations for events. This deficiency hinders LLMs from learning the alignment between time, audio-visual events, and text tokens, thus impairing their ability to temporally localize audio-visual events in videos. To address this gap, we introduce PU-VALOR, a comprehensive audio-visual dataset comprising over 114,000 pseudo-untrimmed videos with detailed temporal annotations. PU-VALOR is derived from the large-scale but coarse-annotated audio-visual dataset VALOR, through a subtle method involving event-based video clustering, random temporal scaling, and permutation. By fine-tuning a multimodal LLM on PU-VALOR, we developed AVicuna, a model capable of aligning audio-visual events with temporal intervals and corresponding text tokens. AVicuna excels in temporal localization and time-aware dialogue capabilities. Our experiments demonstrate that AVicuna effectively handles temporal understanding in audio-visual videos and achieves state-of-the-art performance on open-ended video QA, audio-visual QA, and audio-visual event dense localization tasks.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Empowering LLMs with Pseudo-Untrimmed Videos for Audio-Visual Temporal Understanding》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/2403.16276；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Empowering LLMs with Pseudo-Untrimmed Videos for Audio-Visual Temporal Understanding》联合画面和声音的时间对应关系，处理声源定位、分离、问答、解析、编辑或鲁棒性问题。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>相较独立处理每帧或每种模态，该工作以 视觉语言模型、音画对齐、语言描述、跨帧时间建模 建立可传播的动态状态，贡献落在任务机制而非单纯扩大模型。</p></section><section class="analysis-section"><h2>方法描述</h2><p>该方案利用 视觉语言模型、音画对齐、语言描述、跨帧时间建模 把连续观察压缩成任务状态，随后执行分类、回归、渲染、规划或语言生成；具体超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>PU-VALOR 包含超过 114,000 段带详细时间标注的伪未裁剪音视频，用于训练跨模态事件定位与长时理解。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>实验检验 LLM 在伪长音视频中的跨模态事件定位和时间推理；摘要称 PU-VALOR 训练能改善这些能力，但未公开具体分数。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Empowering LLMs with Pseudo-Untrimmed Videos for Audio-Visual Temporal Understanding》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/2403.16276；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2403.16276" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2403.16276</a></li><li><a href="https://cliangxu.github.io/p/index.html" target="_blank" rel="noopener noreferrer">https://cliangxu.github.io/p/index.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2021-11-24 · arXiv 2111.12527</span>
+    <h1>MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning</h1>
+    <p class="detail-meta">Zhang, David Junhao、Li, Kunchang、Wang, Yali、Chen, Yunpeng、Chandra, Shashwat、Qiao, Yu、Liu, Luoqi、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频数据集与评测</span><span class="chip">高效与流式视频</span><span class="chip">数据集与评测</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2111.12527" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Recently, MLP-Like networks have been revived for image recognition. However, whether it is possible to build a generic MLP-Like architecture on video domain has not been explored, due to complex spatial-temporal modeling with large computation burden. To fill this gap, we present an efficient self-attention free backbone, namely MorphMLP, which flexibly leverages the concise Fully-Connected (FC) layer for video representation learning. Specifically, a MorphMLP block consists of two key layers in sequence, i.e., MorphFC_s and MorphFC_t, for spatial and temporal modeling respectively. MorphFC_s can effectively capture core semantics in each frame, by progressive token interaction along both height and width dimensions. Alternatively, MorphFC_t can adaptively learn long-term dependency over frames, by temporal token aggregation on each spatial location. With such multi-dimension and multi-scale factorization, our MorphMLP block can achieve a great accuracy-computation balance. Finally, we evaluate our MorphMLP on a number of popular video benchmarks. Compared with the recent state-of-the-art models, MorphMLP significantly reduces computation but with better accuracy, e.g., MorphMLP-S only uses 50% GFLOPs of VideoSwin-T but achieves 0.9% top-1 improvement on Kinetics400, under ImageNet1K pretraining. MorphMLP-B only uses 43% GFLOPs of MViT-B but achieves 2.4% top-1 improvement on SSV2, even though MorphMLP-B is pretrained on ImageNet1K while MViT-B is pretrained on Kinetics400. Moreover, our method adapted to the image domain outperforms previous SOTA MLP-Like architectures. Code is available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2021-11-24 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning》聚焦视频数据集与评测：输入侧是视频样本、任务标注或模型输出，目标是形成数据集、基准、指标或评测协议。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning》以 MorphMLP 为核心方案，将摘要所述的任务专用时序模块用于视频数据集与评测。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning》采用摘要所述的任务专用时序模块处理视频样本、任务标注或模型输出，其输出任务是形成数据集、基准、指标或评测协议。摘要未完整报告可拆分的核心模块、损失函数或推理步骤，具体实现需查正文方法章节。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning》摘要明确点名的数据集或评测集合包括：SSV2。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning》摘要报告了定量实验，涉及指标 accuracy、top-1；摘要中的关键数值为 50%、0.9%、43%、2.4%。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《MorphMLP: An Efficient MLP-Like Backbone for Spatial-Temporal Representation Learning》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2111.12527" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2111.12527</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

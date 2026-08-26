@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-12-12 · arXiv 2412.09616</span>
+    <h1>V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding</h1>
+    <p class="detail-meta">Ge, Junqi、Chen, Ziyi、Lin, Jintao、Zhu, Jinguo、Liu, Xihui、Dai, Jifeng、Zhu, Xizhou</p>
+    <div class="chips"><span class="chip lab">OpenGVLab</span><span class="chip">视频数据集与评测</span><span class="chip">高效与流式视频</span><span class="chip">数据集与评测</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2412.09616" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenGVLab/V2PE" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenGVLab/V2PE" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Vision-Language Models (VLMs) have shown promising capabilities in handling various multimodal tasks, yet they struggle in long-context scenarios, particularly in tasks involving videos, high-resolution images, or lengthy image-text documents. In our work, we first conduct an empirical analysis of the long-context capabilities of VLMs using our augmented long-context multimodal datasets. Our findings reveal that directly applying the positional encoding mechanism used for textual tokens to visual tokens is suboptimal, and VLM performance degrades sharply when the position encoding exceeds the model&#x27;s context window. To address this, we propose Variable Visual Position Encoding (V2PE), a novel positional encoding approach that employs variable and smaller increments for visual tokens, enabling more efficient management of long multimodal sequences. Our experiments demonstrate the effectiveness of V2PE to enhances VLMs&#x27; ability to effectively understand and reason over long multimodal contexts. We further integrate V2PE with our augmented long-context multimodal datasets to fine-tune the open-source VLM, InternVL2. The fine-tuned model achieves strong performance on both standard and long-context multimodal tasks. Notably, when the sequence length of the training dataset is increased to 256K tokens, the model is capable of processing multimodal sequences up to 1M tokens, highlighting its potential for real-world long-context applications.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/V2PE 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。本卡 date=2024-12-12 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding》聚焦视频数据集与评测：输入侧是视频样本、任务标注或模型输出，目标是形成数据集、基准、指标或评测协议。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding》以 V2PE 为核心方案，将视觉语言模型用于视频数据集与评测。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding》采用视觉语言模型处理视频样本、任务标注或模型输出，其输出任务是形成数据集、基准、指标或评测协议。摘要只明确到上述主要技术路线，其余网络结构、损失和训练细节需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/OpenGVLab/V2PE。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《V2PE: Improving Multimodal Long-Context Capability of Vision-Language Models with Variable Visual Position Encoding》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/V2PE 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2412.09616" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2412.09616</a></li><li><a href="https://github.com/OpenGVLab/V2PE" target="_blank" rel="noopener noreferrer">https://github.com/OpenGVLab/V2PE</a></li></ul></section>
+</main>
+
+</body>
+</html>

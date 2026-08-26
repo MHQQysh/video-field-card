@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>HoloTime: Taming Video Diffusion Models for Panoramic 4D Scene Generation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-04-30 · arXiv 2504.21650</span>
+    <h1>HoloTime: Taming Video Diffusion Models for Panoramic 4D Scene Generation</h1>
+    <p class="detail-meta">Zhou, Haiyang、Yu, Wangbo、Guan, Jiawen、Cheng, Xinhua、Tian, Yonghong、Yuan, Li</p>
+    <div class="chips"><span class="chip lab">PKU-YuanGroup / 兔展 AIGC 联合实验室</span><span class="chip">4D场景生成</span><span class="chip">视频生成</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2504.21650" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/PKU-YuanGroup/HoloTime" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>The rapid advancement of diffusion models holds the promise of revolutionizing the application of VR and AR technologies, which typically require scene-level 4D assets for user experience. Nonetheless, existing diffusion models predominantly concentrate on modeling static 3D scenes or object-level dynamics, constraining their capacity to provide truly immersive experiences. To address this issue, we propose HoloTime, a framework that integrates video diffusion models to generate panoramic videos from a single prompt or reference image, along with a 360-degree 4D scene reconstruction method that seamlessly transforms the generated panoramic video into 4D assets, enabling a fully immersive 4D experience for users. Specifically, to tame video diffusion models for generating high-fidelity panoramic videos, we introduce the 360World dataset, the first comprehensive collection of panoramic videos suitable for downstream 4D scene reconstruction tasks. With this curated dataset, we propose Panoramic Animator, a two-stage image-to-video diffusion model that can convert panoramic images into high-quality panoramic videos. Following this, we present Panoramic Space-Time Reconstruction, which leverages a space-time depth estimation method to transform the generated panoramic videos into 4D point clouds, enabling the optimization of a holistic 4D Gaussian Splatting representation to reconstruct spatially and temporally consistent 4D scenes. To validate the efficacy of our method, we conducted a comparative analysis with existing approaches, revealing its superiority in both panoramic video generation and 4D scene reconstruction. This demonstrates our method&#x27;s capability to create more engaging and realistic immersive environments, thereby enhancing user experiences in VR and AR applications.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>HoloTime: Taming Video Diffusion Models for Panoramic 4D Scene Generation：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 PKU-YuanGroup / 兔展 AIGC；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>HoloTime: Taming Video Diffusion Models for Panoramic 4D Scene Generation：HoloTime 面向 VR/AR 所需的场景级 4D 资产，解决现有方法缺少动态全景视频与 4D 重建衔接的问题。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>HoloTime: Taming Video Diffusion Models for Panoramic 4D Scene Generation：论文提出 HoloTime：先由视频扩散模型从文本或参考图像生成全景视频，再用 360 度 4D 场景重建将其转换为动态资产。</p></section><section class="analysis-section"><h2>方法描述</h2><p>HoloTime: Taming Video Diffusion Models for Panoramic 4D Scene Generation：流水线包含两阶段 Panoramic Animator 图像到视频扩散模型和后续 360 度 4D 重建；视频模型在专门数据上学习全景时空生成。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>HoloTime: Taming Video Diffusion Models for Panoramic 4D Scene Generation：论文构建 360World 全景视频数据集，用于训练并服务下游 4D 场景重建。 卡片已记录官方代码链接：https://github.com/PKU-YuanGroup/HoloTime。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>HoloTime: Taming Video Diffusion Models for Panoramic 4D Scene Generation：摘要仅称方法能生成更真实、更具沉浸感的环境，未报告评测数据集、指标或数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>PKU-YuanGroup 官方仓库 HoloTime 的 README/引用信息直接关联该 arXiv 论文，并表明 YuanGroup 或北大-兔展 AIGC 团队贡献。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2504.21650" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2504.21650</a></li><li><a href="https://github.com/PKU-YuanGroup/HoloTime" target="_blank" rel="noopener noreferrer">https://github.com/PKU-YuanGroup/HoloTime</a></li></ul></section>
+</main>
+
+</body>
+</html>

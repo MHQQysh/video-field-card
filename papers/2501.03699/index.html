@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Motion-Aware Generative Frame Interpolation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-01-07 · arXiv 2501.03699</span>
+    <h1>Motion-Aware Generative Frame Interpolation</h1>
+    <p class="detail-meta">Zhang, Guozhen、Zhu, Yuhan、Cui, Yutao、Zhao, Xiaotong、Ma, Kai、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">视频生成、动画与可控编辑</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2501.03699" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Flow-based frame interpolation methods ensure motion stability through estimated intermediate flow but often introduce severe artifacts in complex motion regions. Recent generative approaches, boosted by large-scale pre-trained video generation models, show promise in handling intricate scenes. However, they frequently produce unstable motion and content inconsistencies due to the absence of explicit motion trajectory constraints. To address these challenges, we propose Motion-aware Generative frame interpolation (MoG) that synergizes intermediate flow guidance with generative capacities to enhance interpolation fidelity. Our key insight is to simultaneously enforce motion smoothness through flow constraints while adaptively correcting flow estimation errors through generative refinement. Specifically, we first introduce a dual guidance injection that propagates condition information using intermediate flow at both latent and feature levels, aligning the generated motion with flow-derived motion trajectories. Meanwhile, we implemented two critical designs, encoder-only guidance injection and selective parameter fine-tuning, which enable dynamic artifact correction in the complex motion regions. Extensive experiments on both real-world and animation benchmarks demonstrate that MoG outperforms state-of-the-art methods in terms of video quality and visual fidelity. Our work bridges the gap between flow-based stability and generative flexibility, offering a versatile solution for frame interpolation across diverse scenarios.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Motion-Aware Generative Frame Interpolation》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2025-01-07 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Motion-Aware Generative Frame Interpolation》聚焦视频生成、动画与可控编辑：输入侧是文本、图像、轨迹或参考视频条件，目标是生成或编辑具有时间一致性的视频序列。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Motion-Aware Generative Frame Interpolation》以 Motion-Aware Generative Frame Interpolation 为核心方案，将摘要所述的任务专用时序模块用于视频生成、动画与可控编辑。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Motion-Aware Generative Frame Interpolation》采用摘要所述的任务专用时序模块处理文本、图像、轨迹或参考视频条件，其输出任务是生成或编辑具有时间一致性的视频序列。摘要未完整报告可拆分的核心模块、损失函数或推理步骤，具体实现需查正文方法章节。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Motion-Aware Generative Frame Interpolation》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Motion-Aware Generative Frame Interpolation》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Motion-Aware Generative Frame Interpolation》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2501.03699" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2501.03699</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

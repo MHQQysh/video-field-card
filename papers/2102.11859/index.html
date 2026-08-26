@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>STEP: Segmenting and Tracking Every Pixel</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2021-02-24 · arXiv 2102.11859</span>
+    <h1>STEP: Segmenting and Tracking Every Pixel</h1>
+    <p class="detail-meta">Mark Weber、Jun Xie、Maxwell Collins、Yukun Zhu、Paul Voigtlaender、Hartwig Adam、Bradley Green、Andreas Geiger、Bastian Leibe、Daniel Cremers、Aljoša Ošep、Laura Leal-Taixé、Liang-Chieh Chen</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2102.11859" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/google-research/deeplab2" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>The task of assigning semantic classes and track identities to every pixel in a video is called video panoptic segmentation. Our work is the first that targets this task in a real-world setting requiring dense interpretation in both spatial and temporal domains. As the ground-truth for this task is difficult and expensive to obtain, existing datasets are either constructed synthetically or only sparsely annotated within short video clips. To overcome this, we introduce a new benchmark encompassing two datasets, KITTI-STEP, and MOTChallenge-STEP. The datasets contain long video sequences, providing challenging examples and a test-bed for studying long-term pixel-precise segmentation and tracking under real-world conditions. We further propose a novel evaluation metric Segmentation and Tracking Quality (STQ) that fairly balances semantic and tracking aspects of this task and is more appropriate for evaluating sequences of arbitrary length. Finally, we provide several baselines to evaluate the status of existing methods on this new challenging dataset. We have made our datasets, metric, benchmark servers, and baselines publicly available, and hope this will inspire future research.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《STEP: Segmenting and Tracking Every Pixel》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2102.11859</p></section><section class="analysis-section"><h2>论文概述</h2><p>《STEP: Segmenting and Tracking Every Pixel》聚焦视频底层时空对应，解决跨帧对齐、分割、跟踪、显著性或时空超分辨率。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>作者用 像素分割、跨帧关联、跨帧时间建模 重组信息流，并配套数据、损失或评价协议验证这一设计是否解决《STEP: Segmenting and Tracking Every Pixel》的瓶颈。</p></section><section class="analysis-section"><h2>方法描述</h2><p>实现路径以 像素分割、跨帧关联、跨帧时间建模 为主干：基础编码器提取局部证据，交互模块建立时间/模态对应，训练目标约束最终任务输出。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 已核验的项目或代码地址：https://github.com/google-research/deeplab2</p></section><section class="analysis-section"><h2>评估与结果</h2><p>摘要未公开具体数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《STEP: Segmenting and Tracking Every Pixel》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2102.11859</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2102.11859" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2102.11859</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/google-research/deeplab2" target="_blank" rel="noopener noreferrer">https://github.com/google-research/deeplab2</a></li></ul></section>
+</main>
+
+</body>
+</html>

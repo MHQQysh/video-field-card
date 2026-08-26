@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Reference-based Image and Video Super-Resolution via C2-Matching</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-12-19 · arXiv 2212.09581</span>
+    <h1>Reference-based Image and Video Super-Resolution via C2-Matching</h1>
+    <p class="detail-meta">Jiang, Yuming、Chan, Kelvin C. K.、Wang, Xintao、Loy, Chen Change、Liu, Ziwei</p>
+    <div class="chips"><span class="chip lab">MMLab@NTU / S-Lab</span><span class="chip">视频恢复与编辑</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2212.09581" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://doi.ieeecomputersociety.org/10.1109/TPAMI.2022.3231089" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/yumingj/C2-Matching" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Reference-based Super-Resolution (Ref-SR) has recently emerged as a promising paradigm to enhance a low-resolution (LR) input image or video by introducing an additional high-resolution (HR) reference image. Existing Ref-SR methods mostly rely on implicit correspondence matching to borrow HR textures from reference images to compensate for the information loss in input images. However, performing local transfer is difficult because of two gaps between input and reference images: the transformation gap (e.g., scale and rotation) and the resolution gap (e.g., HR and LR). To tackle these challenges, we propose C2-Matching in this work, which performs explicit robust matching crossing transformation and resolution. 1) To bridge the transformation gap, we propose a contrastive correspondence network, which learns transformation-robust correspondences using augmented views of the input image. 2) To address the resolution gap, we adopt teacher-student correlation distillation, which distills knowledge from the easier HR-HR matching to guide the more ambiguous LR-HR matching. 3) Finally, we design a dynamic aggregation module to address the potential misalignment issue between input images and reference images. In addition, to faithfully evaluate the performance of Reference-based Image Super-Resolution under a realistic setting, we contribute the Webly-Referenced SR (WR-SR) dataset, mimicking the practical usage scenario. We also extend C2-Matching to Reference-based Video Super-Resolution task, where an image taken in a similar scene serves as the HR reference image. Extensive experiments demonstrate that our proposed C2-Matching significantly outperforms state of the arts on the standard CUFED5 benchmark and also boosts the performance of video SR by incorporating the C2-Matching component into Video SR pipelines.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Reference-based Image and Video Super-Resolution via C2-Matching：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@NTU / S-Lab；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>Reference-based Image and Video Super-Resolution via C2-Matching：基于参考的超分辨率 (Ref-SR) 最近成为一种有前途的范例，通过引入额外的高分辨率 (HR) 参考图像来增强低分辨率 (LR) 输入图像或视频。现有的 Ref-SR 方法大多依靠隐式对应匹配从参考图像中借用 HR 纹理来补偿输入图像中的信息损失。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Reference-based Image and Video Super-Resolution via C2-Matching：为了应对这些挑战，我们在这项工作中提出了 C2-Matching，它执行显式鲁棒匹配交叉变换和解析。 1）为了弥补变换差距，我们提出了一种对比对应网络，它使用输入图像的增强视图来学习变换鲁棒对应关系。</p></section><section class="analysis-section"><h2>方法描述</h2><p>Reference-based Image and Video Super-Resolution via C2-Matching：为了应对这些挑战，我们在这项工作中提出了 C2-Matching，它执行显式鲁棒匹配交叉变换和解析。 1）为了弥补变换差距，我们提出了一种对比对应网络，它使用输入图像的增强视图来学习变换鲁棒对应关系。 2）为了解决分辨率差距，我们采用师生相关性蒸馏，从更容易的HR-HR匹配中提取知识来指导更模糊的LR-HR匹配。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>Reference-based Image and Video Super-Resolution via C2-Matching：此外，为了在现实环境下忠实地评估基于参考的图像超分辨率的性能，我们贡献了 Webly-Referenced SR (WR-SR) 数据集，模仿实际使用场景。 卡片已记录官方代码链接：https://github.com/yumingj/C2-Matching。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Reference-based Image and Video Super-Resolution via C2-Matching：大量实验表明，我们提出的 C2-Matching 显着优于标准 CUFED5 基准的最新技术，并且通过将 C2-Matching 组件合并到视频 SR 管道中，还提高了视频 SR 的性能。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@NTU 官方 publication_year 年表逐条列出“Reference-based Image and Video Super-Resolution via C2-Matching”（arXiv:2212.09581），该官方年表是本条 ntu-s-lab 归属证据。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2212.09581" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2212.09581</a></li><li><a href="https://www.mmlab-ntu.com/publication_year.html" target="_blank" rel="noopener noreferrer">https://www.mmlab-ntu.com/publication_year.html</a></li><li><a href="https://doi.ieeecomputersociety.org/10.1109/TPAMI.2022.3231089" target="_blank" rel="noopener noreferrer">https://doi.ieeecomputersociety.org/10.1109/TPAMI.2022.3231089</a></li></ul></section>
+</main>
+
+</body>
+</html>

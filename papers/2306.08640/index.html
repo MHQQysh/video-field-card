@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-06-14 · arXiv 2306.08640</span>
+    <h1>AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn</h1>
+    <p class="detail-meta">Gao, Difei、Ji, Lei、Zhou, Luowei、Lin, Kevin Qinghong、Chen, Joya、Fan, Zihan、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频语言理解与多模态工具推理</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2306.08640" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/showlab/assistgpt" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/showlab/assistgpt" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Recent research on Large Language Models (LLMs) has led to remarkable advancements in general NLP AI assistants. Some studies have further explored the use of LLMs for planning and invoking models or APIs to address more general multi-modal user queries. Despite this progress, complex visual-based tasks still remain challenging due to the diverse nature of visual tasks. This diversity is reflected in two aspects: 1) Reasoning paths. For many real-life applications, it is hard to accurately decompose a query simply by examining the query itself. Planning based on the specific visual content and the results of each step is usually required. 2) Flexible inputs and intermediate results. Input forms could be flexible for in-the-wild cases, and involves not only a single image or video but a mixture of videos and images, e.g., a user-view image with some reference videos. Besides, a complex reasoning process will also generate diverse multimodal intermediate results, e.g., video narrations, segmented video clips, etc. To address such general cases, we propose a multi-modal AI assistant, AssistGPT, with an interleaved code and language reasoning approach called Plan, Execute, Inspect, and Learn (PEIL) to integrate LLMs with various tools. Specifically, the Planner is capable of using natural language to plan which tool in Executor should do next based on the current reasoning progress. Inspector is an efficient memory manager to assist the Planner to feed proper visual information into a specific tool. Finally, since the entire reasoning process is complex and flexible, a Learner is designed to enable the model to autonomously explore and discover the optimal solution. We conducted experiments on A-OKVQA and NExT-QA benchmarks, achieving state-of-the-art results. Moreover, showcases demonstrate the ability of our system to handle questions far more complex than those found in the benchmarks.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/showlab/assistgpt。本卡 date=2023-06-14 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn》聚焦视频语言理解与多模态工具推理：输入侧是图像、视频及其混合查询，目标是规划工具调用并输出视频叙述、片段或问答结果。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn》以 AssistGPT 为核心方案，将大语言模型工具编排、显式记忆机制用于视频语言理解与多模态工具推理。其贡献按摘要中明确描述的模型、数据流程和任务设定概括，未在摘要出现的能力不作外推。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn》采用大语言模型工具编排、显式记忆机制处理图像、视频及其混合查询，其输出任务是规划工具调用并输出视频叙述、片段或问答结果。摘要只支持上述技术路线；未报告的模块细节、损失权重和训练超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn》摘要明确点名的数据集或评测集合包括：A-OKVQA、NExT-QA。 已核到论文级项目/代码链接：https://github.com/showlab/assistgpt。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《AssistGPT: A General Multi-modal Assistant that can Plan, Execute, Inspect, and Learn》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/showlab/assistgpt。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2306.08640" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2306.08640</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li><li><a href="https://github.com/showlab/assistgpt" target="_blank" rel="noopener noreferrer">https://github.com/showlab/assistgpt</a></li></ul></section>
+</main>
+
+</body>
+</html>

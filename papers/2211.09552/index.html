@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-11-17 · arXiv 2211.09552</span>
+    <h1>UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer</h1>
+    <p class="detail-meta">Li, Kunchang、Wang, Yali、He, Yinan、Li, Yizhuo、Wang, Yi、Wang, Limin、Qiao, Yu</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip lab">OpenGVLab</span><span class="chip">视频数据集与评测</span><span class="chip">高效与流式视频</span><span class="chip">数据集与评测</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2211.09552" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenGVLab/UniFormerV2" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenGVLab/UniFormerV2" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Learning discriminative spatiotemporal representation is the key problem of video understanding. Recently, Vision Transformers (ViTs) have shown their power in learning long-term video dependency with self-attention. Unfortunately, they exhibit limitations in tackling local video redundancy, due to the blind global comparison among tokens. UniFormer has successfully alleviated this issue, by unifying convolution and self-attention as a relation aggregator in the transformer format. However, this model has to require a tiresome and complicated image-pretraining phrase, before being finetuned on videos. This blocks its wide usage in practice. On the contrary, open-sourced ViTs are readily available and well-pretrained with rich image supervision. Based on these observations, we propose a generic paradigm to build a powerful family of video networks, by arming the pretrained ViTs with efficient UniFormer designs. We call this family UniFormerV2, since it inherits the concise style of the UniFormer block. But it contains brand-new local and global relation aggregators, which allow for preferable accuracy-computation balance by seamlessly integrating advantages from both ViTs and UniFormer. Without any bells and whistles, our UniFormerV2 gets the state-of-the-art recognition performance on 8 popular video benchmarks, including scene-related Kinetics-400/600/700 and Moments in Time, temporal-related Something-Something V1/V2, untrimmed ActivityNet and HACS. In particular, it is the first model to achieve 90% top-1 accuracy on Kinetics-400, to our best knowledge. Code will be available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文；《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/UniFormerV2 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。本卡 date=2022-11-17 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》聚焦视频数据集与评测：输入侧是视频样本、任务标注或模型输出，目标是形成数据集、基准、指标或评测协议。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》以 UniFormerV2 为核心方案，将Transformer 时空建模用于视频数据集与评测。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》采用Transformer 时空建模处理视频样本、任务标注或模型输出，其输出任务是形成数据集、基准、指标或评测协议。摘要只明确到上述主要技术路线，其余网络结构、损失和训练细节需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》摘要明确点名的数据集或评测集合包括：Something-Something、Moments in Time、Kinetics-400、ActivityNet、HACS。 已核到论文级项目/代码链接：https://github.com/OpenGVLab/UniFormerV2。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》摘要报告了定量实验，涉及指标 accuracy、top-1；摘要中的关键数值为 90%、400、1。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li><li>《UniFormerV2: Spatiotemporal Learning by Arming Image ViTs with Video UniFormer》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/UniFormerV2 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2211.09552" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2211.09552</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li><li><a href="https://github.com/OpenGVLab/UniFormerV2" target="_blank" rel="noopener noreferrer">https://github.com/OpenGVLab/UniFormerV2</a></li></ul></section>
+</main>
+
+</body>
+</html>

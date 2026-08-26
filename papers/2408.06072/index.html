@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-08-12 · arXiv 2408.06072</span>
+    <h1>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer</h1>
+    <p class="detail-meta">Yang, Zhuoyi、Teng, Jiayan、Zheng, Wendi、Ding, Ming、Huang, Shiyu、Xu, Jiazheng、Yang, Yuanming、Hong, Wenyi、Zhang, Xiaohan、Feng, Guanyu、Yin, Da、Zhang, Yuxuan、Wang, Weihan、Cheng, Yean、Xu, Bin、Gu, Xiaotao、Dong, Yuxiao、Tang, Jie</p>
+    <div class="chips"><span class="chip lab">THUDM / 智谱 CogVideo 团队</span><span class="chip">文本生成视频</span><span class="chip">视频扩散模型</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2408.06072" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/THUDM/CogVideo" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>We present CogVideoX, a large-scale text-to-video generation model based on diffusion transformer, which can generate 10-second continuous videos aligned with text prompt, with a frame rate of 16 fps and resolution of 768 * 1360 pixels. Previous video generation models often had limited movement and short durations, and is difficult to generate videos with coherent narratives based on text. We propose several designs to address these issues. First, we propose a 3D Variational Autoencoder (VAE) to compress videos along both spatial and temporal dimensions, to improve both compression rate and video fidelity. Second, to improve the text-video alignment, we propose an expert transformer with the expert adaptive LayerNorm to facilitate the deep fusion between the two modalities. Third, by employing a progressive training and multi-resolution frame pack technique, CogVideoX is adept at producing coherent, long-duration, different shape videos characterized by significant motions. In addition, we develop an effective text-video data processing pipeline that includes various data preprocessing strategies and a video captioning method, greatly contributing to the generation quality and semantic alignment. Results show that CogVideoX demonstrates state-of-the-art performance across both multiple machine metrics and human evaluations. The model weight of both 3D Causal VAE, Video caption model and CogVideoX are publicly available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 THUDM / 智谱 CogVideo；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer：我们提出了 CogVideoX，一种基于扩散变换器的大规模文本到视频生成模型，它可以生成与文本提示对齐的 10 秒连续视频，帧率为 16 fps，分辨率为 768 * 1360 像素。以前的视频生成模型往往动作有限、持续时间短，难以基于文本生成具有连贯叙述的视频。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer：提出大规模文本到视频扩散 Transformer CogVideoX，并通过 3D Causal VAE、专家 Transformer、渐进式多分辨率训练及文本-视频数据处理管线提升时长、运动和语义对齐。</p></section><section class="analysis-section"><h2>方法描述</h2><p>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer：3D VAE 沿空间与时间压缩视频；带专家自适应 LayerNorm 的专家 Transformer 深度融合文本与视频；渐进训练和多分辨率帧打包支持不同比例、长时且大运动视频，配套字幕与预处理管线改善数据质量。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer：官方公开 3D Causal VAE、视频字幕模型和 CogVideoX 权重，代码入口为 https://github.com/THUDM/CogVideo；摘要未给出训练数据集名称或规模。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer：CogVideoX 可生成 10 秒、16 fps、768×1360 分辨率的视频；机器指标与人类评价均达到摘要所称的先进水平，但摘要未报告具体基准名称与分数，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>THUDM 官方 CogVideo 仓库将 CogVideoX 列为核心模型并链接该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2408.06072" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2408.06072</a></li><li><a href="https://github.com/THUDM/CogVideo" target="_blank" rel="noopener noreferrer">https://github.com/THUDM/CogVideo</a></li></ul></section>
+</main>
+
+</body>
+</html>

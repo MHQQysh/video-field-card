@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Scene as Occupancy</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-06-05 · arXiv 2306.02851</span>
+    <h1>Scene as Occupancy</h1>
+    <p class="detail-meta">Chonghao Sima、Wenwen Tong、Tai Wang、Li Chen、Silei Wu、Hanming Deng、Yi Gu、Lewei Lu、Ping Luo、Dahua Lin、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">多帧视觉占据预测</span><span class="chip">时序体素解码</span><span class="chip">自动驾驶感知</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2306.02851" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Human driver can easily describe the complex traffic scene by visual system. Such an ability of precise perception is essential for driver&#x27;s planning. To achieve this, a geometry-aware representation that quantizes the physical 3D scene into structured grid map with semantic labels per cell, termed as 3D Occupancy, would be desirable. Compared to the form of bounding box, a key insight behind occupancy is that it could capture the fine-grained details of critical obstacles in the scene, and thereby facilitate subsequent tasks. In this paper, we propose OccNet, a multi-view vision-centric pipeline with a cascade and temporal voxel decoder to reconstruct 3D occupancy. At the core of OccNet is a general occupancy embedding to represent 3D physical world. Such a descriptor could be applied towards a wide span of driving tasks, including detection, segmentation and planning. To validate the effectiveness of this new representation and our proposed algorithm, we propose OpenOcc, the first dense high-quality 3D occupancy benchmark built on top of nuScenes. Empirical experiments show that there are evident performance gain across multiple tasks, e.g., motion planning could witness a collision rate reduction by 15%-58%, demonstrating the superiority of our method.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方 publications 页面以论文级条目列出 Scene as Occupancy，并直接链接 arXiv 2306.02851。</p></section><section class="analysis-section"><h2>论文概述</h2><p>用多视角连续图像重建三维占据，把细粒度障碍几何同时服务于检测、分割和运动规划。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>OccNet 以通用三维占据嵌入连接检测、分割与规划，并发布建立在 nuScenes 之上的 OpenOcc 密集占据基准，验证占据表示不只服务单一场景补全。</p></section><section class="analysis-section"><h2>方法描述</h2><p>多视角相机特征经过级联式时间体素解码器重建三维占据；每个网格同时编码几何与语义，随后被不同驾驶任务头共享。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 nuScenes、OpenOcc。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>OccNet 在基于 nuScenes 构建的 OpenOcc 上评估占据、检测、分割和规划，既看感知精度也看规划碰撞率。 摘要报告将运动规划碰撞率降低 15% 至 58%，表明占据表示的收益可从感知传递到规划。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方 publications 页面以论文级条目列出 Scene as Occupancy，并直接链接 arXiv 2306.02851。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2306.02851" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2306.02851</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

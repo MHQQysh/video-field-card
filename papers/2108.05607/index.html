@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Deep Motion Prior for Weakly-Supervised Temporal Action Localization</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2021-08-12 · arXiv 2108.05607</span>
+    <h1>Deep Motion Prior for Weakly-Supervised Temporal Action Localization</h1>
+    <p class="detail-meta">Cao, Meng、Zhang, Can、Chen, Long、Shou, Mike Zheng、Zou, Yuexian</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频帧插值与运动恢复</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2108.05607" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Weakly-Supervised Temporal Action Localization (WSTAL) aims to localize actions in untrimmed videos with only video-level labels. Currently, most state-of-the-art WSTAL methods follow a Multi-Instance Learning (MIL) pipeline: producing snippet-level predictions first and then aggregating to the video-level prediction. However, we argue that existing methods have overlooked two important drawbacks: 1) inadequate use of motion information and 2) the incompatibility of prevailing cross-entropy training loss. In this paper, we analyze that the motion cues behind the optical flow features are complementary informative. Inspired by this, we propose to build a context-dependent motion prior, termed as motionness. Specifically, a motion graph is introduced to model motionness based on the local motion carrier (e.g., optical flow). In addition, to highlight more informative video snippets, a motion-guided loss is proposed to modulate the network training conditioned on motionness scores. Extensive ablation studies confirm that motionness efficaciously models action-of-interest, and the motion-guided loss leads to more accurate results. Besides, our motion-guided loss is a plug-and-play loss function and is applicable with existing WSTAL methods. Without loss of generality, based on the standard MIL pipeline, our method achieves new state-of-the-art performance on three challenging benchmarks, including THUMOS&#x27;14, ActivityNet v1.2 and v1.3.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Deep Motion Prior for Weakly-Supervised Temporal Action Localization》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2021-08-12 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Deep Motion Prior for Weakly-Supervised Temporal Action Localization》聚焦视频帧插值与运动恢复：输入侧是相邻帧或多视角时序观测，目标是恢复中间帧、光流、场景流或连续运动。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Deep Motion Prior for Weakly-Supervised Temporal Action Localization》以 Deep Motion Prior for Weakly-Supervised 为核心方案，将运动流估计、图结构推理、弱监督学习用于视频帧插值与运动恢复。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Deep Motion Prior for Weakly-Supervised Temporal Action Localization》采用运动流估计、图结构推理、弱监督学习处理相邻帧或多视角时序观测，其输出任务是恢复中间帧、光流、场景流或连续运动。摘要能确认的技术组合为运动流估计、图结构推理、弱监督学习；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Deep Motion Prior for Weakly-Supervised Temporal Action Localization》摘要明确点名的数据集或评测集合包括：ActivityNet、THUMOS。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Deep Motion Prior for Weakly-Supervised Temporal Action Localization》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Deep Motion Prior for Weakly-Supervised Temporal Action Localization》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2108.05607" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2108.05607</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

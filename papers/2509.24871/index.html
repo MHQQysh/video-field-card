@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>StreamForest: Efficient Online Video Understanding with Persistent Event Memory</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-09-29 · arXiv 2509.24871</span>
+    <h1>StreamForest: Efficient Online Video Understanding with Persistent Event Memory</h1>
+    <p class="detail-meta">Zeng, Xiangyu、Qiu, Kefan、Zhang, Qingyu、Li, Xinhao、Wang, Jing、Li, Jiaxin、Yan, Ziang、Tian, Kun、Tian, Meng、Zhao, Xinhai、Wang, Yi、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">流式与在线长视频理解</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2509.24871" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/MCG-NJU/StreamForest" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/MCG-NJU/StreamForest" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Multimodal Large Language Models (MLLMs) have recently achieved remarkable progress in video understanding. However, their effectiveness in real-time streaming scenarios remains limited due to storage constraints of historical visual features and insufficient real-time spatiotemporal reasoning. To address these challenges, we propose StreamForest, a novel architecture specifically designed for streaming video understanding. Central to StreamForest is the Persistent Event Memory Forest, a memory mechanism that adaptively organizes video frames into multiple event-level tree structures. This process is guided by penalty functions based on temporal distance, content similarity, and merge frequency, enabling efficient long-term memory retention under limited computational resources. To enhance real-time perception, we introduce a Fine-grained Spatiotemporal Window, which captures detailed short-term visual cues to improve current scene perception. Additionally, we present OnlineIT, an instruction-tuning dataset tailored for streaming video tasks. OnlineIT significantly boosts MLLM performance in both real-time perception and future prediction. To evaluate generalization in practical applications, we introduce ODV-Bench, a new benchmark focused on real-time streaming video understanding in autonomous driving scenarios. Experimental results demonstrate that StreamForest achieves the state-of-the-art performance, with accuracies of 77.3% on StreamingBench, 60.5% on OVBench, and 55.6% on OVO-Bench. In particular, even under extreme visual token compression (limited to 1024 tokens), the model retains 96.8% of its average accuracy in eight benchmarks relative to the default setting. These results underscore the robustness, efficiency, and generalizability of StreamForest for streaming video understanding.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《StreamForest: Efficient Online Video Understanding with Persistent Event Memory》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2025-09-29 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《StreamForest: Efficient Online Video Understanding with Persistent Event Memory》聚焦流式与在线长视频理解：输入侧是持续到达的视频流和历史上下文，目标是在受限延迟/内存下输出在线理解结果。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《StreamForest: Efficient Online Video Understanding with Persistent Event Memory》以 StreamForest 为核心方案，将视觉令牌压缩、大语言模型工具编排、视觉语言模型、显式记忆机制、频域建模用于流式与在线长视频理解。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《StreamForest: Efficient Online Video Understanding with Persistent Event Memory》采用视觉令牌压缩、大语言模型工具编排、视觉语言模型、显式记忆机制、频域建模处理持续到达的视频流和历史上下文，其输出任务是在受限延迟/内存下输出在线理解结果。摘要能确认的技术组合为视觉令牌压缩、大语言模型工具编排、视觉语言模型、显式记忆机制、频域建模；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《StreamForest: Efficient Online Video Understanding with Persistent Event Memory》摘要明确点名的数据集或评测集合包括：StreamingBench、OVO-Bench、OVBench。 已核到论文级项目/代码链接：https://github.com/MCG-NJU/StreamForest。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《StreamForest: Efficient Online Video Understanding with Persistent Event Memory》摘要报告了定量实验，涉及指标 accuracy；摘要中的关键数值为 77.3%、60.5%、55.6%、96.8%。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《StreamForest: Efficient Online Video Understanding with Persistent Event Memory》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2509.24871" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2509.24871</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li><li><a href="https://github.com/MCG-NJU/StreamForest" target="_blank" rel="noopener noreferrer">https://github.com/MCG-NJU/StreamForest</a></li></ul></section>
+</main>
+
+</body>
+</html>

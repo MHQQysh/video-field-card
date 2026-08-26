@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>STMixer: A One-Stage Sparse Action Detector</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-03-28 · arXiv 2303.15879</span>
+    <h1>STMixer: A One-Stage Sparse Action Detector</h1>
+    <p class="detail-meta">Wu, Tao、Cao, Mengqi、Gao, Ziteng、Wu, Gangshan、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">视频数据集与评测</span><span class="chip">高效与流式视频</span><span class="chip">数据集与评测</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2303.15879" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Traditional video action detectors typically adopt the two-stage pipeline, where a person detector is first employed to generate actor boxes and then 3D RoIAlign is used to extract actor-specific features for classification. This detection paradigm requires multi-stage training and inference, and cannot capture context information outside the bounding box. Recently, a few query-based action detectors are proposed to predict action instances in an end-to-end manner. However, they still lack adaptability in feature sampling and decoding, thus suffering from the issues of inferior performance or slower convergence. In this paper, we propose a new one-stage sparse action detector, termed STMixer. STMixer is based on two core designs. First, we present a query-based adaptive feature sampling module, which endows our STMixer with the flexibility of mining a set of discriminative features from the entire spatiotemporal domain. Second, we devise a dual-branch feature mixing module, which allows our STMixer to dynamically attend to and mix video features along the spatial and the temporal dimension respectively for better feature decoding. Coupling these two designs with a video backbone yields an efficient end-to-end action detector. Without bells and whistles, our STMixer obtains the state-of-the-art results on the datasets of AVA, UCF101-24, and JHMDB.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《STMixer: A One-Stage Sparse Action Detector》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2023-03-28 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《STMixer: A One-Stage Sparse Action Detector》聚焦视频数据集与评测：输入侧是视频样本、任务标注或模型输出，目标是形成数据集、基准、指标或评测协议。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《STMixer: A One-Stage Sparse Action Detector》以 STMixer 为核心方案，将摘要所述的任务专用时序模块用于视频数据集与评测。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《STMixer: A One-Stage Sparse Action Detector》采用摘要所述的任务专用时序模块处理视频样本、任务标注或模型输出，其输出任务是形成数据集、基准、指标或评测协议。摘要未完整报告可拆分的核心模块、损失函数或推理步骤，具体实现需查正文方法章节。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《STMixer: A One-Stage Sparse Action Detector》摘要明确点名的数据集或评测集合包括：UCF101-24、AVA。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《STMixer: A One-Stage Sparse Action Detector》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《STMixer: A One-Stage Sparse Action Detector》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2303.15879" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2303.15879</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

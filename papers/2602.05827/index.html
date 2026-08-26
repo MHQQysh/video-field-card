@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Sparse Video Generation Propels Real-World Beyond-the-View Vision-Language Navigation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-02-06 · arXiv 2602.05827</span>
+    <h1>Sparse Video Generation Propels Real-World Beyond-the-View Vision-Language Navigation</h1>
+    <p class="detail-meta">Hai Zhang、Siqi Liang、Li Chen、Yuxian Li、Yukuan Xu、Yichao Zhong、Fu Zhang、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">视频生成与动画</span><span class="chip">机器人视频与视觉控制</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2602.05827" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Why must vision-language navigation be bound to detailed and verbose language instructions? While such details ease decision-making, they fundamentally contradict the goal for navigation in the real-world. Ideally, agents should possess the autonomy to navigate in unknown environments guided solely by simple and high-level intents. Realizing this ambition introduces a formidable challenge: Beyond-the-View Navigation (BVN), where agents must locate distant, unseen targets without dense and step-by-step guidance. Existing large language model (LLM)-based methods, though adept at following dense instructions, often suffer from short-sighted behaviors due to their reliance on short-horimzon supervision. Simply extending the supervision horizon, however, destabilizes LLM training. In this work, we identify that video generation models inherently benefit from long-horizon supervision to align with language instructions, rendering them uniquely suitable for BVN tasks. Capitalizing on this insight, we propose introducing the video generation model into this field for the first time. Yet, the prohibitive latency for generating videos spanning tens of seconds makes real-world deployment impractical. To bridge this gap, we propose SparseVideoNav, achieving sub-second trajectory inference guided by a generated sparse future spanning a 20-second horizon. This yields a remarkable 27x speed-up compared to the unoptimized counterpart. Extensive real-world zero-shot experiments demonstrate that SparseVideoNav achieves 2.5x the success rate of state-of-the-art LLM baselines on BVN tasks and marks the first realization of such capability in challenging night scenes.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《Sparse Video Generation Propels Real-World Beyond-the-View Vision-Language Navigation》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2602.05827</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Sparse Video Generation Propels Real-World Beyond-the-View Vision-Language Navigation》从视频或连续第一视角观测中学习行为过程，目标是把视觉经验转化为可迁移的机器人动作。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>SparseVideoNav 把视野之外的未来压缩成稀疏生成帧，以简单高层意图替代逐步导航指令，并把该能力用于真实世界 Beyond-the-View Navigation。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法先编码帧级或传感器级观测，再用 视觉语言模型、跨帧时间建模 聚合跨时刻信息，最后由任务解码头输出预测、生成结果、掩码或控制量。 稀疏生成的未来视野覆盖 20 秒时间范围，并在亚秒级完成轨迹推理。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>稀疏视频生成优化带来 27 倍推理加速；真实世界零样本 BVN 中，SparseVideoNav 的成功率达到强 LLM 基线的 2.5 倍，并展示夜间场景能力。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《Sparse Video Generation Propels Real-World Beyond-the-View Vision-Language Navigation》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2602.05827</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2602.05827" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2602.05827</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

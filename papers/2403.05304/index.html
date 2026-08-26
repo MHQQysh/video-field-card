@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Spatiotemporal Predictive Pre-training for Robotic Motor Control</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-03-08 · arXiv 2403.05304</span>
+    <h1>Spatiotemporal Predictive Pre-training for Robotic Motor Control</h1>
+    <p class="detail-meta">Yang, Jiange、Liu, Bei、Fu, Jianlong、Pan, Bocheng、Wu, Gangshan、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">第一视角视频与具身学习</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2403.05304" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Robotic motor control necessitates the ability to predict the dynamics of environments and interaction objects. However, advanced self-supervised pre-trained visual representations in robotic motor control, leveraging large-scale egocentric videos, often focus solely on learning the static content features. This neglects the crucial temporal motion clues in human video, which implicitly contain key knowledge about interacting and manipulating with the environments and objects. In this paper, we present a simple yet effective robotic motor control visual pre-training framework that jointly performs spatiotemporal prediction with dual decoders, utilizing large-scale video data, termed as STP. STP adheres to two key designs in a multi-task learning manner. First, we perform spatial prediction on the masked current frame for learning content features. Second, we utilize the future frame with an extremely high masking ratio as a condition, based on the masked current frame, to conduct temporal prediction for capturing motion features. The asymmetric masking and decoupled dual decoders ensure that our image representation focusing on motion information while capturing spatial details. Extensive simulation and real-world experiments demonstrate the effectiveness and generalization abilities of STP, especially in generalizing to unseen environments with more distractors. Additionally, further post-pre-training and hybrid pre-training unleash its generality and data efficiency. Our code and weights will be released for further applications.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Spatiotemporal Predictive Pre-training for Robotic Motor Control》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2024-03-08 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Spatiotemporal Predictive Pre-training for Robotic Motor Control》聚焦第一视角视频与具身学习：输入侧是第一视角视频、指令或机器人观测，目标是学习动作表征、规划或控制策略。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Spatiotemporal Predictive Pre-training for Robotic Motor Control》以 Spatiotemporal Predictive Pre-training for Robotic 为核心方案，将自监督学习用于第一视角视频与具身学习。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Spatiotemporal Predictive Pre-training for Robotic Motor Control》采用自监督学习处理第一视角视频、指令或机器人观测，其输出任务是学习动作表征、规划或控制策略。摘要只明确到上述主要技术路线，其余网络结构、损失和训练细节需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Spatiotemporal Predictive Pre-training for Robotic Motor Control》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Spatiotemporal Predictive Pre-training for Robotic Motor Control》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Spatiotemporal Predictive Pre-training for Robotic Motor Control》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2403.05304" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2403.05304</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

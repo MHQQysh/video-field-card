@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-05-10 · arXiv 2505.06557</span>
+    <h1>Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining</h1>
+    <p class="detail-meta">Dong, Lu、Zhang, Haiyu、Zhang, Hongjie、Huang, Yifei、Ling, Zhen-Hua、Qiao, Yu、Wang, Limin、Wang, Yali</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">视频语言理解与问答</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2505.06557" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>The task of weakly supervised temporal sentence grounding (WSTSG) aims to detect temporal intervals corresponding to a language description from untrimmed videos with only video-level video-language correspondence. For an anchor sample, most existing approaches generate negative samples either from other videos or within the same video for contrastive learning. However, some training samples are highly similar to the anchor sample, directly regarding them as negative samples leads to difficulties for optimization and ignores the correlations between these similar samples and the anchor sample. To address this, we propose Positive Sample Mining (PSM), a novel framework that mines positive samples from the training set to provide more discriminative supervision. Specifically, for a given anchor sample, we partition the remaining training set into semantically similar and dissimilar subsets based on the similarity of their text queries. To effectively leverage these correlations, we introduce a PSM-guided contrastive loss to ensure that the anchor proposal is closer to similar samples and further from dissimilar ones. Additionally, we design a PSM-guided rank loss to ensure that similar samples are closer to the anchor proposal than to the negative intra-video proposal, aiming to distinguish the anchor proposal and the negative intra-video proposal. Experiments on the WSTSG and grounded VideoQA tasks demonstrate the effectiveness and superiority of our method.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2025-05-10 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining》聚焦视频语言理解与问答：输入侧是视频及文本问题、描述或查询，目标是生成回答、描述、检索结果或时间证据。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining》以 Weakly Supervised Temporal Sentence Grounding 为核心方案，将对比学习、弱监督学习用于视频语言理解与问答。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining》采用对比学习、弱监督学习处理视频及文本问题、描述或查询，其输出任务是生成回答、描述、检索结果或时间证据。摘要能确认的技术组合为对比学习、弱监督学习；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要未报告独立代码、模型或数据下载地址。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Weakly Supervised Temporal Sentence Grounding via Positive Sample Mining》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2505.06557" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2505.06557</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

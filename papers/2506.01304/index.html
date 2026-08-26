@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-06-02 · arXiv 2506.01304</span>
+    <h1>SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost</h1>
+    <p class="detail-meta">Mei, Haiyang、Zhang, Pengyu、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频生成、动画与可控编辑</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2506.01304" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Foundation models like the Segment Anything Model (SAM) have significantly advanced promptable image segmentation in computer vision. However, extending these capabilities to videos presents substantial challenges, particularly in ensuring precise and temporally consistent mask propagation in dynamic scenes. SAM 2 attempts to address this by training a model on massive image and video data from scratch to learn complex spatiotemporal associations, resulting in huge training costs that hinder research and practical deployment. In this paper, we introduce SAM-I2V, an effective image-to-video upgradation method for cultivating a promptable video segmentation (PVS) model. Our approach strategically upgrades the pre-trained SAM to support PVS, significantly reducing training complexity and resource requirements. To achieve this, we introduce three key innovations: (i) an image-to-video feature extraction upgrader built upon SAM&#x27;s static image encoder to enable spatiotemporal video perception, (ii) a memory filtering strategy that selects the most relevant past frames for more effective utilization of historical information, and (iii) a memory-as-prompt mechanism leveraging object memory to ensure temporally consistent mask propagation in dynamic scenes. Comprehensive experiments demonstrate that our method achieves over 90% of SAM 2&#x27;s performance while using only 0.2% of its training cost. Our work presents a resource-efficient pathway to PVS, lowering barriers for further research in PVS model design and enabling broader applications and advancements in the field. Code and model are available at: this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2025-06-02 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost》聚焦视频生成、动画与可控编辑：输入侧是文本、图像、轨迹或参考视频条件，目标是生成或编辑具有时间一致性的视频序列。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost》以 SAM-I2V 为核心方案，将提示学习、显式记忆机制用于视频生成、动画与可控编辑。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost》采用提示学习、显式记忆机制处理文本、图像、轨迹或参考视频条件，其输出任务是生成或编辑具有时间一致性的视频序列。摘要能确认的技术组合为提示学习、显式记忆机制；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost》摘要报告了定量实验；摘要中的关键数值为 90%、0.2%。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《SAM-I2V: Upgrading SAM to Support Promptable Video Segmentation with Less than 0.2% Training Cost》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2506.01304" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2506.01304</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

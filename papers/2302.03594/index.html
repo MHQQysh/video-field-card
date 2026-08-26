@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>NICER-SLAM: Neural Implicit Scene Encoding for RGB SLAM</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-02-08 · arXiv 2302.03594</span>
+    <h1>NICER-SLAM: Neural Implicit Scene Encoding for RGB SLAM</h1>
+    <p class="detail-meta">Zihan Zhu、Songyou Peng、Viktor Larsson、Zhaopeng Cui、Martin R. Oswald、Andreas Geiger、Marc Pollefeys</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">动态场景与 4D 重建</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2302.03594" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Neural implicit representations have recently become popular in simultaneous localization and mapping (SLAM), especially in dense visual SLAM. However, previous works in this direction either rely on RGB-D sensors, or require a separate monocular SLAM approach for camera tracking and do not produce high-fidelity dense 3D scene reconstruction. In this paper, we present NICER-SLAM, a dense RGB SLAM system that simultaneously optimizes for camera poses and a hierarchical neural implicit map representation, which also allows for high-quality novel view synthesis. To facilitate the optimization process for mapping, we integrate additional supervision signals including easy-to-obtain monocular geometric cues and optical flow, and also introduce a simple warping loss to further enforce geometry consistency. Moreover, to further boost performance in complicated indoor scenes, we also propose a local adaptive transformation from signed distance functions (SDFs) to density in the volume rendering equation. On both synthetic and real-world datasets we demonstrate strong performance in dense mapping, tracking, and novel view synthesis, even competitive with recent RGB-D SLAM systems.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《NICER-SLAM: Neural Implicit Scene Encoding for RGB SLAM》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2302.03594</p></section><section class="analysis-section"><h2>论文概述</h2><p>《NICER-SLAM: Neural Implicit Scene Encoding for RGB SLAM》把连续图像转成相机运动、三维几何和动态外观表示，用于重建、定位或新视角合成。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>NICER-SLAM 在仅 RGB 输入下同时优化相机轨迹与分层神经隐式地图，并兼顾稠密几何和新视角渲染。</p></section><section class="analysis-section"><h2>方法描述</h2><p>每帧 RGB 图像先参与相机位姿跟踪，随后更新多层隐式场；额外几何监督帮助稳定纯 RGB 建图，统一地图被用于表面重建和视图合成。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>摘要未公开具体数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《NICER-SLAM: Neural Implicit Scene Encoding for RGB SLAM》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2302.03594</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2302.03594" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2302.03594</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

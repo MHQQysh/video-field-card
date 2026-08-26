@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Learning Spatiotemporal Features via Video and Text Pair Discrimination</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2020-01-16 · arXiv 2001.05691</span>
+    <h1>Learning Spatiotemporal Features via Video and Text Pair Discrimination</h1>
+    <p class="detail-meta">Li, Tianhao、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">动作识别、检测与时间定位</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2001.05691" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Current video representations heavily rely on learning from manually annotated video datasets which are time-consuming and expensive to acquire. We observe videos are naturally accompanied by abundant text information such as YouTube titles and Instagram captions. In this paper, we leverage this visual-textual connection to learn spatiotemporal features in an efficient weakly-supervised manner. We present a general cross-modal pair discrimination (CPD) framework to capture this correlation between a video and its associated text. Specifically, we adopt noise-contrastive estimation to tackle the computational issue imposed by the huge amount of pair instance classes and design a practical curriculum learning strategy. We train our CPD models on both standard video dataset (Kinetics-210k) and uncurated web video dataset (Instagram-300k) to demonstrate its effectiveness. Without further fine-tuning, the learnt models obtain competitive results for action classification on Kinetics under the linear classification protocol. Moreover, our visual model provides an effective initialization to fine-tune on downstream tasks, which yields a remarkable performance gain for action recognition on UCF101 and HMDB51, compared with the existing state-of-the-art self-supervised training methods. In addition, our CPD model yields a new state of the art for zero-shot action recognition on UCF101 by directly utilizing the learnt visual-textual embeddings. The code will be made available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Learning Spatiotemporal Features via Video and Text Pair Discrimination》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2020-01-16 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Learning Spatiotemporal Features via Video and Text Pair Discrimination》聚焦动作识别、检测与时间定位：输入侧是裁剪或未裁剪视频，目标是识别动作类别并定位其时间或空间边界。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Learning Spatiotemporal Features via Video and Text Pair Discrimination》以 Learning Spatiotemporal Features via Video 为核心方案，将对比学习、弱监督学习、自监督学习用于动作识别、检测与时间定位。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Learning Spatiotemporal Features via Video and Text Pair Discrimination》采用对比学习、弱监督学习、自监督学习处理裁剪或未裁剪视频，其输出任务是识别动作类别并定位其时间或空间边界。摘要能确认的技术组合为对比学习、弱监督学习、自监督学习；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Learning Spatiotemporal Features via Video and Text Pair Discrimination》摘要明确点名的数据集或评测集合包括：Kinetics、UCF101、HMDB51。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Learning Spatiotemporal Features via Video and Text Pair Discrimination》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Learning Spatiotemporal Features via Video and Text Pair Discrimination》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2001.05691" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2001.05691</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

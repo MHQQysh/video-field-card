@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-05-13 · arXiv 2605.13724</span>
+    <h1>AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation</h1>
+    <p class="detail-meta">Gu, Yuchao、Fang, Guian、Jiang, Yuxin、Mao, Weijia、Han, Song、Cai, Han、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频生成、动画与可控编辑</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2605.13724" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Few-step video generation has been significantly advanced by consistency distillation. However, the performance of consistency-distilled models often degrades as more sampling steps are allocated at test time, limiting their effectiveness for any-step video diffusion. This limitation arises because consistency distillation replaces the original probability-flow ODE trajectory with a consistency-sampling trajectory, weakening the desirable test-time scaling behavior of ODE sampling. To address this limitation, we introduce AnyFlow, the first any-step video diffusion distillation framework based on flow maps. Instead of distilling a model for only a few fixed sampling steps, AnyFlow optimizes the full ODE sampling trajectory. To this end, we shift the distillation target from endpoint consistency mapping $(z_{t}\rightarrow z_{0})$ to flow-map transition learning $(z_{t}\rightarrow z_{r})$ over arbitrary time intervals. We further propose Flow Map Backward Simulation, which decomposes a full Euler rollout into shortcut flow-map transitions, enabling efficient on-policy distillation that reduces test-time errors (i.e., discretization error in few-step sampling and exposure bias in causal generation). Extensive experiments across both bidirectional and causal architectures, at scales ranging from 1.3B to 14B parameters, demonstrate that AnyFlow achieves performance matches or surpasses consistency-based counterparts in the few-step regime, while scaling with sampling step budgets.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2026-05-13 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation》聚焦视频生成、动画与可控编辑：输入侧是文本、图像、轨迹或参考视频条件，目标是生成或编辑具有时间一致性的视频序列。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation》以 AnyFlow 为核心方案，将扩散建模、知识蒸馏用于视频生成、动画与可控编辑。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation》采用扩散建模、知识蒸馏处理文本、图像、轨迹或参考视频条件，其输出任务是生成或编辑具有时间一致性的视频序列。摘要能确认的技术组合为扩散建模、知识蒸馏；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation》摘要报告了定量实验，涉及指标 mAP；摘要中的关键数值为 0。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《AnyFlow: Any-Step Video Diffusion Model with On-Policy Flow Map Distillation》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2605.13724" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2605.13724</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

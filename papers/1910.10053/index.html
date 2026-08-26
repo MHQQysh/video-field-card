@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Attacking Optical Flow</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2019-10-22 · arXiv 1910.10053</span>
+    <h1>Attacking Optical Flow</h1>
+    <p class="detail-meta">Anurag Ranjan、Joel Janai、Andreas Geiger、Michael J. Black</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">视频分割、跟踪与运动估计</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/1910.10053" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Deep neural nets achieve state-of-the-art performance on the problem of optical flow estimation. Since optical flow is used in several safety-critical applications like self-driving cars, it is important to gain insights into the robustness of those techniques. Recently, it has been shown that adversarial attacks easily fool deep neural networks to misclassify objects. The robustness of optical flow networks to adversarial attacks, however, has not been studied so far. In this paper, we extend adversarial patch attacks to optical flow networks and show that such attacks can compromise their performance. We show that corrupting a small patch of less than 1% of the image size can significantly affect optical flow estimates. Our attacks lead to noisy flow estimates that extend significantly beyond the region of the attack, in many cases even completely erasing the motion of objects in the scene. While networks using an encoder-decoder architecture are very sensitive to these attacks, we found that networks using a spatial pyramid architecture are less affected. We analyse the success and failure of attacking both architectures by visualizing their feature maps and comparing them to classical optical flow techniques which are robust to these attacks. We also demonstrate that such attacks are practical by placing a printed pattern into real scenes.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Attacking Optical Flow》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/1910.10053</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Attacking Optical Flow》聚焦视频底层时空对应，解决跨帧对齐、分割、跟踪、显著性或时空超分辨率。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>论文首次把对抗贴片系统地应用到光流网络，证明局部图像扰动可以破坏整幅运动估计并威胁依赖光流的安全系统。</p></section><section class="analysis-section"><h2>方法描述</h2><p>攻击只修改图像中一个小区域，再通过梯度优化贴片以最大化光流误差；同一贴片被放入相邻帧，测试不同光流网络的脆弱性和迁移性。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>不足图像面积 1% 的对抗贴片即可显著破坏光流估计，说明局部扰动会传播到全局运动场。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Attacking Optical Flow》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/1910.10053</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/1910.10053" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1910.10053</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

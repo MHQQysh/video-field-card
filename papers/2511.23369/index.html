@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>SimScale: Learning to Drive via Real-World Simulation at Scale</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-11-29 · arXiv 2511.23369</span>
+    <h1>SimScale: Learning to Drive via Real-World Simulation at Scale</h1>
+    <p class="detail-meta">Haochen Tian、Tianyu Li、Haochen Liu、Jiazhi Yang、Yihang Qiu、Guang Li、Junli Wang、Yinfeng Gao、Zhang Zhang、Liang Wang、Hangjun Ye、Tieniu Tan、Long Chen、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">驾驶世界模型与未来预测</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2511.23369" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenDriveLab/SimScale" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Achieving fully autonomous driving systems requires learning rational decisions in a wide span of scenarios, including safety-critical and out-of-distribution ones. However, such cases are underrepresented in real-world corpus collected by human experts. To complement for the lack of data diversity, we introduce a novel and scalable simulation framework capable of synthesizing massive unseen states upon existing driving logs. Our pipeline utilizes advanced neural rendering with a reactive environment to generate high-fidelity multi-view observations controlled by the perturbed ego trajectory. Furthermore, we develop a pseudo-expert trajectory generation mechanism for these newly simulated states to provide action supervision. Upon the synthesized data, we find that a simple co-training strategy on both real-world and simulated samples can lead to significant improvements in both robustness and generalization for various planning methods on challenging real-world benchmarks, up to +8.6 EPDMS on navhard and +2.9 on navtest. More importantly, such policy improvement scales smoothly by increasing simulation data only, even without extra real-world data streaming in. We further reveal several crucial findings of such a sim-real learning system, which we term SimScale, including the design of pseudo-experts and the scaling properties for different policy architectures. Simulation data and code have been released at https://github.com/OpenDriveLab/SimScale.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《SimScale: Learning to Drive via Real-World Simulation at Scale》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2511.23369</p></section><section class="analysis-section"><h2>论文概述</h2><p>《SimScale: Learning to Drive via Real-World Simulation at Scale》围绕驾驶世界建模展开，利用连续视觉生成或神经仿真刻画自车动作导致的未来场景变化。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>相较独立处理每帧或每种模态，该工作以 世界模型/仿真 建立可传播的动态状态，贡献落在任务机制而非单纯扩大模型。</p></section><section class="analysis-section"><h2>方法描述</h2><p>该方案利用 世界模型/仿真 把连续观察压缩成任务状态，随后执行分类、回归、渲染、规划或语言生成；具体超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 已核验的项目或代码地址：https://github.com/OpenDriveLab/SimScale</p></section><section class="analysis-section"><h2>评估与结果</h2><p>真实数据与神经仿真样本共同训练后，多种规划器在困难真实基准上提升：navhard 最高增加 8.6 EPDMS，navtest 增加 2.9。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《SimScale: Learning to Drive via Real-World Simulation at Scale》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2511.23369</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2511.23369" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2511.23369</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li><li><a href="https://github.com/OpenDriveLab/SimScale" target="_blank" rel="noopener noreferrer">https://github.com/OpenDriveLab/SimScale</a></li></ul></section>
+</main>
+
+</body>
+</html>

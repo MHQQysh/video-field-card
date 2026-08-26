@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Centaur: Robust End-to-End Autonomous Driving with Test-Time Training</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-03-15 · arXiv 2503.11650</span>
+    <h1>Centaur: Robust End-to-End Autonomous Driving with Test-Time Training</h1>
+    <p class="detail-meta">Chonghao Sima、Kashyap Chitta、Zhiding Yu、Shiyi Lan、Ping Luo、Andreas Geiger、Hongyang Li、Jose M. Alvarez</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2503.11650" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>How can we rely on an end-to-end autonomous vehicle&#x27;s complex decision-making system during deployment? One common solution is to have a ``fallback layer&#x27;&#x27; that checks the planned trajectory for rule violations and replaces it with a pre-defined safe action if necessary. Another approach involves adjusting the planner&#x27;s decisions to minimize a pre-defined ``cost function&#x27;&#x27; using additional system predictions such as road layouts and detected obstacles. However, these pre-programmed rules or cost functions cannot learn and improve with new training data, often resulting in overly conservative behaviors. In this work, we propose Centaur (Cluster Entropy for Test-time trAining using Uncertainty) which updates a planner&#x27;s behavior via test-time training, without relying on hand-engineered rules or cost functions. Instead, we measure and minimize the uncertainty in the planner&#x27;s decisions. For this, we develop a novel uncertainty measure, called Cluster Entropy, which is simple, interpretable, and compatible with state-of-the-art planning algorithms. Using data collected at prior test-time time-steps, we perform an update to the model&#x27;s parameters using a gradient that minimizes the Cluster Entropy. With only this sole gradient update prior to inference, Centaur exhibits significant improvements, ranking first on the navtest leaderboard with notable gains in safety-critical metrics such as time to collision. To provide detailed insights on a per-scenario basis, we also introduce navsafe, a challenging new benchmark, which highlights previously undiscovered failure modes of driving models.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Centaur: Robust End-to-End Autonomous Driving with Test-Time Training》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2503.11650；OpenDriveLab 官方 publications 页面以论文级条目列出 Centaur: Robust End-to-End Autonomous Driving with Test-Time Training 并链接 arXiv 2503.11650。</p></section><section class="analysis-section"><h2>论文概述</h2><p>Centaur 研究部署阶段连续测试时刻上的规划器自适应：它利用先前时刻积累的数据更新当前规划，而不是依赖手写安全规则。与本目录的关系来自时间连续的驾驶部署流，摘要未声称其核心是视频表征。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>论文提出可解释的 Cluster Entropy 来度量规划决策不确定性，并以单次测试时梯度更新替代固定回退规则；同时发布用于暴露逐场景故障的 navsafe 基准。</p></section><section class="analysis-section"><h2>方法描述</h2><p>系统收集先前测试时刻的数据，计算候选规划的聚类熵，并在当前推理前做一次最小化不确定性的参数更新；该过程可接入现有规划算法。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>论文报告 navtest 排行榜结果，并新建 navsafe 安全基准用于逐场景诊断；摘要没有给出已核验的独立代码地址，官方论文锚点见 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>评估以 navtest 和 navsafe 的闭环安全指标为主，特别考察碰撞时间等风险量。摘要称 Centaur 位列 navtest 第一并显著改善安全关键指标，但未列具体幅度。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Centaur: Robust End-to-End Autonomous Driving with Test-Time Training》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2503.11650</li><li>OpenDriveLab 官方 publications 页面以论文级条目列出 Centaur: Robust End-to-End Autonomous Driving with Test-Time Training 并链接 arXiv 2503.11650。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2503.11650" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2503.11650</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

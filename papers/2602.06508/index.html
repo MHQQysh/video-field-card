@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-02-06 · arXiv 2602.06508</span>
+    <h1>World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy</h1>
+    <p class="detail-meta">Liu, Xiaokang、Bai, Zechen、Ci, Hai、Ma, Kevin Yuchen、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">通用视频时序建模</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2602.06508" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Reinforcement learning (RL) can refine Vision-Language-Action (VLA) policies beyond behavior cloning, but real-world RL remains expensive due to extensive rollouts, resets, supervision, and safety risks. Action-conditioned video world models offer an option to train in virtual environments, yet they exhibit imprecise action following, particularly on subtle near-success failures. Besides, they lack native reward signals for RL. Computing rewards based on inaccurate visual predictions remain unreliable. We introduce World-VLA-Loop, structured around two foundational designs and a higher-level co-evolving paradigm. We first curate SANS, dedicatedly mixing successful and near-success trajectories to improve action-outcome alignment. Then, we train a state-aware video world model that jointly predicts future frames and binary rewards from diffusion latents. It couples reward estimation to the generator rather than a separate module, and in turn, benefits visual prediction. Since VLA behavior shifts during RL, a fixed simulator can misalign with the updated policy, World-VLA-Loop therefore closes the loop by using the refined world model for iterative VLA post-training while feeding rollouts from each improved policy back to augment and fine-tune the world model. Across simulation and real-robot experiments, World-VLA-Loop substantially improves VLA performance while reducing reliance on costly physical interaction.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2026-02-06 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy》聚焦通用视频时序建模：输入侧是视频帧或跨帧视觉序列，目标是输出与论文任务对应的识别、生成或预测结果。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy》以 World-VLA-Loop 为核心方案，将扩散建模、强化学习、世界模型用于通用视频时序建模。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy》采用扩散建模、强化学习、世界模型处理视频帧或跨帧视觉序列，其输出任务是输出与论文任务对应的识别、生成或预测结果。摘要能确认的技术组合为扩散建模、强化学习、世界模型；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2602.06508" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2602.06508</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

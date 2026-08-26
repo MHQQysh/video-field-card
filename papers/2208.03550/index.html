@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Frozen CLIP Models are Efficient Video Learners</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-08-06 · arXiv 2208.03550</span>
+    <h1>Frozen CLIP Models are Efficient Video Learners</h1>
+    <p class="detail-meta">Lin, Ziyi、Geng, Shijie、Zhang, Renrui、Gao, Peng、de Melo, Gerard、Wang, Xiaogang、Dai, Jifeng、Qiao, Yu、Li, Hongsheng</p>
+    <div class="chips"><span class="chip lab">OpenGVLab</span><span class="chip">视频数据集与评测</span><span class="chip">高效与流式视频</span><span class="chip">数据集与评测</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2208.03550" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenGVLab/efficient-video-recognition" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenGVLab/efficient-video-recognition" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Video recognition has been dominated by the end-to-end learning paradigm -- first initializing a video recognition model with weights of a pretrained image model and then conducting end-to-end training on videos. This enables the video network to benefit from the pretrained image model. However, this requires substantial computation and memory resources for finetuning on videos and the alternative of directly using pretrained image features without finetuning the image backbone leads to subpar results. Fortunately, recent advances in Contrastive Vision-Language Pre-training (CLIP) pave the way for a new route for visual recognition tasks. Pretrained on large open-vocabulary image-text pair data, these models learn powerful visual representations with rich semantics. In this paper, we present Efficient Video Learning (EVL) -- an efficient framework for directly training high-quality video recognition models with frozen CLIP features. Specifically, we employ a lightweight Transformer decoder and learn a query token to dynamically collect frame-level spatial features from the CLIP image encoder. Furthermore, we adopt a local temporal module in each decoder layer to discover temporal clues from adjacent frames and their attention maps. We show that despite being efficient to train with a frozen backbone, our models learn high quality video representations on a variety of video recognition datasets. Code is available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Frozen CLIP Models are Efficient Video Learners》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/efficient-video-recognition 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。本卡 date=2022-08-06 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Frozen CLIP Models are Efficient Video Learners》聚焦视频数据集与评测：输入侧是视频样本、任务标注或模型输出，目标是形成数据集、基准、指标或评测协议。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Frozen CLIP Models are Efficient Video Learners》以 Frozen CLIP Models are Efficient 为核心方案，将Transformer 时空建模、对比学习、显式记忆机制用于视频数据集与评测。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Frozen CLIP Models are Efficient Video Learners》采用Transformer 时空建模、对比学习、显式记忆机制处理视频样本、任务标注或模型输出，其输出任务是形成数据集、基准、指标或评测协议。摘要能确认的技术组合为Transformer 时空建模、对比学习、显式记忆机制；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Frozen CLIP Models are Efficient Video Learners》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/OpenGVLab/efficient-video-recognition。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Frozen CLIP Models are Efficient Video Learners》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Frozen CLIP Models are Efficient Video Learners》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/efficient-video-recognition 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2208.03550" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2208.03550</a></li><li><a href="https://github.com/OpenGVLab/efficient-video-recognition" target="_blank" rel="noopener noreferrer">https://github.com/OpenGVLab/efficient-video-recognition</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>DriveLM: Driving with Graph Visual Question Answering</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-12-22 · arXiv 2312.14150</span>
+    <h1>DriveLM: Driving with Graph Visual Question Answering</h1>
+    <p class="detail-meta">Chonghao Sima、Katrin Renz、Kashyap Chitta、Li Chen、Hanxue Zhang、Chengen Xie、Jens Beißwenger、Ping Luo、Andreas Geiger、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2312.14150" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://opendrivelab.com/DriveLM/" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenDriveLab/DriveLM" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>We study how vision-language models (VLMs) trained on web-scale data can be integrated into end-to-end driving systems to boost generalization and enable interactivity with human users. While recent approaches adapt VLMs to driving via single-round visual question answering (VQA), human drivers reason about decisions in multiple steps. Starting from the localization of key objects, humans estimate object interactions before taking actions. The key insight is that with our proposed task, Graph VQA, where we model graph-structured reasoning through perception, prediction and planning question-answer pairs, we obtain a suitable proxy task to mimic the human reasoning process. We instantiate datasets (DriveLM-Data) built upon nuScenes and CARLA, and propose a VLM-based baseline approach (DriveLM-Agent) for jointly performing Graph VQA and end-to-end driving. The experiments demonstrate that Graph VQA provides a simple, principled framework for reasoning about a driving scene, and DriveLM-Data provides a challenging benchmark for this task. Our DriveLM-Agent baseline performs end-to-end autonomous driving competitively in comparison to state-of-the-art driving-specific architectures. Notably, its benefits are pronounced when it is evaluated zero-shot on unseen objects or sensor configurations. We hope this work can be the starting point to shed new light on how to apply VLMs for autonomous driving. To facilitate future research, all code, data, and models are available to the public.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《DriveLM: Driving with Graph Visual Question Answering》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2312.14150；OpenDriveLab 官方 publications 页面以论文级条目列出 DriveLM: Driving with Graph Visual Question Answering 并链接 arXiv 2312.14150。</p></section><section class="analysis-section"><h2>论文概述</h2><p>把驾驶视频中的感知、预测与规划关系组织成图式视觉问答，使模型能够回答并解释驾驶决策链。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>DriveLM 提出 Graph VQA，把关键对象定位、交互预测和行动规划组织成相互连接的问答图，并发布基于 nuScenes 与 CARLA 的 DriveLM-Data。</p></section><section class="analysis-section"><h2>方法描述</h2><p>DriveLM-Agent 以视觉语言模型同时学习图结构问答和端到端驾驶；推理链先识别关键对象，再判断对象交互，最后形成规划答案，从而替代单轮 VQA。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 nuScenes、CARLA。 已核验的项目或代码地址：https://opendrivelab.com/DriveLM/；https://github.com/OpenDriveLab/DriveLM</p></section><section class="analysis-section"><h2>评估与结果</h2><p>实验在 DriveLM-Data 的 Graph VQA 与端到端驾驶任务上比较专用驾驶架构，并额外测试未见对象和传感器配置的零样本泛化。摘要报告 DriveLM-Agent 的驾驶表现具有竞争力，零样本设置下优势更明显，但未列完整数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《DriveLM: Driving with Graph Visual Question Answering》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2312.14150</li><li>OpenDriveLab 官方 publications 页面以论文级条目列出 DriveLM: Driving with Graph Visual Question Answering 并链接 arXiv 2312.14150。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2312.14150" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2312.14150</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/OpenDriveLab/DriveLM" target="_blank" rel="noopener noreferrer">https://github.com/OpenDriveLab/DriveLM</a></li><li><a href="https://opendrivelab.com/DriveLM/" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/DriveLM/</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

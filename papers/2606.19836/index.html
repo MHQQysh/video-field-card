@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>World Engine: Towards the Era of Post-Training for Autonomous Driving</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-06-18 · arXiv 2606.19836</span>
+    <h1>World Engine: Towards the Era of Post-Training for Autonomous Driving</h1>
+    <p class="detail-meta">Tianyu Li、Li Chen、Caojun Wang、Haochen Liu、Kashyap Chitta、Zhenjie Yang、Yuhang Lu、Naisheng Ye、Yihang Qiu、Yufei Wang、Luoxi Zou、Jiaxin Peng、Jin Pan、Zhaoyu Su、Andrei Bursuc、Shengbo Eben Li、Andreas Geiger、Peng Su、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2606.19836" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Autonomous vehicles must operate safely in the real world, where errors can have severe consequences. Although modern end-to-end driving policies excel in routine scenarios, their reliability is limited by the scarcity of safety-critical ``long-tail&#x27;&#x27; events in real driving datasets. These rare interactions define the practical safety boundary of the learned policy, yet they are difficult to collect at scale in the real world. Here we show that this fundamental limitation can be addressed by post-training pre-trained driving models on synthesized high-stakes interactions. We introduce World Engine, a generative framework that reconstructs high-fidelity interactive environments from real-world logs and systematically extrapolates them into realistic safety-critical variations. This paradigm enables reinforcement-based post-training to align policies with safety constraints, circumventing the physical risks inherent in real-world exploration. On a public benchmark built on nuPlan, World Engine substantially reduces failures in rare safety-critical scenarios and yields significantly larger gains than scaling pre-training data alone. Furthermore, when deployed on a production-scale autonomous driving system, the resulting policy reduces simulated collisions and demonstrates measurable improvements in on-road testing, showing that post-training on synthesized, safety-critical interactions offers a scalable and effective pathway to safer autonomous driving. The full codebase suite, including training, is released to the public.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《World Engine: Towards the Era of Post-Training for Autonomous Driving》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2606.19836；Autonomous Vision 官方 publications 页面以《World Engine: Towards the Era of Post-Training for Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2606.19836</p></section><section class="analysis-section"><h2>论文概述</h2><p>《World Engine: Towards the Era of Post-Training for Autonomous Driving》围绕驾驶世界建模展开，利用连续视觉生成或神经仿真刻画自车动作导致的未来场景变化。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>相较独立处理每帧或每种模态，该工作以 强化学习、跨帧时间建模 建立可传播的动态状态，贡献落在任务机制而非单纯扩大模型。</p></section><section class="analysis-section"><h2>方法描述</h2><p>该方案利用 强化学习、跨帧时间建模 把连续观察压缩成任务状态，随后执行分类、回归、渲染、规划或语言生成；具体超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 nuPlan。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>摘要明确在 nuPlan 上验证，评价围绕该任务的准确性、生成质量、时序一致性或闭环行为展开。 该文是文献综述，结果是后训练方法、数据与评价的分类比较，不产生新的模型分数。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《World Engine: Towards the Era of Post-Training for Autonomous Driving》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2606.19836</li><li>Autonomous Vision 官方 publications 页面以《World Engine: Towards the Era of Post-Training for Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2606.19836</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2606.19836" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2606.19836</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

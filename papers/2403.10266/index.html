@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>DSP: Dynamic Sequence Parallelism for Multi-Dimensional Transformers</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-03-15 · arXiv 2403.10266</span>
+    <h1>DSP: Dynamic Sequence Parallelism for Multi-Dimensional Transformers</h1>
+    <p class="detail-meta">Zhao, Xuanlei、Cheng, Shenggan、Chen, Chang、Zheng, Zangwei、Liu, Ziming、Yang, Zheming、You, Yang</p>
+    <div class="chips"><span class="chip lab">NUS HPC-AI Lab / HPC-AI Tech</span><span class="chip">视频生成系统</span><span class="chip">序列并行</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2403.10266" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/NUS-HPC-AI-Lab/VideoSys" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Scaling multi-dimensional transformers to long sequences is indispensable across various domains. However, the challenges of large memory requirements and slow speeds of such sequences necessitate sequence parallelism. All existing approaches fall under the category of embedded sequence parallelism, which are limited to shard along a single sequence dimension, thereby introducing significant communication overhead. However, the nature of multi-dimensional transformers involves independent calculations across multiple sequence dimensions. To this end, we propose Dynamic Sequence Parallelism (DSP) as a novel abstraction of sequence parallelism. DSP dynamically switches the parallel dimension among all sequences according to the computation stage with efficient resharding strategy. DSP offers significant reductions in communication costs, adaptability across modules, and ease of implementation with minimal constraints. Experimental evaluations demonstrate DSP&#x27;s superiority over state-of-the-art embedded sequence parallelism methods by remarkable throughput improvements ranging from 32.2% to 10x, with less than 25% communication volume.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>DSP: Dynamic Sequence Parallelism for Multi-Dimensional Transformers：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 NUS HPC-AI Lab / HPC-AI Tech；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>DSP: Dynamic Sequence Parallelism for Multi-Dimensional Transformers：将多维变换器扩展到长序列在各个领域都是必不可少的。然而，大内存需求和此类序列速度慢的挑战使得序列并行性成为必要。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>DSP: Dynamic Sequence Parallelism for Multi-Dimensional Transformers：为此，我们提出动态序列并行（DSP）作为序列并行的新颖抽象。 DSP根据计算阶段动态切换所有序列之间的并行维度，并采用高效的重新分片策略。</p></section><section class="analysis-section"><h2>方法描述</h2><p>DSP: Dynamic Sequence Parallelism for Multi-Dimensional Transformers：为此，我们提出动态序列并行（DSP）作为序列并行的新颖抽象。 DSP根据计算阶段动态切换所有序列之间的并行维度，并采用高效的重新分片策略。 DSP 显着降低了通信成本、跨模块的适应性以及在最小限制下易于实施。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>DSP: Dynamic Sequence Parallelism for Multi-Dimensional Transformers：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。 卡片已记录官方代码链接：https://github.com/NUS-HPC-AI-Lab/VideoSys。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>DSP: Dynamic Sequence Parallelism for Multi-Dimensional Transformers：实验评估证明了 DSP 相对于最先进的嵌入式序列并行方法的优越性，吞吐量显着提高，从 32.2% 到 10 倍，而通信量不到 25%。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>NUS HPC-AI Lab 官方 VideoSys 仓库直接链接 DSP 论文，作者含 Yang You。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2403.10266" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2403.10266</a></li><li><a href="https://github.com/NUS-HPC-AI-Lab/VideoSys" target="_blank" rel="noopener noreferrer">https://github.com/NUS-HPC-AI-Lab/VideoSys</a></li></ul></section>
+</main>
+
+</body>
+</html>

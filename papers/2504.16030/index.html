@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-04-22 · arXiv 2504.16030</span>
+    <h1>LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale</h1>
+    <p class="detail-meta">Chen, Joya、Zeng, Ziyun、Lin, Yiqi、Li, Wei、Ma, Zejun、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频语言理解与问答</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2504.16030" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/showlab/livecc" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/showlab/livecc" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Recent video large language models (Video LLMs) often depend on costly human annotations or proprietary model APIs (e.g., GPT-4o) to produce training data, which limits their training at scale. In this paper, we explore large-scale training for Video LLM with cheap automatic speech recognition (ASR) transcripts. Specifically, we propose a novel streaming training approach that densely interleaves the ASR words and video frames according to their timestamps. Compared to previous studies in vision-language representation with ASR, our method naturally fits the streaming characteristics of ASR, thus enabling the model to learn temporally-aligned, fine-grained vision-language modeling. To support the training algorithm, we introduce a data production pipeline to process YouTube videos and their closed captions (CC, same as ASR), resulting in Live-CC-5M dataset for pre-training and Live-WhisperX-526K dataset for high-quality supervised fine-tuning (SFT). Remarkably, even without SFT, the ASR-only pre-trained LiveCC-7B-Base model demonstrates competitive general video QA performance and exhibits a new capability in real-time video commentary. To evaluate this, we carefully design a new LiveSports-3K benchmark, using LLM-as-a-judge to measure the free-form commentary. Experiments show our final LiveCC-7B-Instruct model can surpass advanced 72B models (Qwen2.5-VL-72B-Instruct, LLaVA-Video-72B) in commentary quality even working in a real-time mode. Meanwhile, it achieves state-of-the-art results at the 7B/8B scale on popular video QA benchmarks such as VideoMME and OVOBench, demonstrating the broad generalizability of our approach. All resources of this paper have been released at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/showlab/livecc。本卡 date=2025-04-22 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale》聚焦视频语言理解与问答：输入侧是视频及文本问题、描述或查询，目标是生成回答、描述、检索结果或时间证据。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale》以 LiveCC 为核心方案，将大语言模型工具编排、视觉语言模型用于视频语言理解与问答。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale》采用大语言模型工具编排、视觉语言模型处理视频及文本问题、描述或查询，其输出任务是生成回答、描述、检索结果或时间证据。摘要能确认的技术组合为大语言模型工具编排、视觉语言模型；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale》摘要明确点名的数据集或评测集合包括：LiveSports-3K、VideoMME。 已核到论文级项目/代码链接：https://github.com/showlab/livecc。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《LiveCC: Learning Video LLM with Streaming Speech Transcription at Scale》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/showlab/livecc。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2504.16030" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2504.16030</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li><li><a href="https://github.com/showlab/livecc" target="_blank" rel="noopener noreferrer">https://github.com/showlab/livecc</a></li></ul></section>
+</main>
+
+</body>
+</html>

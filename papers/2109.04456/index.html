@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>NEAT: Neural Attention Fields for End-to-End Autonomous Driving</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2021-09-10 · arXiv 2109.04456</span>
+    <h1>NEAT: Neural Attention Fields for End-to-End Autonomous Driving</h1>
+    <p class="detail-meta">Kashyap Chitta、Aditya Prakash、Andreas Geiger</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2109.04456" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Efficient reasoning about the semantic, spatial, and temporal structure of a scene is a crucial prerequisite for autonomous driving. We present NEural ATtention fields (NEAT), a novel representation that enables such reasoning for end-to-end imitation learning models. NEAT is a continuous function which maps locations in Bird&#x27;s Eye View (BEV) scene coordinates to waypoints and semantics, using intermediate attention maps to iteratively compress high-dimensional 2D image features into a compact representation. This allows our model to selectively attend to relevant regions in the input while ignoring information irrelevant to the driving task, effectively associating the images with the BEV representation. In a new evaluation setting involving adverse environmental conditions and challenging scenarios, NEAT outperforms several strong baselines and achieves driving scores on par with the privileged CARLA expert used to generate its training data. Furthermore, visualizing the attention maps for models with NEAT intermediate representations provides improved interpretability.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《NEAT: Neural Attention Fields for End-to-End Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2109.04456</p></section><section class="analysis-section"><h2>论文概述</h2><p>《NEAT: Neural Attention Fields for End-to-End Autonomous Driving》研究 时序自动驾驶与规划，重点考察连续传感器信息如何支持驾驶感知、预测、规划或闭环评价。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>NEAT 用连续神经注意力场把驾驶画面中的语义、空间与时间信息压缩到同一鸟瞰图函数，并直接输出航点。</p></section><section class="analysis-section"><h2>方法描述</h2><p>给定鸟瞰图坐标，连续函数查询语义和航点；中间注意力图迭代汇聚二维图像特征，使模型集中于与驾驶相关的区域。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 CARLA。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>摘要明确在 CARLA 上验证，评价围绕该任务的准确性、生成质量、时序一致性或闭环行为展开。 NEAT 的实验关注规划、闭环安全或驾驶场景质量；摘要只给出改善结论，没有列明具体数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《NEAT: Neural Attention Fields for End-to-End Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2109.04456</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2109.04456" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2109.04456</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Demystifying Video Reasoning</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-03-17 · arXiv 2603.16870</span>
+    <h1>Demystifying Video Reasoning</h1>
+    <p class="detail-meta">Wang, Ruisi、Cai, Zhongang、Pu, Fanyi、Xu, Junxiang、Yin, Wanqi、Wang, Maijunxian、Ji, Ran、Gu, Chenyang、Li, Bo、Huang, Ziqi、Deng, Hokin、Lin, Dahua、Liu, Ziwei、Yang, Lei</p>
+    <div class="chips"><span class="chip lab">MMLab@NTU / S-Lab</span><span class="chip">视频理解</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2603.16870" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenSenseNova/Demystifying_Video_Reasoning" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenSenseNova/Demystifying_Video_Reasoning" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Recent advances in video generation have revealed an unexpected phenomenon: diffusion-based video models exhibit non-trivial reasoning capabilities. Prior work attributes this to a Chain-of-Frames (CoF) mechanism, where reasoning is assumed to unfold sequentially across video frames. In this work, we challenge this assumption and uncover a fundamentally different mechanism. We show that reasoning in video models instead primarily emerges along the diffusion denoising steps. Through qualitative analysis and targeted probing experiments, we find that models explore multiple candidate solutions in early denoising steps and progressively converge to a final answer, a process we term Chain-of-Steps (CoS). Beyond this core mechanism, we identify several emergent reasoning behaviors critical to model performance: (1) working memory that supports tasks requiring consistent reference, such as object permanence; (2) self-correction and enhancement, allowing recovery from incorrect intermediate solutions; and (3) perception before action, where early steps establish semantic grounding and later steps perform structured manipulation. Moreover, analysis of Diffusion Transformer layers shows that middle layers conduct key reasoning procedures. Motivated by these insights, we present a simple Training-Free Ensemble (TFE) as a proof-of-concept, demonstrating how reasoning can be improved by ensembling latent trajectories from identical models with different random seeds. Overall, our work provides the first systematic dissection of the mechanisms underlying video reasoning, offering a foundation to guide future research in better exploiting the inherent reasoning dynamics of video models as a new substrate for intelligence.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Demystifying Video Reasoning：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@NTU / S-Lab；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>Demystifying Video Reasoning：视频生成的最新进展揭示了一个意想不到的现象：基于扩散的视频模型表现出非凡的推理能力。先前的工作将此归因于帧链（CoF）机制，其中假设推理在视频帧中按顺序展开。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Demystifying Video Reasoning：在这项工作中，我们挑战了这一假设并揭示了一种根本不同的机制。我们表明，视频模型中的推理主要是沿着扩散去噪步骤出现的。</p></section><section class="analysis-section"><h2>方法描述</h2><p>Demystifying Video Reasoning：通过逐去噪步的定性观察、针对性探针和 Diffusion Transformer 分层分析，追踪候选解从早期探索到最终收敛的过程；另以不同随机种子的潜轨迹集成构造免训练 TFE，验证推理机制可被利用。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>Demystifying Video Reasoning：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。 卡片已记录官方代码链接：https://github.com/OpenSenseNova/Demystifying_Video_Reasoning。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Demystifying Video Reasoning：定性分析与针对性探测发现，模型在早期去噪步骤探索多个候选解并逐步收敛，形成 Step Chain；同时出现工作记忆、自我纠正/增强和“先感知后行动”等行为。摘要未报告具体数据集、指标或结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@NTU 官方 publication_year 年表逐条列出“Demystifying Video Reasoning”（arXiv:2603.16870），该官方年表是本条 ntu-s-lab 归属证据。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2603.16870" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2603.16870</a></li><li><a href="https://www.mmlab-ntu.com/publication_year.html" target="_blank" rel="noopener noreferrer">https://www.mmlab-ntu.com/publication_year.html</a></li><li><a href="https://github.com/OpenSenseNova/Demystifying_Video_Reasoning" target="_blank" rel="noopener noreferrer">https://github.com/OpenSenseNova/Demystifying_Video_Reasoning</a></li></ul></section>
+</main>
+
+</body>
+</html>

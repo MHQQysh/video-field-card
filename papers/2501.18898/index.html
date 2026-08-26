@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>GestureLSM: Latent Shortcut based Co-Speech Gesture Generation with Spatial-Temporal Modeling</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-01-31 · arXiv 2501.18898</span>
+    <h1>GestureLSM: Latent Shortcut based Co-Speech Gesture Generation with Spatial-Temporal Modeling</h1>
+    <p class="detail-meta">Pinxin Liu、Luchuan Song、Junhua Huang、Haiyang Liu、Junfan Zhu、Chenliang Xu</p>
+    <div class="chips"><span class="chip lab">Chenliang Xu Group</span><span class="chip">视频与时序视觉</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2501.18898" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Generating full-body human gestures based on speech signals remains challenges on quality and speed. Existing approaches model different body regions such as body, legs and hands separately, which fail to capture the spatial interactions between them and result in unnatural and disjointed movements. Additionally, their autoregressive/diffusion-based pipelines show slow generation speed due to dozens of inference steps. To address these two challenges, we propose GestureLSM, a flow-matching-based approach for Co-Speech Gesture Generation with spatial-temporal modeling. Our method i) explicitly model the interaction of tokenized body regions through spatial and temporal attention, for generating coherent full-body gestures. ii) introduce the flow matching to enable more efficient sampling by explicitly modeling the latent velocity space. To overcome the suboptimal performance of flow matching baseline, we propose latent shortcut learning and beta distribution time stamp sampling during training to enhance gesture synthesis quality and accelerate inference. Combining the spatial-temporal modeling and improved flow matching-based framework, GestureLSM achieves state-of-the-art performance on BEAT2 while significantly reducing inference time compared to existing methods, highlighting its potential for enhancing digital humans and embodied agents in real-world applications. Project Page: https://andypinxinliu.github.io/GestureLSM</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《GestureLSM: Latent Shortcut based Co-Speech Gesture Generation with Spatial-Temporal Modeling》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/2501.18898；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</p></section><section class="analysis-section"><h2>论文概述</h2><p>《GestureLSM: Latent Shortcut based Co-Speech Gesture Generation with Spatial-Temporal Modeling》关注动态人物建模：从语音、文本或视频恢复可控动作/头像，并保持身份、节奏与跨帧外观一致。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>GestureLSM 用流匹配替代多步自回归或扩散采样，并显式建模身体、腿和手等 token 化部位之间的时空交互。</p></section><section class="analysis-section"><h2>方法描述</h2><p>模型先把不同身体区域编码为 token，再通过空间—时间模块交换部位信息；latent shortcut 缩短从噪声到完整动作的生成路径，以提高全身手势速度和连贯性。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>GestureLSM 的人物生成或重建实验显示动作自然度、外观质量或效率改善；摘要未公开具体数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《GestureLSM: Latent Shortcut based Co-Speech Gesture Generation with Spatial-Temporal Modeling》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/2501.18898；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2501.18898" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2501.18898</a></li><li><a href="https://cliangxu.github.io/p/index.html" target="_blank" rel="noopener noreferrer">https://cliangxu.github.io/p/index.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

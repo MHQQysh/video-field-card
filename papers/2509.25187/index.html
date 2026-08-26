@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>FlashI2V: Fourier-Guided Latent Shifting Prevents Conditional Image Leakage in Image-to-Video Generation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-09-29 · arXiv 2509.25187</span>
+    <h1>FlashI2V: Fourier-Guided Latent Shifting Prevents Conditional Image Leakage in Image-to-Video Generation</h1>
+    <p class="detail-meta">Ge, Yunyang、Cheng, Xinhua、Zhao, Chengshu、He, Xianyi、Yuan, Shenghai、Lin, Bin、Zhu, Bin、Yuan, Li</p>
+    <div class="chips"><span class="chip lab">PKU-YuanGroup / 兔展 AIGC 联合实验室</span><span class="chip">图生视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2509.25187" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/PKU-YuanGroup/FlashI2V" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>In Image-to-Video (I2V) generation, a video is created using an input image as the first-frame condition. Existing I2V methods concatenate the full information of the conditional image with noisy latents to achieve high fidelity. However, the denoisers in these methods tend to shortcut the conditional image, which is known as conditional image leakage, leading to performance degradation issues such as slow motion and color inconsistency. In this work, we further clarify that conditional image leakage leads to overfitting to in-domain data and decreases the performance in out-of-domain scenarios. Moreover, we introduce Fourier-Guided Latent Shifting I2V, named FlashI2V, to prevent conditional image leakage. Concretely, FlashI2V consists of: (1) Latent Shifting. We modify the source and target distributions of flow matching by subtracting the conditional image information from the noisy latents, thereby incorporating the condition implicitly. (2) Fourier Guidance. We use high-frequency magnitude features obtained by the Fourier Transform to accelerate convergence and enable the adjustment of detail levels in the generated video. Experimental results show that our method effectively overcomes conditional image leakage and achieves the best generalization and performance on out-of-domain data among various I2V paradigms. With only 1.3B parameters, FlashI2V achieves a dynamic degree score of 53.01 on Vbench-I2V, surpassing CogVideoX1.5-5B-I2V and Wan2.1-I2V-14B-480P. Project page: this https URL</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>FlashI2V: Fourier-Guided Latent Shifting Prevents Conditional Image Leakage in Image-to-Video Generation：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 PKU-YuanGroup / 兔展 AIGC；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>FlashI2V: Fourier-Guided Latent Shifting Prevents Conditional Image Leakage in Image-to-Video Generation：在图像到视频 (I2V) 生成中，使用输入图像作为第一帧条件创建视频。现有的 I2V 方法将条件图像的完整信息与潜在噪声连接起来，以实现高保真度。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>FlashI2V: Fourier-Guided Latent Shifting Prevents Conditional Image Leakage in Image-to-Video Generation：此外，我们引入了傅里叶引导潜在移位 I2V，称为 FlashI2V，以防止条件图像泄漏。具体来说，FlashI2V 包括： (1) Latent Shifting。</p></section><section class="analysis-section"><h2>方法描述</h2><p>FlashI2V: Fourier-Guided Latent Shifting Prevents Conditional Image Leakage in Image-to-Video Generation：此外，我们引入了傅立叶引导潜在移位 I2V，称为 FlashI2V，以防止条件图像泄漏。具体来说，FlashI2V 包括： (1) Latent Shifting。我们通过从噪声潜伏中减去条件图像信息来修改流匹配的源和目标分布，从而隐式地合并条件。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>FlashI2V: Fourier-Guided Latent Shifting Prevents Conditional Image Leakage in Image-to-Video Generation：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。 卡片已记录官方代码链接：https://github.com/PKU-YuanGroup/FlashI2V。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>FlashI2V: Fourier-Guided Latent Shifting Prevents Conditional Image Leakage in Image-to-Video Generation：实验结果表明，我们的方法有效克服了条件图像泄漏，并在各种 I2V 范式中对域外数据实现了最佳泛化和性能。仅用1.3B参数，FlashI2V在Vbench-I2V上就获得了53.01的动态度得分，超越了CogVideoX1.5-5B-I2V和Wan2.1-I2V-14B-480P。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>PKU-YuanGroup 官方仓库 FlashI2V 的 README/引用信息直接关联该 arXiv 论文，并表明 YuanGroup 或北大-兔展 AIGC 团队贡献。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2509.25187" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2509.25187</a></li><li><a href="https://github.com/PKU-YuanGroup/FlashI2V" target="_blank" rel="noopener noreferrer">https://github.com/PKU-YuanGroup/FlashI2V</a></li></ul></section>
+</main>
+
+</body>
+</html>

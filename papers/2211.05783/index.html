@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Unifying Flow, Stereo and Depth Estimation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-11-11 · arXiv 2211.05783</span>
+    <h1>Unifying Flow, Stereo and Depth Estimation</h1>
+    <p class="detail-meta">Haofei Xu、Jing Zhang、Jianfei Cai、Hamid Rezatofighi、Fisher Yu、Dacheng Tao、Andreas Geiger</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2211.05783" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>We present a unified formulation and model for three motion and 3D perception tasks: optical flow, rectified stereo matching and unrectified stereo depth estimation from posed images. Unlike previous specialized architectures for each specific task, we formulate all three tasks as a unified dense correspondence matching problem, which can be solved with a single model by directly comparing feature similarities. Such a formulation calls for discriminative feature representations, which we achieve using a Transformer, in particular the cross-attention mechanism. We demonstrate that cross-attention enables integration of knowledge from another image via cross-view interactions, which greatly improves the quality of the extracted features. Our unified model naturally enables cross-task transfer since the model architecture and parameters are shared across tasks. We outperform RAFT with our unified model on the challenging Sintel dataset, and our final model that uses a few additional task-specific refinement steps outperforms or compares favorably to recent state-of-the-art methods on 10 popular flow, stereo and depth datasets, while being simpler and more efficient in terms of model design and inference speed.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Unifying Flow, Stereo and Depth Estimation》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2211.05783</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Unifying Flow, Stereo and Depth Estimation》围绕 视频分割、跟踪与运动估计、数据集、基准与综述 展开，研究连续视觉观察中的空间内容如何随时间变化并被模型利用。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>该文将 Transformer 关系建模、光流、注意力选择 引入 视频分割、跟踪与运动估计，使对象、动作、几何或声音的变化可以在多个时刻间保持关联。</p></section><section class="analysis-section"><h2>方法描述</h2><p>模型围绕 Transformer 关系建模、光流、注意力选择 组织数据流，保留对象身份、运动、几何或声音随时间的变化；摘要没有披露的层数与损失权重不作推定。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>统一模型在 Sintel 上超过 RAFT，并在 10 个光流、双目和深度数据集上达到或接近当时最佳，同时保持更简单的模型与推理流程；摘要未列逐项数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Unifying Flow, Stereo and Depth Estimation》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2211.05783</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2211.05783" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2211.05783</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

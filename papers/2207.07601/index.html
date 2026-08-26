@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>ST-P3: End-to-end Vision-based Autonomous Driving via Spatial-Temporal Feature Learning</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-07-15 · arXiv 2207.07601</span>
+    <h1>ST-P3: End-to-end Vision-based Autonomous Driving via Spatial-Temporal Feature Learning</h1>
+    <p class="detail-meta">Shengchao Hu、Li Chen、Penghao Wu、Hongyang Li、Junchi Yan、Dacheng Tao</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">视觉自动驾驶</span><span class="chip">时空特征学习</span><span class="chip">端到端规划</span><span class="chip">鸟瞰图感知</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2207.07601" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenDriveLab/ST-P3" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenDriveLab/ST-P3" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Many existing autonomous driving paradigms involve a multi-stage discrete pipeline of tasks. To better predict the control signals and enhance user safety, an end-to-end approach that benefits from joint spatial-temporal feature learning is desirable. While there are some pioneering works on LiDAR-based input or implicit design, in this paper we formulate the problem in an interpretable vision-based setting. In particular, we propose a spatial-temporal feature learning scheme towards a set of more representative features for perception, prediction and planning tasks simultaneously, which is called ST-P3. Specifically, an egocentric-aligned accumulation technique is proposed to preserve geometry information in 3D space before the bird&#x27;s eye view transformation for perception; a dual pathway modeling is devised to take past motion variations into account for future prediction; a temporal-based refinement unit is introduced to compensate for recognizing vision-based elements for planning. To the best of our knowledge, we are the first to systematically investigate each part of an interpretable end-to-end vision-based autonomous driving system. We benchmark our approach against previous state-of-the-arts on both open-loop nuScenes dataset as well as closed-loop CARLA simulation. The results show the effectiveness of our method. Source code, model and protocol details are made publicly available at https://github.com/OpenDriveLab/ST-P3.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方成果页面和官方仓库均将 ST-P3 标为团队的 ECCV 2022 时空视觉端到端驾驶工作。；OpenDriveLab/ST-P3 仓库与 arXiv 2207.07601 的标题、作者和代码链接相互对应。</p></section><section class="analysis-section"><h2>论文概述</h2><p>从连续相机帧共同学习空间几何和运动变化，把感知、预测与规划纳入可解释的视觉驾驶系统。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>ST-P3 将感知、未来预测和规划放入同一套可解释视觉驾驶框架：分别设计自车坐标对齐的历史累积、双路径运动预测与面向规划的时间细化。</p></section><section class="analysis-section"><h2>方法描述</h2><p>连续相机特征先按自车运动对齐，在进入鸟瞰图变换前保留三维几何；预测模块以双路径吸收过去运动变化，规划模块再用时间细化单元补偿纯视觉要素识别误差。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 nuScenes、CARLA。 已核验的项目或代码地址：https://github.com/OpenDriveLab/ST-P3</p></section><section class="analysis-section"><h2>评估与结果</h2><p>ST-P3 在 nuScenes 做开环评估，并在 CARLA 中进行闭环驾驶测试，覆盖感知、预测与规划三个环节。 摘要确认 ST-P3 在 nuScenes 开环和 CARLA 闭环均有效，但未列完整数值；精确提升需查正文表格。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方成果页面和官方仓库均将 ST-P3 标为团队的 ECCV 2022 时空视觉端到端驾驶工作。</li><li>OpenDriveLab/ST-P3 仓库与 arXiv 2207.07601 的标题、作者和代码链接相互对应。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li><li><a href="https://arxiv.org/abs/2207.07601" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2207.07601</a></li><li><a href="https://github.com/OpenDriveLab/ST-P3" target="_blank" rel="noopener noreferrer">https://github.com/OpenDriveLab/ST-P3</a></li></ul></section>
+</main>
+
+</body>
+</html>

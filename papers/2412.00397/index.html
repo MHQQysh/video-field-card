@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>DreamDance: Animating Human Images by Enriching 3D Geometry Cues from 2D Poses</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-11-30 · arXiv 2412.00397</span>
+    <h1>DreamDance: Animating Human Images by Enriching 3D Geometry Cues from 2D Poses</h1>
+    <p class="detail-meta">Pang, Yatian、Zhu, Bin、Lin, Bin、Zheng, Mingzhe、Tay, Francis E. H.、Lim, Ser-Nam、Yang, Harry、Yuan, Li</p>
+    <div class="chips"><span class="chip lab">PKU-YuanGroup / 兔展 AIGC 联合实验室</span><span class="chip">人体动画</span><span class="chip">视频生成</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2412.00397" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/PKU-YuanGroup/DreamDance" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>In this work, we present DreamDance, a novel method for animating human images using only skeleton pose sequences as conditional inputs. Existing approaches struggle with generating coherent, high-quality content in an efficient and user-friendly manner. Concretely, baseline methods relying on only 2D pose guidance lack the cues of 3D information, leading to suboptimal results, while methods using 3D representation as guidance achieve higher quality but involve a cumbersome and time-intensive process. To address these limitations, DreamDance enriches 3D geometry cues from 2D poses by introducing an efficient diffusion model, enabling high-quality human image animation with various guidance. Our key insight is that human images naturally exhibit multiple levels of correlation, progressing from coarse skeleton poses to fine-grained geometry cues, and further from these geometry cues to explicit appearance details. Capturing such correlations could enrich the guidance signals, facilitating intra-frame coherency and inter-frame consistency. Specifically, we construct the TikTok-Dance5K dataset, comprising 5K high-quality dance videos with detailed frame annotations, including human pose, depth, and normal maps. Next, we introduce a Mutually Aligned Geometry Diffusion Model to generate fine-grained depth and normal maps for enriched guidance. Finally, a Cross-domain Controller incorporates multi-level guidance to animate human images effectively with a video diffusion model. Extensive experiments demonstrate that our method achieves state-of-the-art performance in animating human images.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>DreamDance: Animating Human Images by Enriching 3D Geometry Cues from 2D Poses：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 PKU-YuanGroup / 兔展 AIGC；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>DreamDance: Animating Human Images by Enriching 3D Geometry Cues from 2D Poses：在这项工作中，我们提出了 DreamDance，一种仅使用骨架姿势序列作为条件输入来对人类图像进行动画处理的新颖方法。现有的方法很难以高效且用户友好的方式生成连贯的高质量内容。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>DreamDance: Animating Human Images by Enriching 3D Geometry Cues from 2D Poses：在这项工作中，我们提出了 DreamDance，这是一种仅使用骨架姿势序列作为条件输入来对人类图像进行动画处理的新颖方法。具体来说，我们构建了 TikTok-Dance5K 数据集，其中包含 5K 高质量舞蹈视频以及详细的帧注释，包括人体姿势、深度和法线贴图。</p></section><section class="analysis-section"><h2>方法描述</h2><p>DreamDance: Animating Human Images by Enriching 3D Geometry Cues from 2D Poses：在这项工作中，我们提出了 DreamDance，一种仅使用骨架姿势序列作为条件输入来对人类图像进行动画处理的新颖方法。具体来说，我们构建了 TikTok-Dance5K 数据集，其中包含 5K 高质量舞蹈视频以及详细的帧注释，包括人体姿势、深度和法线贴图。接下来，我们引入相互对齐的几何扩散模型来生成细粒度的深度和法线贴图以丰富指导。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>DreamDance: Animating Human Images by Enriching 3D Geometry Cues from 2D Poses：具体来说，我们构建了 TikTok-Dance5K 数据集，其中包含 5K 高质量舞蹈视频，并带有详细的帧注释，包括人体姿势、深度和法线贴图。 卡片已记录官方代码链接：https://github.com/PKU-YuanGroup/DreamDance。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>DreamDance: Animating Human Images by Enriching 3D Geometry Cues from 2D Poses：大量的实验表明，我们的方法在动画人类图像方面实现了最先进的性能。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>PKU-YuanGroup 官方仓库 DreamDance 的 README/引用信息直接关联该 arXiv 论文，并表明 YuanGroup 或北大-兔展 AIGC 团队贡献。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2412.00397" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2412.00397</a></li><li><a href="https://github.com/PKU-YuanGroup/DreamDance" target="_blank" rel="noopener noreferrer">https://github.com/PKU-YuanGroup/DreamDance</a></li></ul></section>
+</main>
+
+</body>
+</html>

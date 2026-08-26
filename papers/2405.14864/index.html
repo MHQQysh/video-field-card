@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Video Diffusion Models are Training-free Motion Interpreter and Controller</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-05-23 · arXiv 2405.14864</span>
+    <h1>Video Diffusion Models are Training-free Motion Interpreter and Controller</h1>
+    <p class="detail-meta">Xiao, Zeqi、Zhou, Yifan、Yang, Shuai、Pan, Xingang</p>
+    <div class="chips"><span class="chip lab">MMLab@NTU / S-Lab</span><span class="chip">视频生成</span><span class="chip">可控视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2405.14864" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://xizaoqu.github.io/moft/" target="_blank" rel="noopener noreferrer">项目主页</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Video generation primarily aims to model authentic and customized motion across frames, making understanding and controlling the motion a crucial topic. Most diffusion-based studies on video motion focus on motion customization with training-based paradigms, which, however, demands substantial training resources and necessitates retraining for diverse models. Crucially, these approaches do not explore how video diffusion models encode cross-frame motion information in their features, lacking interpretability and transparency in their effectiveness. To answer this question, this paper introduces a novel perspective to understand, localize, and manipulate motion-aware features in video diffusion models. Through analysis using Principal Component Analysis (PCA), our work discloses that robust motion-aware feature already exists in video diffusion models. We present a new MOtion FeaTure (MOFT) by eliminating content correlation information and filtering motion channels. MOFT provides a distinct set of benefits, including the ability to encode comprehensive motion information with clear interpretability, extraction without the need for training, and generalizability across diverse architectures. Leveraging MOFT, we propose a novel training-free video motion control framework. Our method demonstrates competitive performance in generating natural and faithful motion, providing architecture-agnostic insights and applicability in a variety of downstream tasks.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Video Diffusion Models are Training-free Motion Interpreter and Controller：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@NTU / S-Lab；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>Video Diffusion Models are Training-free Motion Interpreter and Controller：论文研究视频扩散模型在特征中如何编码跨帧运动，以及能否无需针对不同模型重新训练就理解和控制运动。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Video Diffusion Models are Training-free Motion Interpreter and Controller：论文提出 MOFT 运动特征，通过去除内容相关信息并筛选运动通道，获得可解释、免训练、跨架构的运动表示。</p></section><section class="analysis-section"><h2>方法描述</h2><p>Video Diffusion Models are Training-free Motion Interpreter and Controller：流程从扩散特征中消除内容成分，再过滤与运动相关的通道；得到的 MOFT 用于定位、解释和操纵生成运动。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>Video Diffusion Models are Training-free Motion Interpreter and Controller：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Video Diffusion Models are Training-free Motion Interpreter and Controller：摘要称该方法在自然、忠实运动生成上具有竞争力并适用于多种下游任务，但未报告具体数据集、指标或结果数值，需查正文。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@NTU 官方 publication_year 年表逐条列出“Video Diffusion Models are Training-free Motion Interpreter and Controller”（arXiv:2405.14864），该官方年表是本条 ntu-s-lab 归属证据。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2405.14864" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2405.14864</a></li><li><a href="https://www.mmlab-ntu.com/publication_year.html" target="_blank" rel="noopener noreferrer">https://www.mmlab-ntu.com/publication_year.html</a></li><li><a href="https://xizaoqu.github.io/moft/" target="_blank" rel="noopener noreferrer">https://xizaoqu.github.io/moft/</a></li></ul></section>
+</main>
+
+</body>
+</html>

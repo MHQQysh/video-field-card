@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>WF-VAE: Enhancing Video VAE by Wavelet-Driven Energy Flow for Latent Video Diffusion Model</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-11-26 · arXiv 2411.17459</span>
+    <h1>WF-VAE: Enhancing Video VAE by Wavelet-Driven Energy Flow for Latent Video Diffusion Model</h1>
+    <p class="detail-meta">Li, Zongjian、Lin, Bin、Ye, Yang、Chen, Liuhan、Cheng, Xinhua、Yuan, Shenghai、Yuan, Li</p>
+    <div class="chips"><span class="chip lab">PKU-YuanGroup / 兔展 AIGC 联合实验室</span><span class="chip">视频VAE</span><span class="chip">视频生成</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2411.17459" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/PKU-YuanGroup/WF-VAE" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Video Variational Autoencoder (VAE) encodes videos into a low-dimensional latent space, becoming a key component of most Latent Video Diffusion Models (LVDMs) to reduce model training costs. However, as the resolution and duration of generated videos increase, the encoding cost of Video VAEs becomes a limiting bottleneck in training LVDMs. Moreover, the block-wise inference method adopted by most LVDMs can lead to discontinuities of latent space when processing long-duration videos. The key to addressing the computational bottleneck lies in decomposing videos into distinct components and efficiently encoding the critical information. Wavelet transform can decompose videos into multiple frequency-domain components and improve the efficiency significantly, we thus propose Wavelet Flow VAE (WF-VAE), an autoencoder that leverages multi-level wavelet transform to facilitate low-frequency energy flow into latent representation. Furthermore, we introduce a method called Causal Cache, which maintains the integrity of latent space during block-wise inference. Compared to state-of-the-art video VAEs, WF-VAE demonstrates superior performance in both PSNR and LPIPS metrics, achieving 2x higher throughput and 4x lower memory consumption while maintaining competitive reconstruction quality. Our code and models are available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>WF-VAE: Enhancing Video VAE by Wavelet-Driven Energy Flow for Latent Video Diffusion Model：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 PKU-YuanGroup / 兔展 AIGC；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>WF-VAE: Enhancing Video VAE by Wavelet-Driven Energy Flow for Latent Video Diffusion Model：视频变分自动编码器 (VAE) 将视频编码到低维潜在空间中，成为大多数潜在视频扩散模型 (LVDM) 的关键组成部分，以降低模型训练成本。然而，随着生成视频的分辨率和持续时间的增加，视频 VAE 的编码成本成为训练 LVDM 的限制瓶颈。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>WF-VAE: Enhancing Video VAE by Wavelet-Driven Energy Flow for Latent Video Diffusion Model：此外，大多数 LVDM 采用的分块推理方法在处理长时间视频时会导致潜在空间的不连续性。此外，我们引入了一种称为因果缓存的方法，它可以在块推理期间保持潜在空间的完整性。</p></section><section class="analysis-section"><h2>方法描述</h2><p>WF-VAE: Enhancing Video VAE by Wavelet-Driven Energy Flow for Latent Video Diffusion Model：此外，大多数 LVDM 采用的逐块推理方法在处理长时间视频时会导致潜在空间的不连续性。此外，我们引入了一种称为因果缓存的方法，它可以在块推理期间保持潜在空间的完整性。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>WF-VAE: Enhancing Video VAE by Wavelet-Driven Energy Flow for Latent Video Diffusion Model：视频变分自动编码器 (VAE) 将视频编码到低维潜在空间中，成为大多数潜在视频扩散模型 (LVDM) 的关键组件，以降低模型训练成本。小波变换可以将视频分解为多个频域分量并显着提高效率，因此我们提出了小波流VAE（WF-VAE），一种利用多级小波变换促进低频能量流到潜在表示的自动编码器。 卡片已记录官方代码链接：https://github.com/PKU-YuanGroup/WF-VAE。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>WF-VAE: Enhancing Video VAE by Wavelet-Driven Energy Flow for Latent Video Diffusion Model：与最先进的视频 VAE 相比，WF-VAE 在 PSNR 和 LPIPS 指标方面均表现出卓越的性能，吞吐量提高了 2 倍，内存消耗降低了 4 倍，同时保持了有竞争力的重建质量。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>PKU-YuanGroup 官方仓库 WF-VAE 的 README/引用信息直接关联该 arXiv 论文，并表明 YuanGroup 或北大-兔展 AIGC 团队贡献。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2411.17459" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2411.17459</a></li><li><a href="https://github.com/PKU-YuanGroup/WF-VAE" target="_blank" rel="noopener noreferrer">https://github.com/PKU-YuanGroup/WF-VAE</a></li></ul></section>
+</main>
+
+</body>
+</html>

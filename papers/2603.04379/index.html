@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Helios: Real Real-Time Long Video Generation Model</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-03-04 · arXiv 2603.04379</span>
+    <h1>Helios: Real Real-Time Long Video Generation Model</h1>
+    <p class="detail-meta">Yuan, Shenghai、Yin, Yuanyang、Li, Zongjian、Huang, Xinwei、Yang, Xiao、Yuan, Li</p>
+    <div class="chips"><span class="chip lab">PKU-YuanGroup / 兔展 AIGC 联合实验室</span><span class="chip">长视频生成</span><span class="chip">实时推理</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2603.04379" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/PKU-YuanGroup/Helios" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>We introduce Helios, the first 14B video generation model that runs at 19.5 FPS on a single NVIDIA H100 GPU and supports minute-scale generation while matching the quality of a strong baseline. We make breakthroughs along three key dimensions: (1) robustness to long-video drifting without commonly used anti-drifting heuristics such as self-forcing, error-banks, or keyframe sampling; (2) real-time generation without standard acceleration techniques such as KV-cache, sparse/linear attention, or quantization; and (3) training without parallelism or sharding frameworks, enabling image-diffusion-scale batch sizes while fitting up to four 14B models within 80 GB of GPU memory. Specifically, Helios is a 14B autoregressive diffusion model with a unified input representation that natively supports T2V, I2V, and V2V tasks. To mitigate drifting in long-video generation, we characterize typical failure modes and propose simple yet effective training strategies that explicitly simulate drifting during training, while eliminating repetitive motion at its source. For efficiency, we heavily compress the historical and noisy context and reduce the number of sampling steps, yielding computational costs comparable to -- or lower than -- those of 1.3B video generative models. Moreover, we introduce infrastructure-level optimizations that accelerate both inference and training while reducing memory consumption. Extensive experiments demonstrate that Helios consistently outperforms prior methods on both short- and long-video generation. We plan to release the code, base model, and distilled model to support further development by the community.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Helios: Real Real-Time Long Video Generation Model：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 PKU-YuanGroup / 兔展 AIGC；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>Helios: Real Real-Time Long Video Generation Model：我们推出了 Helios，这是第一个 14B 视频生成模型，它在单个 NVIDIA H100 GPU 上以 19.5 FPS 运行，支持分钟级生成，同时匹配强大基线的质量。我们在三个关键维度上取得了突破：（1）对长视频漂移的鲁棒性，无需常用的抗漂移启发式方法，例如自我强迫、错误库或关键帧采样； (2) 实时生成，无需标准加速技术，例如 KV 缓存、稀疏/线性注意力或量化； (3) 在没有并行或分片框架的情况下进行训练，实现图像扩散规模的批量大小，同时在 80 GB GPU 内存中拟合最多四个 14B 模型。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Helios: Real Real-Time Long Video Generation Model：我们推出了 Helios，这是第一个 14B 视频生成模型，它在单个 NVIDIA H100 GPU 上以 19.5 FPS 运行，支持分钟级生成，同时匹配强大基线的质量。我们在三个关键维度上取得了突破：（1）对长视频漂移的鲁棒性，无需常用的抗漂移启发式方法，例如自我强迫、错误库或关键帧采样； (2) 实时生成，无需标准加速技术，例如 KV 缓存、稀疏/线性注意力或量化； (3) 在没有并行或分片框架的情况下进行训练，实现图像扩散规模的批量大小，同时在 80 GB GPU 内存中拟合最多四个 14B 模型。</p></section><section class="analysis-section"><h2>方法描述</h2><p>Helios: Real Real-Time Long Video Generation Model：我们推出了 Helios，这是第一个 14B 视频生成模型，它在单个 NVIDIA H100 GPU 上以 19.5 FPS 运行，支持分钟级生成，同时匹配强大基线的质量。我们在三个关键维度上取得了突破：（1）对长视频漂移的鲁棒性，无需常用的抗漂移启发式方法，例如自我强迫、错误库或关键帧采样； (2) 实时生成，无需标准加速技术，例如 KV 缓存、稀疏/线性注意力或量化； (3) 在没有并行或分片框架的情况下进行训练，实现图像扩散规模的批量大小，同时在 80 GB GPU 内存中拟合最多四个 14B 模型。为了减轻长视频生成中的漂移，我们描述了典型的故障模式，并提出了简单而有效的训练策略，这些策略在训练过程中明确模拟漂移，同时从源头消除重复运动。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>Helios: Real Real-Time Long Video Generation Model：我们计划发布代码、基础模型和蒸馏模型以支持社区的进一步开发。 卡片已记录官方代码链接：https://github.com/PKU-YuanGroup/Helios。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Helios: Real Real-Time Long Video Generation Model：大量实验表明，Helios 在短视频和长视频生成方面始终优于先前的方法。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>PKU-YuanGroup 官方仓库 Helios 的 README/引用信息直接关联该 arXiv 论文，并表明 YuanGroup 或北大-兔展 AIGC 团队贡献。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2603.04379" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2603.04379</a></li><li><a href="https://github.com/PKU-YuanGroup/Helios" target="_blank" rel="noopener noreferrer">https://github.com/PKU-YuanGroup/Helios</a></li></ul></section>
+</main>
+
+</body>
+</html>

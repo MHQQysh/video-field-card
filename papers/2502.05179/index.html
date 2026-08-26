@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>FlashVideo: Flowing Fidelity to Detail for Efficient High-Resolution Video Generation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-02-07 · arXiv 2502.05179</span>
+    <h1>FlashVideo: Flowing Fidelity to Detail for Efficient High-Resolution Video Generation</h1>
+    <p class="detail-meta">Zhang, Shilong、Li, Wenbo、Chen, Shoufa、GE, Chongjian、Sun, Peize、Zhang, Yifu、Jiang, Yi、Yuan, Zehuan、Peng, Bingyue、Luo, Ping</p>
+    <div class="chips"><span class="chip lab">MMLab@HKU</span><span class="chip">高分辨率视频生成</span><span class="chip">推理加速</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2502.05179" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://mmlab.hk/publication" target="_blank" rel="noopener noreferrer">项目主页</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>DiT models have achieved great success in text-to-video generation, leveraging their scalability in model capacity and data scale. High content and motion fidelity aligned with text prompts, however, often require large model parameters and a substantial number of function evaluations (NFEs). Realistic and visually appealing details are typically reflected in high-resolution outputs, further amplifying computational demands-especially for single-stage DiT models. To address these challenges, we propose a novel two-stage framework, FlashVideo, which strategically allocates model capacity and NFEs across stages to balance generation fidelity and quality. In the first stage, prompt fidelity is prioritized through a low-resolution generation process utilizing large parameters and sufficient NFEs to enhance computational efficiency. The second stage achieves a nearly straight ODE trajectory between low and high resolutions via flow matching, effectively generating fine details and fixing artifacts with minimal NFEs. To ensure a seamless connection between the two independently trained stages during inference, we carefully design degradation strategies during the second-stage training. Quantitative and visual results demonstrate that FlashVideo achieves state-of-the-art high-resolution video generation with superior computational efficiency. Additionally, the two-stage design enables users to preview the initial output and accordingly adjust the prompt before committing to full-resolution generation, thereby significantly reducing computational costs and wait times as well as enhancing commercial viability.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>FlashVideo: Flowing Fidelity to Detail for Efficient High-Resolution Video Generation：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@HKU；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>FlashVideo: Flowing Fidelity to Detail for Efficient High-Resolution Video Generation：DiT 模型利用其模型容量和数据规模的可扩展性，在文本到视频生成方面取得了巨大成功。然而，与文本提示一致的高内容和运动保真度通常需要大型模型参数和大量功能评估 (NFE)。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>FlashVideo: Flowing Fidelity to Detail for Efficient High-Resolution Video Generation：为了应对这些挑战，我们提出了一种新颖的两阶段框架 FlashVideo，它跨阶段战略性地分配模型容量和 NFE，以平衡生成保真度和质量。为了确保推理过程中两个独立训练阶段之间的无缝连接，我们在第二阶段训练期间仔细设计了降级策略。</p></section><section class="analysis-section"><h2>方法描述</h2><p>FlashVideo: Flowing Fidelity to Detail for Efficient High-Resolution Video Generation：为了应对这些挑战，我们提出了一种新颖的两阶段框架 FlashVideo，它跨阶段战略性地分配模型容量和 NFE，以平衡生成保真度和质量。为了确保推理过程中两个独立训练阶段之间的无缝连接，我们在第二阶段训练期间仔细设计了降级策略。此外，两阶段设计使用户能够预览初始输出，并在进行全分辨率生成之前相应地调整提示，从而显着降低计算成本和等待时间，并增强商业可行性。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>FlashVideo: Flowing Fidelity to Detail for Efficient High-Resolution Video Generation：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>FlashVideo: Flowing Fidelity to Detail for Efficient High-Resolution Video Generation：结果表明，FlashVideo 能够以卓越的计算效率实现最先进的高分辨率视频生成。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@HKU 官方 Publication 页面列出 FlashVideo，论文单位含 The University of Hong Kong，作者 Ping Luo 为实验室 PI。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2502.05179" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2502.05179</a></li><li><a href="https://mmlab.hk/publication" target="_blank" rel="noopener noreferrer">https://mmlab.hk/publication</a></li></ul></section>
+</main>
+
+</body>
+</html>

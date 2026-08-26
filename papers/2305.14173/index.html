@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>TVTSv2: Learning Out-of-the-box Spatiotemporal Visual Representations at Scale</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-05-23 · arXiv 2305.14173</span>
+    <h1>TVTSv2: Learning Out-of-the-box Spatiotemporal Visual Representations at Scale</h1>
+    <p class="detail-meta">Zeng, Ziyun、Ge, Yixiao、Tong, Zhan、Liu, Xihui、Xia, Shu-Tao、Shan, Ying</p>
+    <div class="chips"><span class="chip lab">MMLab@HKU</span><span class="chip">视频基础模型</span><span class="chip">视频表征</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2305.14173" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://mmlab.hk/publication" target="_blank" rel="noopener noreferrer">项目主页</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>The ultimate goal for foundation models is realizing task-agnostic, i.e., supporting out-of-the-box usage without task-specific fine-tuning. Although breakthroughs have been made in natural language processing and image representation learning, it is still challenging for video models to reach it due to the increasing uncertainty of spatiotemporal signals. To ease training, existing works leverage image foundation models&#x27; prior knowledge and equip them with efficient temporal modules. Despite the satisfactory fine-tuning performance, we empirically find they fall short of out-of-the-box usage, given the even degraded performance in zero-shot/linear protocols compared to their baseline counterparts. In this work, we analyze the factor that leads to degradation from the perspective of language supervision distortion. We argue that tuning a text encoder end-to-end, as done in previous work, is suboptimal since it may overfit in terms of styles, thereby losing its original generalization ability to capture the semantics of various language registers. The overfitted text encoder, in turn, provides a harmful supervision signal, degrading the video representation. To tackle this issue, we propose a degradation-free pre-training strategy to retain the generalization ability of the text encoder via freezing shallow layers while enabling the task-related semantics capturing in tunable deep layers. As for the training objective, we adopted the transcript sorting task in TVTS incorporated with masking techniques to enable scalable training. As a result, we produce a series of models, dubbed TVTSv2, with up to one billion parameters. We achieve new state-of-the-arts on various video benchmarks with a frozen backbone, surpassing the recent ImageBind, InternVideo, etc. Code is available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>TVTSv2: Learning Out-of-the-box Spatiotemporal Visual Representations at Scale：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@HKU；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>TVTSv2: Learning Out-of-the-box Spatiotemporal Visual Representations at Scale：基础模型的最终目标是实现任务无关，即支持开箱即用的使用，而无需针对特定任务进行微调。尽管在自然语言处理和图像表示学习方面已经取得了突破，但由于时空信号的不确定性不断增加，视频模型仍然面临挑战。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>TVTSv2: Learning Out-of-the-box Spatiotemporal Visual Representations at Scale：为了简化训练，现有工作利用图像基础模型的先验知识，并为其配备高效的时间模块。为了解决这个问题，我们提出了一种无降级预训练策略，通过冻结浅层来保留文本编码器的泛化能力，同时在可调节的深层中捕获与任务相关的语义。</p></section><section class="analysis-section"><h2>方法描述</h2><p>TVTSv2: Learning Out-of-the-box Spatiotemporal Visual Representations at Scale：为了简化训练，现有工作利用图像基础模型的先验知识，并为其配备高效的时间模块。为了解决这个问题，我们提出了一种无降级预训练策略，通过冻结浅层来保留文本编码器的泛化能力，同时在可调节的深层中捕获与任务相关的语义。至于训练目标，我们采用了 TVTS 中的转录本排序任务，并结合了掩码技术，以实现可扩展的训练。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>TVTSv2: Learning Out-of-the-box Spatiotemporal Visual Representations at Scale：我们认为，像以前的工作一样，端到端地调整文本编码器并不是最理想的，因为它可能在样式方面过度拟合，从而失去了捕获各种语言寄存器语义的原始泛化能力。过度拟合的文本编码器反过来会提供有害的监督信号，从而降低视频表示的质量。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>TVTSv2: Learning Out-of-the-box Spatiotemporal Visual Representations at Scale：尽管微调性能令人满意，但我们凭经验发现它们达不到开箱即用的使用效果，因为与基线协议相比，零样本/线性协议的性能甚至下降。因此，我们生成了一系列模型，称为 TVTSv2，具有多达 10 亿个参数。我们通过冻结主干在各种视频基准测试中实现了新的最先进技术，超越了最近的 ImageBind、InternVideo 等。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@HKU 官方 Publication 页面列出该论文及作者；页面以实验室 PI/成员条目提供团队归属证据。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2305.14173" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2305.14173</a></li><li><a href="https://mmlab.hk/publication" target="_blank" rel="noopener noreferrer">https://mmlab.hk/publication</a></li></ul></section>
+</main>
+
+</body>
+</html>

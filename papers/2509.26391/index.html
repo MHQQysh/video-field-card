@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-09-30 · arXiv 2509.26391</span>
+    <h1>MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation</h1>
+    <p class="detail-meta">Zhu, Chenhui、Wu, Yilu、Wang, Shuai、Wu, Gangshan、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">视频生成、动画与可控编辑</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2509.26391" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/MCG-NJU/MotionRAG" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/MCG-NJU/MotionRAG" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Image-to-video generation has made remarkable progress with the advancements in diffusion models, yet generating videos with realistic motion remains highly challenging. This difficulty arises from the complexity of accurately modeling motion, which involves capturing physical constraints, object interactions, and domain-specific dynamics that are not easily generalized across diverse scenarios. To address this, we propose MotionRAG, a retrieval-augmented framework that enhances motion realism by adapting motion priors from relevant reference videos through Context-Aware Motion Adaptation (CAMA). The key technical innovations include: (i) a retrieval-based pipeline extracting high-level motion features using video encoder and specialized resamplers to distill semantic motion representations; (ii) an in-context learning approach for motion adaptation implemented through a causal transformer architecture; (iii) an attention-based motion injection adapter that seamlessly integrates transferred motion features into pretrained video diffusion models. Extensive experiments demonstrate that our method achieves significant improvements across multiple domains and various base models, all with negligible computational overhead during inference. Furthermore, our modular design enables zero-shot generalization to new domains by simply updating the retrieval database without retraining any components. This research enhances the core capability of video generation systems by enabling the effective retrieval and transfer of motion priors, facilitating the synthesis of realistic motion dynamics.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2025-09-30 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation》聚焦视频生成、动画与可控编辑：输入侧是文本、图像、轨迹或参考视频条件，目标是生成或编辑具有时间一致性的视频序列。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation》以 MotionRAG 为核心方案，将扩散建模、Transformer 时空建模、知识蒸馏、检索增强用于视频生成、动画与可控编辑。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation》采用扩散建模、Transformer 时空建模、知识蒸馏、检索增强处理文本、图像、轨迹或参考视频条件，其输出任务是生成或编辑具有时间一致性的视频序列。摘要能确认的技术组合为扩散建模、Transformer 时空建模、知识蒸馏、检索增强；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/MCG-NJU/MotionRAG。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《MotionRAG: Motion Retrieval-Augmented Image-to-Video Generation》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2509.26391" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2509.26391</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li><li><a href="https://github.com/MCG-NJU/MotionRAG" target="_blank" rel="noopener noreferrer">https://github.com/MCG-NJU/MotionRAG</a></li></ul></section>
+</main>
+
+</body>
+</html>

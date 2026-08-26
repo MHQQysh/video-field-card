@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>HOTA: A Higher Order Metric for Evaluating Multi-Object Tracking</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2020-09-16 · arXiv 2009.07736</span>
+    <h1>HOTA: A Higher Order Metric for Evaluating Multi-Object Tracking</h1>
+    <p class="detail-meta">Jonathon Luiten、Aljosa Osep、Patrick Dendorfer、Philip Torr、Andreas Geiger、Laura Leal-Taixe、Bastian Leibe</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2009.07736" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Multi-Object Tracking (MOT) has been notoriously difficult to evaluate. Previous metrics overemphasize the importance of either detection or association. To address this, we present a novel MOT evaluation metric, HOTA (Higher Order Tracking Accuracy), which explicitly balances the effect of performing accurate detection, association and localization into a single unified metric for comparing trackers. HOTA decomposes into a family of sub-metrics which are able to evaluate each of five basic error types separately, which enables clear analysis of tracking performance. We evaluate the effectiveness of HOTA on the MOTChallenge benchmark, and show that it is able to capture important aspects of MOT performance not previously taken into account by established metrics. Furthermore, we show HOTA scores better align with human visual evaluation of tracking performance.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《HOTA: A Higher Order Metric for Evaluating Multi-Object Tracking》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2009.07736</p></section><section class="analysis-section"><h2>论文概述</h2><p>HOTA 解决多目标跟踪评价长期偏向检测或关联一侧的问题，用统一指标同时衡量检测、轨迹关联与定位。它使视频跟踪模型的错误来源可以被拆开解释。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>HOTA 将跟踪质量分解为五类基本错误对应的子指标，同时给出统一总分，避免旧指标只奖励检测或只奖励关联。</p></section><section class="analysis-section"><h2>方法描述</h2><p>指标在匹配阈值上联合计算检测准确性、关联准确性与定位质量，并通过子指标呈现漏检、误检、断轨等错误，而不是训练一个新的视频网络。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 MOTChallenge。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>作者在 MOTChallenge 上比较 HOTA 与既有跟踪指标，并用人工视觉判断检查排序一致性。结果表明 HOTA 能反映旧指标遗漏的跟踪性质，且与人工观感更一致；摘要未给出单一提升百分比。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《HOTA: A Higher Order Metric for Evaluating Multi-Object Tracking》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2009.07736</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2009.07736" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2009.07736</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-12-12 · arXiv 2512.11782</span>
+    <h1>MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator</h1>
+    <p class="detail-meta">Yang, Peiqing、Zhou, Shangchen、Hao, Kai、Tao, Qingyi</p>
+    <div class="chips"><span class="chip lab">MMLab@NTU / S-Lab</span><span class="chip">视频研究</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2512.11782" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://huggingface.co/spaces/PeiqingYang/MatAnyone" target="_blank" rel="noopener noreferrer">项目主页</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Video matting remains limited by the scale and realism of existing datasets. While leveraging segmentation data can enhance semantic stability, the lack of effective boundary supervision often leads to segmentation-like mattes lacking fine details. To this end, we introduce a learned Matting Quality Evaluator (MQE) that assesses semantic and boundary quality of alpha mattes without ground truth. It produces a pixel-wise evaluation map that identifies reliable and erroneous regions, enabling fine-grained quality assessment. The MQE scales up video matting in two ways: (1) as an online matting-quality feedback during training to suppress erroneous regions, providing comprehensive supervision, and (2) as an offline selection module for data curation, improving annotation quality by combining the strengths of leading video and image matting models. This process allows us to build a large-scale real-world video matting dataset, VMReal, containing 28K clips and 2.4M frames. To handle large appearance variations in long videos, we introduce a reference-frame training strategy that incorporates long-range frames beyond the local window for effective training. Our MatAnyone 2 achieves state-of-the-art performance on both synthetic and real-world benchmarks, surpassing prior methods across all metrics.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@NTU / S-Lab；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator：视频抠图仍然受到现有数据集的规模和真实性的限制。虽然利用分割数据可以增强语义稳定性，但缺乏有效的边界监督通常会导致类似分割的遮罩缺乏精细的细节。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator：虽然利用分割数据可以增强语义稳定性，但缺乏有效的边界监督通常会导致类似分割的遮罩缺乏精细的细节。为此，我们引入了一个学习的抠图质量评估器（MQE），它可以在没有地面事实的情况下评估 alpha 遮罩的语义和边界质量。</p></section><section class="analysis-section"><h2>方法描述</h2><p>MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator：虽然利用分割数据可以增强语义稳定性，但缺乏有效的边界监督通常会导致类似分割的遮罩缺乏精细的细节。为此，我们引入了一个学习的抠图质量评估器（MQE），它可以在没有地面事实的情况下评估 alpha 遮罩的语义和边界质量。这个过程使我们能够构建一个大规模的真实世界视频抠图数据集 VMReal，其中包含 28K 剪辑和 240 万帧。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator：视频抠图仍然受到现有数据集的规模和真实性的限制。这个过程使我们能够构建一个大规模的真实世界视频抠图数据集 VMReal，其中包含 28K 剪辑和 240 万帧。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator：MQE 通过两种方式扩展视频抠图：(1) 作为训练期间的在线抠图质量反馈，以抑制错误区域，提供全面的监督；(2) 作为数据管理的离线选择模块，通过结合领先视频和图像抠图模型的优势来提高注释质量。我们的 MatAnyone 2 在综合基准和实际基准上都实现了最先进的性能，在所有指标上都超越了之前的方法。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@NTU 官方 publication_year 年表逐条列出“MatAnyone 2: Scaling Video Matting via a Learned Quality Evaluator”（arXiv:2512.11782），该官方年表是本条 ntu-s-lab 归属证据。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2512.11782" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2512.11782</a></li><li><a href="https://www.mmlab-ntu.com/publication_year.html" target="_blank" rel="noopener noreferrer">https://www.mmlab-ntu.com/publication_year.html</a></li><li><a href="https://huggingface.co/spaces/PeiqingYang/MatAnyone" target="_blank" rel="noopener noreferrer">https://huggingface.co/spaces/PeiqingYang/MatAnyone</a></li></ul></section>
+</main>
+
+</body>
+</html>

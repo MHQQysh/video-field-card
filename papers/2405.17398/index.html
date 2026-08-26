@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Vista: A Generalizable Driving World Model with High Fidelity and Versatile Controllability</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-05-28 · arXiv 2405.17398</span>
+    <h1>Vista: A Generalizable Driving World Model with High Fidelity and Versatile Controllability</h1>
+    <p class="detail-meta">Shenyuan Gao、Jiazhi Yang、Li Chen、Kashyap Chitta、Yihang Qiu、Andreas Geiger、Jun Zhang、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip lab">Autonomous Vision Group</span><span class="chip">驾驶世界模型与未来预测</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2405.17398" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://opendrivelab.com/Vista/" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenDriveLab/Vista" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>World models can foresee the outcomes of different actions, which is of paramount importance for autonomous driving. Nevertheless, existing driving world models still have limitations in generalization to unseen environments, prediction fidelity of critical details, and action controllability for flexible application. In this paper, we present Vista, a generalizable driving world model with high fidelity and versatile controllability. Based on a systematic diagnosis of existing methods, we introduce several key ingredients to address these limitations. To accurately predict real-world dynamics at high resolution, we propose two novel losses to promote the learning of moving instances and structural information. We also devise an effective latent replacement approach to inject historical frames as priors for coherent long-horizon rollouts. For action controllability, we incorporate a versatile set of controls from high-level intentions (command, goal point) to low-level maneuvers (trajectory, angle, and speed) through an efficient learning strategy. After large-scale training, the capabilities of Vista can seamlessly generalize to different scenarios. Extensive experiments on multiple datasets show that Vista outperforms the most advanced general-purpose video generator in over 70% of comparisons and surpasses the best-performing driving world model by 55% in FID and 27% in FVD. Moreover, for the first time, we utilize the capacity of Vista itself to establish a generalizable reward for real-world action evaluation without accessing the ground truth actions.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《Vista: A Generalizable Driving World Model with High Fidelity and Versatile Controllability》收录本成果：https://opendrivelab.com/Vista/；论文级 arXiv 锚点：https://arxiv.org/abs/2405.17398；Autonomous Vision 官方 publications 页面以《Vista: A Generalizable Driving World Model with High Fidelity and Versatile Controllability》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2405.17398</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Vista: A Generalizable Driving World Model with High Fidelity and Versatile Controllability》围绕驾驶世界建模展开，利用连续视觉生成或神经仿真刻画自车动作导致的未来场景变化。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Vista 在潜空间扩散世界模型中同时强化未见环境泛化、关键驾驶细节保真和动作条件控制，使同一模型可按多种驾驶信号生成未来视频。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法先编码帧级或传感器级观测，再用 世界模型/仿真、跨帧时间建模 聚合跨时刻信息，最后由任务解码头输出预测、生成结果、掩码或控制量。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 已核验的项目或代码地址：https://opendrivelab.com/Vista/；https://github.com/OpenDriveLab/Vista</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Vista 在超过 70% 的成对比较中优于通用视频生成器；相对当时最佳驾驶世界模型，FID 改善 55%，FVD 改善 27%。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《Vista: A Generalizable Driving World Model with High Fidelity and Versatile Controllability》收录本成果：https://opendrivelab.com/Vista/；论文级 arXiv 锚点：https://arxiv.org/abs/2405.17398</li><li>Autonomous Vision 官方 publications 页面以《Vista: A Generalizable Driving World Model with High Fidelity and Versatile Controllability》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2405.17398</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2405.17398" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2405.17398</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/OpenDriveLab/Vista" target="_blank" rel="noopener noreferrer">https://github.com/OpenDriveLab/Vista</a></li><li><a href="https://opendrivelab.com/Vista/" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/Vista/</a></li></ul></section>
+</main>
+
+</body>
+</html>

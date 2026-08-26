@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Policy Pre-training for Autonomous Driving via Self-supervised Geometric Modeling</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-01-03 · arXiv 2301.01006</span>
+    <h1>Policy Pre-training for Autonomous Driving via Self-supervised Geometric Modeling</h1>
+    <p class="detail-meta">Penghao Wu、Li Chen、Hongyang Li、Xiaosong Jia、Junchi Yan、Yu Qiao</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">时序自动驾驶与规划</span><span class="chip">自监督视频表征</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2301.01006" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Witnessing the impressive achievements of pre-training techniques on large-scale data in the field of computer vision and natural language processing, we wonder whether this idea could be adapted in a grab-and-go spirit, and mitigate the sample inefficiency problem for visuomotor driving. Given the highly dynamic and variant nature of the input, the visuomotor driving task inherently lacks view and translation invariance, and the visual input contains massive irrelevant information for decision making, resulting in predominant pre-training approaches from general vision less suitable for the autonomous driving task. To this end, we propose PPGeo (Policy Pre-training via Geometric modeling), an intuitive and straightforward fully self-supervised framework curated for the policy pretraining in visuomotor driving. We aim at learning policy representations as a powerful abstraction by modeling 3D geometric scenes on large-scale unlabeled and uncalibrated YouTube driving videos. The proposed PPGeo is performed in two stages to support effective self-supervised training. In the first stage, the geometric modeling framework generates pose and depth predictions simultaneously, with two consecutive frames as input. In the second stage, the visual encoder learns driving policy representation by predicting the future ego-motion and optimizing with the photometric error based on current visual observation only. As such, the pre-trained visual encoder is equipped with rich driving policy related representations and thereby competent for multiple visuomotor driving tasks. Extensive experiments covering a wide span of challenging scenarios have demonstrated the superiority of our proposed approach, where improvements range from 2% to even over 100% with very limited data.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《Policy Pre-training for Autonomous Driving via Self-supervised Geometric Modeling》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2301.01006；PPGeo 摘要明确写明 YouTube driving videos、two consecutive frames 与 future ego-motion；原文锚点：https://arxiv.org/abs/2301.01006</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Policy Pre-training for Autonomous Driving via Self-supervised Geometric Modeling》研究 时序自动驾驶与规划、自监督视频表征，重点考察连续传感器信息如何支持驾驶感知、预测、规划或闭环评价。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>相较独立处理每帧或每种模态，该工作以 强化学习、自监督预训练、几何约束、跨帧时间建模 建立可传播的动态状态，贡献落在任务机制而非单纯扩大模型。</p></section><section class="analysis-section"><h2>方法描述</h2><p>该方案利用 强化学习、自监督预训练、几何约束、跨帧时间建模 把连续观察压缩成任务状态，随后执行分类、回归、渲染、规划或语言生成；具体超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>自监督几何预训练在多类困难驾驶情形中带来 2% 到超过 100% 的提升，且在标注数据很少时仍有效。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《Policy Pre-training for Autonomous Driving via Self-supervised Geometric Modeling》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2301.01006</li><li>PPGeo 摘要明确写明 YouTube driving videos、two consecutive frames 与 future ego-motion；原文锚点：https://arxiv.org/abs/2301.01006</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2301.01006" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2301.01006</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-12-31 · arXiv 2501.00574</span>
+    <h1>VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling</h1>
+    <p class="detail-meta">Li, Xinhao、Wang, Yi、Yu, Jiashuo、Zeng, Xiangyu、Zhu, Yuhan、Huang, Haian、Gao, Jianfei、Li, Kunchang、He, Yinan、Wang, Chenting、Qiao, Yu、Wang, Yali、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip lab">OpenGVLab</span><span class="chip">流式与在线长视频理解</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2501.00574" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenGVLab/VideoChat-Flash" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenGVLab/VideoChat-Flash" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Long-context video modeling is critical for multimodal large language models (MLLMs), enabling them to process movies, online video streams, and so on. Despite its advances, handling long videos remains challenging due to the difficulty in efficiently understanding the extremely long video context. This paper aims to address this issue from aspects of model architecture, training data, training strategy and evaluation benchmark. First, we propose a novel Hierarchical video token Compression (HiCo) method, which leverages visual redundancy in long videos to compress long video context from Clip-level to Video-level, reducing the computation significantly while preserving essential details, achieving an extreme compression ratio of approximately 1/50 with almost no performance loss. Second, we introduce a multi-stage short-to-long learning scheme, a large-scale dataset of real-world long videos named LongVid, and a challenging ``Multi-Hop Needle-In-A-Video-Haystack&#x27;&#x27; benchmark. Finally, we build a powerful video MLLM named VideoChat-Flash, which shows a leading performance on both mainstream long and short video benchmarks at the 2B and 7B model scale. It first gets 99.1% accuracy over 10,000 frames in NIAH among open-source models.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文；《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/VideoChat-Flash 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。本卡 date=2024-12-31 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》聚焦流式与在线长视频理解：输入侧是持续到达的视频流和历史上下文，目标是在受限延迟/内存下输出在线理解结果。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》以 VideoChat-Flash 为核心方案，将视觉令牌压缩、大语言模型工具编排、视觉语言模型用于流式与在线长视频理解。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》采用视觉令牌压缩、大语言模型工具编排、视觉语言模型处理持续到达的视频流和历史上下文，其输出任务是在受限延迟/内存下输出在线理解结果。摘要能确认的技术组合为视觉令牌压缩、大语言模型工具编排、视觉语言模型；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/OpenGVLab/VideoChat-Flash。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》摘要报告了定量实验，涉及指标 accuracy；摘要中的关键数值为 99.1%、10。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li><li>《VideoChat-Flash: Hierarchical Compression for Long-Context Video Modeling》由 OpenGVLab 官方项目仓库 https://github.com/OpenGVLab/VideoChat-Flash 发布或维护，仓库与该 arXiv 论文在题名/引用信息上对应。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2501.00574" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2501.00574</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li><li><a href="https://github.com/OpenGVLab/VideoChat-Flash" target="_blank" rel="noopener noreferrer">https://github.com/OpenGVLab/VideoChat-Flash</a></li></ul></section>
+</main>
+
+</body>
+</html>

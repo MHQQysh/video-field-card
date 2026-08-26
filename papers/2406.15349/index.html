@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-06-22 · arXiv 2406.15349</span>
+    <h1>NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking</h1>
+    <p class="detail-meta">Daniel Dauner、Marcel Hallgarten、Tianyu Li、Xinshuo Weng、Zhiyu Huang、Zetong Yang、Hongyang Li、Igor Gilitschenski、Boris Ivanovic、Marco Pavone、Andreas Geiger、Kashyap Chitta</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2406.15349" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/autonomousvision/navsim" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Benchmarking vision-based driving policies is challenging. On one hand, open-loop evaluation with real data is easy, but these results do not reflect closed-loop performance. On the other, closed-loop evaluation is possible in simulation, but is hard to scale due to its significant computational demands. Further, the simulators available today exhibit a large domain gap to real data. This has resulted in an inability to draw clear conclusions from the rapidly growing body of research on end-to-end autonomous driving. In this paper, we present NAVSIM, a middle ground between these evaluation paradigms, where we use large datasets in combination with a non-reactive simulator to enable large-scale real-world benchmarking. Specifically, we gather simulation-based metrics, such as progress and time to collision, by unrolling bird&#x27;s eye view abstractions of the test scenes for a short simulation horizon. Our simulation is non-reactive, i.e., the evaluated policy and environment do not influence each other. As we demonstrate empirically, this decoupling allows open-loop metric computation while being better aligned with closed-loop evaluations than traditional displacement errors. NAVSIM enabled a new competition held at CVPR 2024, where 143 teams submitted 463 entries, resulting in several new insights. On a large set of challenging scenarios, we observe that simple methods with moderate compute requirements such as TransFuser can match recent large-scale end-to-end driving architectures such as UniAD. Our modular framework can potentially be extended with new datasets, data curation strategies, and metrics, and will be continually maintained to host future challenges. Our code is available at https://github.com/autonomousvision/navsim.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2406.15349；Autonomous Vision 官方 publications 页面以《NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2406.15349</p></section><section class="analysis-section"><h2>论文概述</h2><p>《NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking》研究 时序自动驾驶与规划、数据集、基准与综述，重点考察连续传感器信息如何支持驾驶感知、预测、规划或闭环评价。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>相较独立处理每帧或每种模态，该工作以 鸟瞰图表示、世界模型/仿真 建立可传播的动态状态，贡献落在任务机制而非单纯扩大模型。</p></section><section class="analysis-section"><h2>方法描述</h2><p>该方案利用 鸟瞰图表示、世界模型/仿真 把连续观察压缩成任务状态，随后执行分类、回归、渲染、规划或语言生成；具体超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 NAVSIM。 已核验的项目或代码地址：https://github.com/autonomousvision/navsim</p></section><section class="analysis-section"><h2>评估与结果</h2><p>评估围绕《NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking》的数据覆盖、标注协议和代表基线展开，重点是基准能否区分不同方法。 论文给出可复用数据/评价协议和首批基线；《NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking》摘要未列全分数，具体值应查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2406.15349</li><li>Autonomous Vision 官方 publications 页面以《NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2406.15349</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2406.15349" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2406.15349</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/autonomousvision/navsim" target="_blank" rel="noopener noreferrer">https://github.com/autonomousvision/navsim</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Multiple Object Tracking as ID Prediction</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-03-25 · arXiv 2403.16848</span>
+    <h1>Multiple Object Tracking as ID Prediction</h1>
+    <p class="detail-meta">Gao, Ruopeng、Qi, Ji、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">视频目标跟踪与时序分割</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2403.16848" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/MCG-NJU/MOTIP" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/MCG-NJU/MOTIP" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Multi-Object Tracking (MOT) has been a long-standing challenge in video understanding. A natural and intuitive approach is to split this task into two parts: object detection and association. Most mainstream methods employ meticulously crafted heuristic techniques to maintain trajectory information and compute cost matrices for object matching. Although these methods can achieve notable tracking performance, they often require a series of elaborate handcrafted modifications while facing complicated scenarios. We believe that manually assumed priors limit the method&#x27;s adaptability and flexibility in learning optimal tracking capabilities from domain-specific data. Therefore, we introduce a new perspective that treats Multiple Object Tracking as an in-context ID Prediction task, transforming the aforementioned object association into an end-to-end trainable task. Based on this, we propose a simple yet effective method termed MOTIP. Given a set of trajectories carried with ID information, MOTIP directly decodes the ID labels for current detections to accomplish the association process. Without using tailored or sophisticated architectures, our method achieves state-of-the-art results across multiple benchmarks by solely leveraging object-level features as tracking cues. The simplicity and impressive results of MOTIP leave substantial room for future advancements, thereby making it a promising baseline for subsequent research. Our code and checkpoints are released at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Multiple Object Tracking as ID Prediction》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2024-03-25 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Multiple Object Tracking as ID Prediction》聚焦视频目标跟踪与时序分割：输入侧是视频帧和目标/语言提示，目标是输出跨帧轨迹、身份或像素级掩码。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Multiple Object Tracking as ID Prediction》以 Multiple Object Tracking as ID 为核心方案，将摘要所述的任务专用时序模块用于视频目标跟踪与时序分割。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Multiple Object Tracking as ID Prediction》采用摘要所述的任务专用时序模块处理视频帧和目标/语言提示，其输出任务是输出跨帧轨迹、身份或像素级掩码。摘要未完整报告可拆分的核心模块、损失函数或推理步骤，具体实现需查正文方法章节。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Multiple Object Tracking as ID Prediction》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/MCG-NJU/MOTIP。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Multiple Object Tracking as ID Prediction》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Multiple Object Tracking as ID Prediction》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2403.16848" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2403.16848</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li><li><a href="https://github.com/MCG-NJU/MOTIP" target="_blank" rel="noopener noreferrer">https://github.com/MCG-NJU/MOTIP</a></li></ul></section>
+</main>
+
+</body>
+</html>

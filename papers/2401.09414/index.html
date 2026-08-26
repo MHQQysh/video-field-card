@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Vlogger: Make Your Dream A Vlog</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-01-17 · arXiv 2401.09414</span>
+    <h1>Vlogger: Make Your Dream A Vlog</h1>
+    <p class="detail-meta">Zhuang, Shaobin、Li, Kunchang、Chen, Xinyuan、Wang, Yaohui、Liu, Ziwei、Qiao, Yu、Wang, Yali</p>
+    <div class="chips"><span class="chip lab">MMLab@NTU / S-Lab</span><span class="chip">长视频生成</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2401.09414" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/Vchitect/Vlogger" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>In this work, we present Vlogger, a generic AI system for generating a minute-level video blog (i.e., vlog) of user descriptions. Different from short videos with a few seconds, vlog often contains a complex storyline with diversified scenes, which is challenging for most existing video generation approaches. To break through this bottleneck, our Vlogger smartly leverages Large Language Model (LLM) as Director and decomposes a long video generation task of vlog into four key stages, where we invoke various foundation models to play the critical roles of vlog professionals, including (1) Script, (2) Actor, (3) ShowMaker, and (4) Voicer. With such a design of mimicking human beings, our Vlogger can generate vlogs through explainable cooperation of top-down planning and bottom-up shooting. Moreover, we introduce a novel video diffusion model, ShowMaker, which serves as a videographer in our Vlogger for generating the video snippet of each shooting scene. By incorporating Script and Actor attentively as textual and visual prompts, it can effectively enhance spatial-temporal coherence in the snippet. Besides, we design a concise mixed training paradigm for ShowMaker, boosting its capacity for both T2V generation and prediction. Finally, the extensive experiments show that our method achieves state-of-the-art performance on zero-shot T2V generation and prediction tasks. More importantly, Vlogger can generate over 5-minute vlogs from open-world descriptions, without loss of video coherence on script and actor. The code and model is all available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Vlogger: Make Your Dream A Vlog：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@NTU / S-Lab；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>Vlogger: Make Your Dream A Vlog：在这项工作中，我们提出了 Vlogger，这是一种通用人工智能系统，用于生成用户描述的分钟级视频博客（即 vlog）。与几秒钟的短视频不同，vlog往往包含复杂的故事情节和多样化的场景，这对大多数现有的视频生成方法来说是一个挑战。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Vlogger: Make Your Dream A Vlog：提出分钟级 vlog 生成系统 Vlogger，以 LLM Director 把长视频制作拆成 Script、Actor、ShowMaker、Voicer 四个角色阶段，并引入专用视频扩散模型 ShowMaker。</p></section><section class="analysis-section"><h2>方法描述</h2><p>Vlogger: Make Your Dream A Vlog：LLM Director 负责自上而下规划，四个基础模型角色执行自下而上拍摄；ShowMaker 将 Script 与 Actor 分别作为文本和视觉提示生成每个镜头片段，并通过混合训练同时学习文本到视频生成和视频预测。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>Vlogger: Make Your Dream A Vlog：摘要说明代码与模型均已公开，官方代码入口为 https://github.com/Vchitect/Vlogger；摘要未报告新数据集名称或规模。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Vlogger: Make Your Dream A Vlog：ShowMaker 在零样本文本到视频生成和预测任务达到摘要所称的先进性能；完整系统可从开放域描述生成超过 5 分钟的 vlog，并保持脚本与演员一致性。摘要未报告具体基准分数，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Vchitect 官方仓库 Vlogger 直接收录该论文；论文作者/项目页包含 S-Lab, Nanyang Technological University 的成员或单位署名。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2401.09414" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2401.09414</a></li><li><a href="https://github.com/Vchitect/Vlogger" target="_blank" rel="noopener noreferrer">https://github.com/Vchitect/Vlogger</a></li></ul></section>
+</main>
+
+</body>
+</html>

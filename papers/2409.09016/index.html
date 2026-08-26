@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Closed-Loop Visuomotor Control with Generative Expectation for Robotic Manipulation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-09-14 · arXiv 2409.09016</span>
+    <h1>Closed-Loop Visuomotor Control with Generative Expectation for Robotic Manipulation</h1>
+    <p class="detail-meta">Qingwen Bu、Jia Zeng、Li Chen、Yanchao Yang、Guyue Zhou、Junchi Yan、Ping Luo、Heming Cui、Yi Ma、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">视频生成与动画</span><span class="chip">数据集、基准与综述</span><span class="chip">机器人视频与视觉控制</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2409.09016" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenDriveLab/CLOVER" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenDriveLab/CLOVER" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Despite significant progress in robotics and embodied AI in recent years, deploying robots for long-horizon tasks remains a great challenge. Majority of prior arts adhere to an open-loop philosophy and lack real-time feedback, leading to error accumulation and undesirable robustness. A handful of approaches have endeavored to establish feedback mechanisms leveraging pixel-level differences or pre-trained visual representations, yet their efficacy and adaptability have been found to be constrained. Inspired by classic closed-loop control systems, we propose CLOVER, a closed-loop visuomotor control framework that incorporates feedback mechanisms to improve adaptive robotic control. CLOVER consists of a text-conditioned video diffusion model for generating visual plans as reference inputs, a measurable embedding space for accurate error quantification, and a feedback-driven controller that refines actions from feedback and initiates replans as needed. Our framework exhibits notable advancement in real-world robotic tasks and achieves state-of-the-art on CALVIN benchmark, improving by 8% over previous open-loop counterparts. Code and checkpoints are maintained at https://github.com/OpenDriveLab/CLOVER.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《Closed-Loop Visuomotor Control with Generative Expectation for Robotic Manipulation》收录本成果：https://github.com/OpenDriveLab/CLOVER；论文级 arXiv 锚点：https://arxiv.org/abs/2409.09016</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Closed-Loop Visuomotor Control with Generative Expectation for Robotic Manipulation》从视频或连续第一视角观测中学习行为过程，目标是把视觉经验转化为可迁移的机器人动作。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>CLOVER 把生成模型给出的预期视觉结果纳入反馈回路，让机器人在长程操作中持续比较实际观察与预期，而非一次性执行开环动作。</p></section><section class="analysis-section"><h2>方法描述</h2><p>策略执行一步后获取新画面，生成式期望模块预测理想进展，二者差异形成反馈并修正后续动作；循环重复直到任务完成。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 已核验的项目或代码地址：https://github.com/OpenDriveLab/CLOVER</p></section><section class="analysis-section"><h2>评估与结果</h2><p>CLOVER 在 CALVIN 上达到当时最佳结果，比开环方案提高 8%，并在多项真机操作中验证闭环反馈收益。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《Closed-Loop Visuomotor Control with Generative Expectation for Robotic Manipulation》收录本成果：https://github.com/OpenDriveLab/CLOVER；论文级 arXiv 锚点：https://arxiv.org/abs/2409.09016</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2409.09016" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2409.09016</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li><li><a href="https://github.com/OpenDriveLab/CLOVER" target="_blank" rel="noopener noreferrer">https://github.com/OpenDriveLab/CLOVER</a></li></ul></section>
+</main>
+
+</body>
+</html>

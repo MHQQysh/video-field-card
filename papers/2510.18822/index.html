@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>SAM 2++: Tracking Anything at Any Granularity</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-10-21 · arXiv 2510.18822</span>
+    <h1>SAM 2++: Tracking Anything at Any Granularity</h1>
+    <p class="detail-meta">Zhang, Jiaming、Liang, Cheng、Yang, Yichun、Zeng, Chenkai、Cui, Yutao、Zhang, Xinwen、Zhou, Xin、Ma, Kai、Wu, Gangshan、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">视频目标跟踪与时序分割</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2510.18822" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Due to the varying granularity of target states across different tasks, most existing trackers are tailored to a single task, which specificity limits their generalization, preventing them from effectively utilizing multi-task training data and leading to redundancy in both model design and parameters. Although recent unified vision models share partial architectures across tasks, they usually retain task-specific interfaces and overlook the common tracking principle behind different granularities, leaving a gap for truly unified video tracking. To unify video tracking tasks, we present SAM 2++, a unified framework that can handle target states at different granularities, including masks, boxes, and points, through an integrated design of prompt encoding, output decoding, and memory representation. First, to handle different target granularities, we design task-specific prompts that map diverse task inputs into general prompt embeddings, together with a Unified Decoder that produces task results in a common output form without redesigning the overall pipeline. Next, to satisfy memory matching, the core operation of tracking, we introduce a task-adaptive memory mechanism that unifies memory across different granularities while preserving their distinct state semantics, preventing full parameter sharing from causing interference across granularities. Finally, we introduce Tracking-Any-Granularity, the first large and diverse video tracking dataset with rich annotations at three granularities. It is constructed through a customized data engine with phased manual annotation and model-assisted completion, providing a comprehensive resource for training, benchmarking, and analyzing unified tracking models. Comprehensive experiments confirm that SAM 2++ sets a new state of the art across diverse tracking tasks at different granularities, establishing a unified and robust tracking framework.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《SAM 2++: Tracking Anything at Any Granularity》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2025-10-21 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《SAM 2++: Tracking Anything at Any Granularity》聚焦视频目标跟踪与时序分割：输入侧是视频帧和目标/语言提示，目标是输出跨帧轨迹、身份或像素级掩码。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《SAM 2++: Tracking Anything at Any Granularity》以 SAM 2++ 为核心方案，将提示学习、显式记忆机制用于视频目标跟踪与时序分割。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《SAM 2++: Tracking Anything at Any Granularity》采用提示学习、显式记忆机制处理视频帧和目标/语言提示，其输出任务是输出跨帧轨迹、身份或像素级掩码。摘要能确认的技术组合为提示学习、显式记忆机制；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《SAM 2++: Tracking Anything at Any Granularity》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《SAM 2++: Tracking Anything at Any Granularity》摘要报告了定量实验，涉及指标 mAP。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《SAM 2++: Tracking Anything at Any Granularity》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2510.18822" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2510.18822</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

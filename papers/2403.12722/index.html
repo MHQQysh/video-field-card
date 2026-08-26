@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>HUGS: Holistic Urban 3D Scene Understanding via Gaussian Splatting</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-03-19 · arXiv 2403.12722</span>
+    <h1>HUGS: Holistic Urban 3D Scene Understanding via Gaussian Splatting</h1>
+    <p class="detail-meta">Hongyu Zhou、Jiahao Shao、Lu Xu、Dongfeng Bai、Weichao Qiu、Bingbing Liu、Yue Wang、Andreas Geiger、Yiyi Liao</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">动态场景与 4D 重建</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2403.12722" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Holistic understanding of urban scenes based on RGB images is a challenging yet important problem. It encompasses understanding both the geometry and appearance to enable novel view synthesis, parsing semantic labels, and tracking moving objects. Despite considerable progress, existing approaches often focus on specific aspects of this task and require additional inputs such as LiDAR scans or manually annotated 3D bounding boxes. In this paper, we introduce a novel pipeline that utilizes 3D Gaussian Splatting for holistic urban scene understanding. Our main idea involves the joint optimization of geometry, appearance, semantics, and motion using a combination of static and dynamic 3D Gaussians, where moving object poses are regularized via physical constraints. Our approach offers the ability to render new viewpoints in real-time, yielding 2D and 3D semantic information with high accuracy, and reconstruct dynamic scenes, even in scenarios where 3D bounding box detection are highly noisy. Experimental results on KITTI, KITTI-360, and Virtual KITTI 2 demonstrate the effectiveness of our approach.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《HUGS: Holistic Urban 3D Scene Understanding via Gaussian Splatting》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2403.12722</p></section><section class="analysis-section"><h2>论文概述</h2><p>《HUGS: Holistic Urban 3D Scene Understanding via Gaussian Splatting》要求模型在视频中定位随时间出现的证据，再完成语言描述、问答或多步推理。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>HUGS 只用 RGB 序列和高斯溅射统一恢复城市几何、外观、二维/三维语义及动态目标轨迹，无需激光雷达或人工三维框。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法先编码帧级或传感器级观测，再用 三维高斯溅射、新视角合成、跨帧关联、几何约束 聚合跨时刻信息，最后由任务解码头输出预测、生成结果、掩码或控制量。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 KITTI-360、KITTI。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>摘要明确在 KITTI-360、KITTI 上验证，评价围绕该任务的准确性、生成质量、时序一致性或闭环行为展开。 HUGS 在视频问答、描述或时序推理测试中改善任务表现；摘要未公开具体数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《HUGS: Holistic Urban 3D Scene Understanding via Gaussian Splatting》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2403.12722</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2403.12722" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2403.12722</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Dynamic Sampling Networks for Efficient Action Recognition in Videos</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2020-06-28 · arXiv 2006.15560</span>
+    <h1>Dynamic Sampling Networks for Efficient Action Recognition in Videos</h1>
+    <p class="detail-meta">Zheng, Yin-Dong、Liu, Zhaoyang、Lu, Tong、Wang, Limin</p>
+    <div class="chips"><span class="chip lab">NJU MCG</span><span class="chip">动作识别、检测与时间定位</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2006.15560" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>The existing action recognition methods are mainly based on clip-level classifiers such as two-stream CNNs or 3D CNNs, which are trained from the randomly selected clips and applied to densely sampled clips during testing. However, this standard setting might be suboptimal for training classifiers and also requires huge computational overhead when deployed in practice. To address these issues, we propose a new framework for action recognition in videos, called {\em Dynamic Sampling Networks} (DSN), by designing a dynamic sampling module to improve the discriminative power of learned clip-level classifiers and as well increase the inference efficiency during testing. Specifically, DSN is composed of a sampling module and a classification module, whose objective is to learn a sampling policy to on-the-fly select which clips to keep and train a clip-level classifier to perform action recognition based on these selected clips, respectively. In particular, given an input video, we train an observation network in an associative reinforcement learning setting to maximize the rewards of the selected clips with a correct prediction. We perform extensive experiments to study different aspects of the DSN framework on four action recognition datasets: UCF101, HMDB51, THUMOS14, and ActivityNet v1.3. The experimental results demonstrate that DSN is able to greatly improve the inference efficiency by only using less than half of the clips, which can still obtain a slightly better or comparable recognition accuracy to the state-of-the-art approaches.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Dynamic Sampling Networks for Efficient Action Recognition in Videos》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。本卡 date=2020-06-28 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Dynamic Sampling Networks for Efficient Action Recognition in Videos》聚焦动作识别、检测与时间定位：输入侧是裁剪或未裁剪视频，目标是识别动作类别并定位其时间或空间边界。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Dynamic Sampling Networks for Efficient Action Recognition in Videos》以 Dynamic Sampling Networks for Efficient 为核心方案，将强化学习用于动作识别、检测与时间定位。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Dynamic Sampling Networks for Efficient Action Recognition in Videos》采用强化学习处理裁剪或未裁剪视频，其输出任务是识别动作类别并定位其时间或空间边界。摘要只明确到上述主要技术路线，其余网络结构、损失和训练细节需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Dynamic Sampling Networks for Efficient Action Recognition in Videos》摘要明确点名的数据集或评测集合包括：ActivityNet、THUMOS14、UCF101、HMDB51。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Dynamic Sampling Networks for Efficient Action Recognition in Videos》摘要报告了定量实验，涉及指标 accuracy。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Dynamic Sampling Networks for Efficient Action Recognition in Videos》作者表中的 Wang, Limin 与 NJU MCG 对应，且 MCG@NJU 官方 Publication 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2006.15560" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2006.15560</a></li><li><a href="https://mcg.nju.edu.cn/en/publication.html" target="_blank" rel="noopener noreferrer">https://mcg.nju.edu.cn/en/publication.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

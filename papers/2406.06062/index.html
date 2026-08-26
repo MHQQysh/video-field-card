@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>ProcessPainter: Learn Painting Process from Sequence Data</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-06-10 · arXiv 2406.06062</span>
+    <h1>ProcessPainter: Learn Painting Process from Sequence Data</h1>
+    <p class="detail-meta">Song, Yiren、Huang, Shijie、Yao, Chen、Ye, Xiaojun、Ci, Hai、Liu, Jiaming、Zhang, Yuxuan、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">绘画过程视频生成</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2406.06062" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/nicolaus-huang/ProcessPainter" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/nicolaus-huang/ProcessPainter" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>The painting process of artists is inherently stepwise and varies significantly among different painters and styles. Generating detailed, step-by-step painting processes is essential for art education and research, yet remains largely underexplored. Traditional stroke-based rendering methods break down images into sequences of brushstrokes, yet they fall short of replicating the authentic processes of artists, with limitations confined to basic brushstroke modifications. Text-to-image models utilizing diffusion processes generate images through iterative denoising, also diverge substantially from artists&#x27; painting process. To address these challenges, we introduce ProcessPainter, a text-to-video model that is initially pre-trained on synthetic data and subsequently fine-tuned with a select set of artists&#x27; painting sequences using the LoRA model. This approach successfully generates painting processes from text prompts for the first time. Furthermore, we introduce an Artwork Replication Network capable of accepting arbitrary-frame input, which facilitates the controlled generation of painting processes, decomposing images into painting sequences, and completing semi-finished artworks. This paper offers new perspectives and tools for advancing art education and image generation technology.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《ProcessPainter: Learn Painting Process from Sequence Data》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/nicolaus-huang/ProcessPainter。本卡 date=2024-06-10 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《ProcessPainter: Learn Painting Process from Sequence Data》聚焦绘画过程视频生成：输入侧是文本、参考图像或半成品绘画序列，目标是生成时间有序且可控的绘画过程视频。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《ProcessPainter: Learn Painting Process from Sequence Data》以 ProcessPainter 为核心方案，将扩散建模、低秩适配、提示学习用于绘画过程视频生成。其贡献按摘要中明确描述的模型、数据流程和任务设定概括，未在摘要出现的能力不作外推。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《ProcessPainter: Learn Painting Process from Sequence Data》采用扩散建模、低秩适配、提示学习处理文本、参考图像或半成品绘画序列，其输出任务是生成时间有序且可控的绘画过程视频。摘要只支持上述技术路线；未报告的模块细节、损失权重和训练超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《ProcessPainter: Learn Painting Process from Sequence Data》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/nicolaus-huang/ProcessPainter。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《ProcessPainter: Learn Painting Process from Sequence Data》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《ProcessPainter: Learn Painting Process from Sequence Data》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/nicolaus-huang/ProcessPainter。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2406.06062" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2406.06062</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li><li><a href="https://github.com/nicolaus-huang/ProcessPainter" target="_blank" rel="noopener noreferrer">https://github.com/nicolaus-huang/ProcessPainter</a></li></ul></section>
+</main>
+
+</body>
+</html>

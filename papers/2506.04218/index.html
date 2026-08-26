@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Pseudo-Simulation for Autonomous Driving</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-06-05 · arXiv 2506.04218</span>
+    <h1>Pseudo-Simulation for Autonomous Driving</h1>
+    <p class="detail-meta">Wei Cao、Marcel Hallgarten、Tianyu Li、Daniel Dauner、Xunjiang Gu、Caojun Wang、Yakov Miron、Marco Aiello、Hongyang Li、Igor Gilitschenski、Boris Ivanovic、Marco Pavone、Andreas Geiger、Kashyap Chitta</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">驾驶世界模型与未来预测</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2506.04218" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/autonomousvision/navsim" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Existing evaluation paradigms for Autonomous Vehicles (AVs) face critical limitations. Real-world evaluation is often challenging due to safety concerns and a lack of reproducibility, whereas closed-loop simulation can face insufficient realism or high computational costs. Open-loop evaluation, while being efficient and data-driven, relies on metrics that generally overlook compounding errors. In this paper, we propose pseudo-simulation, a novel paradigm that addresses these limitations. Pseudo-simulation operates on real datasets, similar to open-loop evaluation, but augments them with synthetic observations generated prior to evaluation using 3D Gaussian Splatting. Our key idea is to approximate potential future states the AV might encounter by generating a diverse set of observations that vary in position, heading, and speed. Our method then assigns a higher importance to synthetic observations that best match the AV&#x27;s likely behavior using a novel proximity-based weighting scheme. This enables evaluating error recovery and the mitigation of causal confusion, as in closed-loop benchmarks, without requiring sequential interactive simulation. We show that pseudo-simulation is better correlated with closed-loop simulations ($R^2=0.8$) than the best existing open-loop approach ($R^2=0.7$). We also establish a public leaderboard for the community to benchmark new methodologies with pseudo-simulation. Our code is available at https://github.com/autonomousvision/navsim.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Pseudo-Simulation for Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2506.04218</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Pseudo-Simulation for Autonomous Driving》围绕驾驶世界建模展开，利用连续视觉生成或神经仿真刻画自车动作导致的未来场景变化。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Pseudo-Simulation 用预生成的合成观察扩展真实驾驶日志，使评测仍可复现、数据驱动，同时能暴露开环指标看不到的误差累积。</p></section><section class="analysis-section"><h2>方法描述</h2><p>评测前根据候选自车行为生成对应视觉观察，再让规划策略在这些伪未来观察上滚动执行；因此无需实时高成本仿真也能近似闭环反馈。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 NAVSIM。 已核验的项目或代码地址：https://github.com/autonomousvision/navsim</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Pseudo-Simulation 与真实闭环结果的相关性达到 R²=0.8，高于最佳开环指标的 R²=0.7；论文同时建立 public leaderboard 供不同驾驶策略提交比较。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Pseudo-Simulation for Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2506.04218</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2506.04218" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2506.04218</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/autonomousvision/navsim" target="_blank" rel="noopener noreferrer">https://github.com/autonomousvision/navsim</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2022-05-31 · arXiv 2205.15723</span>
+    <h1>DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes</h1>
+    <p class="detail-meta">Liu, Jia-Wei、Cao, Yan-Pei、Mao, Weijia、Zhang, Wenqiao、Zhang, David Junhao、Keppo, Jussi、Shan, Ying、Qie, Xiaohu、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">动态场景重建与新视角合成</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2205.15723" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Modeling dynamic scenes is important for many applications such as virtual reality and telepresence. Despite achieving unprecedented fidelity for novel view synthesis in dynamic scenes, existing methods based on Neural Radiance Fields (NeRF) suffer from slow convergence (i.e., model training time measured in days). In this paper, we present DeVRF, a novel representation to accelerate learning dynamic radiance fields. The core of DeVRF is to model both the 3D canonical space and 4D deformation field of a dynamic, non-rigid scene with explicit and discrete voxel-based representations. However, it is quite challenging to train such a representation which has a large number of model parameters, often resulting in overfitting issues. To overcome this challenge, we devise a novel static-to-dynamic learning paradigm together with a new data capture setup that is convenient to deploy in practice. This paradigm unlocks efficient learning of deformable radiance fields via utilizing the 3D volumetric canonical space learnt from multi-view static images to ease the learning of 4D voxel deformation field with only few-view dynamic sequences. To further improve the efficiency of our DeVRF and its synthesized novel view&#x27;s quality, we conduct thorough explorations and identify a set of strategies. We evaluate DeVRF on both synthetic and real-world dynamic scenes with different types of deformation. Experiments demonstrate that DeVRF achieves two orders of magnitude speedup (100x faster) with on-par high-fidelity results compared to the previous state-of-the-art approaches. The code and dataset will be released in this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2022-05-31 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes》聚焦动态场景重建与新视角合成：输入侧是单目或多相机时序视频，目标是重建动态三维场景、形变或可渲染表示。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes》以 DeVRF 为核心方案，将神经辐射场用于动态场景重建与新视角合成。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes》采用神经辐射场处理单目或多相机时序视频，其输出任务是重建动态三维场景、形变或可渲染表示。摘要只明确到上述主要技术路线，其余网络结构、损失和训练细节需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes》摘要报告了定量实验；摘要中的关键数值为 100x。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《DeVRF: Fast Deformable Voxel Radiance Fields for Dynamic Scenes》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2205.15723" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2205.15723</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

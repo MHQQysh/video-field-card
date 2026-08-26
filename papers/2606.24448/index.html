@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-06-23 · arXiv 2606.24448</span>
+    <h1>Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos</h1>
+    <p class="detail-meta">Chen, Danze、Chen, Yanzhe、Huang, Qiming、Cao, Zhijun、Gao, Chen、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频生成、动画与可控编辑</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2606.24448" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Vision-Language-Action (VLA) models require large-scale video-action pairs, yet real teleoperation remains scarce. While generated robot videos offer a scalable alternative, existing methods treat them as real robot data by recovering pseudo-actions from synthesized pixels. We argue that deriving low-level control from generated visuals is a mismatched abstraction. A video captures only \emph{geometry}: the spatial trajectory representing the \emph{where} of a task. A real demonstration captures \emph{control}: the exact motor commands representing the \emph{how}. Human-to-robot video generation preserves these unequally: the visible geometry survives the generation process, while the underlying control signals are lost. This \textbf{Asymmetric Preservation Principle} dictates a clean rule: this surviving geometry should solely supervise visual perception, leaving control to real demonstrations. Following this principle, we propose \textbf{GRA} (\textbf{G}eometry-guided \textbf{R}epresentation \textbf{A}lignment), which extracts the geometric content as future 2D end-effector waypoints, computed from the source human video through pose estimation, retargeting, simulation, and calibrated projection, and routes them to the VLA vision backbone via an auxiliary 2D head. The action head is trained on real demonstrations only. During fine-tuning, the waypoint loss persists as a \textbf{spatial representation anchor} that prevents the backbone from losing its geometric grounding. On real-robot tasks, GRA outperforms pseudo-action baselines under matched data budgets and narrows the gap to policies trained with substantially more real demonstrations, suggesting that correctly routed geometry bridges generated videos to robot policies more reliably than recovered actions.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2026-06-23 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos》聚焦视频生成、动画与可控编辑：输入侧是文本、图像、轨迹或参考视频条件，目标是生成或编辑具有时间一致性的视频序列。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos》以 Supervise What Survives 为核心方案，将摘要所述的任务专用时序模块用于视频生成、动画与可控编辑。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos》采用摘要所述的任务专用时序模块处理文本、图像、轨迹或参考视频条件，其输出任务是生成或编辑具有时间一致性的视频序列。摘要未完整报告可拆分的核心模块、损失函数或推理步骤，具体实现需查正文方法章节。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Supervise What Survives: Geometry-Guided VLA Adaptation from Synthetic Robot Videos》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2606.24448" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2606.24448</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

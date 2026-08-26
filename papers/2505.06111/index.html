@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>UniVLA: Learning to Act Anywhere with Task-centric Latent Actions</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-05-09 · arXiv 2505.06111</span>
+    <h1>UniVLA: Learning to Act Anywhere with Task-centric Latent Actions</h1>
+    <p class="detail-meta">Qingwen Bu、Yanting Yang、Jisong Cai、Shenyuan Gao、Guanghui Ren、Maoqing Yao、Ping Luo、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">机器人视频与视觉控制</span><span class="chip">视频表征学习</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2505.06111" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenDriveLab/UniVLA" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/OpenDriveLab/UniVLA" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>A generalist robot should perform effectively across various environments. However, most existing approaches heavily rely on scaling action-annotated data to enhance their capabilities. Consequently, they are often limited to single physical specification and struggle to learn transferable knowledge across different embodiments and environments. To confront these limitations, we propose UniVLA, a new framework for learning cross-embodiment vision-language-action (VLA) policies. Our key innovation is to derive task-centric action representations from videos with a latent action model. This enables us to exploit extensive data across a wide spectrum of embodiments and perspectives. To mitigate the effect of task-irrelevant dynamics, we incorporate language instructions and establish a latent action model within the DINO feature space. Learned from internet-scale videos, the generalist policy can be deployed to various robots through efficient latent action decoding. We obtain state-of-the-art results across multiple manipulation and navigation benchmarks, as well as real-robot deployments. UniVLA achieves superior performance over OpenVLA with less than 1/20 of pretraining compute and 1/10 of downstream data. Continuous performance improvements are observed as heterogeneous data, even including human videos, are incorporated into the training pipeline. The results underscore UniVLA&#x27;s potential to facilitate scalable and efficient robot policy learning.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《UniVLA: Learning to Act Anywhere with Task-centric Latent Actions》收录本成果：https://github.com/OpenDriveLab/UniVLA；论文级 arXiv 锚点：https://arxiv.org/abs/2505.06111；OpenDriveLab/UniVLA 官方仓库明确写明从 cross-embodiment videos 提取 latent actions，并使用 Ego4D human videos：https://github.com/OpenDriveLab/UniVLA</p></section><section class="analysis-section"><h2>论文概述</h2><p>《UniVLA: Learning to Act Anywhere with Task-centric Latent Actions》从视频或连续第一视角观测中学习行为过程，目标是把视觉经验转化为可迁移的机器人动作。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>该文将 视觉语言模型、强化学习、潜在动作、跨帧时间建模 引入 机器人视频与视觉控制，使对象、动作、几何或声音的变化可以在多个时刻间保持关联。</p></section><section class="analysis-section"><h2>方法描述</h2><p>模型围绕 视觉语言模型、强化学习、潜在动作、跨帧时间建模 组织数据流，保留对象身份、运动、几何或声音随时间的变化；摘要没有披露的层数与损失权重不作推定。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 已核验的项目或代码地址：https://github.com/OpenDriveLab/UniVLA</p></section><section class="analysis-section"><h2>评估与结果</h2><p>UniVLA 用不到 OpenVLA 预训练算力的 1/20、下游数据的 1/10 即取得更高表现，验证无动作视频潜动作预训练的数据效率。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《UniVLA: Learning to Act Anywhere with Task-centric Latent Actions》收录本成果：https://github.com/OpenDriveLab/UniVLA；论文级 arXiv 锚点：https://arxiv.org/abs/2505.06111</li><li>OpenDriveLab/UniVLA 官方仓库明确写明从 cross-embodiment videos 提取 latent actions，并使用 Ego4D human videos：https://github.com/OpenDriveLab/UniVLA</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2505.06111" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2505.06111</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li><li><a href="https://github.com/OpenDriveLab/UniVLA" target="_blank" rel="noopener noreferrer">https://github.com/OpenDriveLab/UniVLA</a></li></ul></section>
+</main>
+
+</body>
+</html>

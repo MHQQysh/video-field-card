@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2015-12-31 · arXiv 1512.09049</span>
+    <h1>LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing</h1>
+    <p class="detail-meta">Chenliang Xu、Jason J. Corso</p>
+    <div class="chips"><span class="chip lab">Chenliang Xu Group</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/1512.09049" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Supervoxel segmentation has strong potential to be incorporated into early video analysis as superpixel segmentation has in image analysis. However, there are many plausible supervoxel methods and little understanding as to when and where each is most appropriate. Indeed, we are not aware of a single comparative study on supervoxel segmentation. To that end, we study seven supervoxel algorithms, including both off-line and streaming methods, in the context of what we consider to be a good supervoxel: namely, spatiotemporal uniformity, object/region boundary detection, region compression and parsimony. For the evaluation we propose a comprehensive suite of seven quality metrics to measure these desirable supervoxel characteristics. In addition, we evaluate the methods in a supervoxel classification task as a proxy for subsequent high-level uses of the supervoxels in video analysis. We use six existing benchmark video datasets with a variety of content-types and dense human annotations. Our findings have led us to conclusive evidence that the hierarchical graph-based (GBH), segmentation by weighted aggregation (SWA) and temporal superpixels (TSP) methods are the top-performers among the seven methods. They all perform well in terms of segmentation accuracy, but vary in regard to the other desiderata: GBH captures object boundaries best; SWA has the best potential for region compression; and TSP achieves the best undersegmentation error.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/1512.09049；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</p></section><section class="analysis-section"><h2>论文概述</h2><p>《LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing》面向长短不一的视频活动，识别动作主体、步骤顺序、边界或异常，并保留时间结构。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>LIBSVX 在统一库中实现并比较 7 种离线或流式超体素算法，从质量、效率和下游语义保留等维度建立早期视频处理基准。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法先编码帧级或传感器级观测，再用 图结构推理、像素分割、跨帧时间建模 聚合跨时刻信息，最后由任务解码头输出预测、生成结果、掩码或控制量。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing》本身提供或审计视频数据、基准或评价协议；摘要未完整列出所有下载条目与划分。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>评估围绕《LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing》的数据覆盖、标注协议和代表基线展开，重点是基准能否区分不同方法。 论文给出可复用数据/评价协议和首批基线；《LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing》摘要未列全分数，具体值应查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/1512.09049；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/1512.09049" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1512.09049</a></li><li><a href="https://cliangxu.github.io/p/index.html" target="_blank" rel="noopener noreferrer">https://cliangxu.github.io/p/index.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

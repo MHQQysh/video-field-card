@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Hidden Biases of End-to-End Driving Datasets</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-12-13 · arXiv 2412.09602</span>
+    <h1>Hidden Biases of End-to-End Driving Datasets</h1>
+    <p class="detail-meta">Julian Zimmerlin、Jens Beißwenger、Bernhard Jaeger、Andreas Geiger、Kashyap Chitta</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2412.09602" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/autonomousvision/carla_garage" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>End-to-end driving systems have made rapid progress, but have so far not been applied to the challenging new CARLA Leaderboard 2.0. Further, while there is a large body of literature on end-to-end architectures and training strategies, the impact of the training dataset is often overlooked. In this work, we make a first attempt at end-to-end driving for Leaderboard 2.0. Instead of investigating architectures, we systematically analyze the training dataset, leading to new insights: (1) Expert style significantly affects downstream policy performance. (2) In complex data sets, the frames should not be weighted on the basis of simplistic criteria such as class frequencies. (3) Instead, estimating whether a frame changes the target labels compared to previous frames can reduce the size of the dataset without removing important information. By incorporating these findings, our model ranks first and second respectively on the map and sensors tracks of the 2024 CARLA Challenge, and sets a new state-of-the-art on the Bench2Drive test routes. Finally, we uncover a design flaw in the current evaluation metrics and propose a modification for future challenges. Our dataset, code, and pre-trained models are publicly available at https://github.com/autonomousvision/carla_garage.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Hidden Biases of End-to-End Driving Datasets》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2412.09602</p></section><section class="analysis-section"><h2>论文概述</h2><p>分析驾驶数据中当前帧与历史帧对航点标签的真实贡献，检查模型是否借助标签惯性而非视觉变化。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>相较独立处理每帧或每种模态，该工作以 面向任务的端到端表征 建立可传播的动态状态，贡献落在任务机制而非单纯扩大模型。</p></section><section class="analysis-section"><h2>方法描述</h2><p>该方案利用 面向任务的端到端表征 把连续观察压缩成任务状态，随后执行分类、回归、渲染、规划或语言生成；具体超参数需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 CARLA、Bench2Drive。 已核验的项目或代码地址：https://github.com/autonomousvision/carla_garage</p></section><section class="analysis-section"><h2>评估与结果</h2><p>作者在 CARLA Leaderboard 2.0、2024 CARLA Challenge 与 Bench2Drive 中比较当前帧、历史帧和传感器配置的影响。 系统在 2024 CARLA Challenge 的地图赛道和传感器赛道分别取得第一、第二，并在 Bench2Drive 上达到当时最佳水平。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Hidden Biases of End-to-End Driving Datasets》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2412.09602</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2412.09602" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2412.09602</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/autonomousvision/carla_garage" target="_blank" rel="noopener noreferrer">https://github.com/autonomousvision/carla_garage</a></li></ul></section>
+</main>
+
+</body>
+</html>

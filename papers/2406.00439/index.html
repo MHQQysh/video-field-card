@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Learning Manipulation by Predicting Interaction</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-06-01 · arXiv 2406.00439</span>
+    <h1>Learning Manipulation by Predicting Interaction</h1>
+    <p class="detail-meta">Jia Zeng、Qingwen Bu、Bangjun Wang、Wenke Xia、Li Chen、Hao Dong、Haoming Song、Dong Wang、Di Hu、Ping Luo、Heming Cui、Bin Zhao、Xuelong Li、Yu Qiao、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">数据集、基准与综述</span><span class="chip">机器人视频与视觉控制</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2406.00439" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/OpenDriveLab/MPI" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Representation learning approaches for robotic manipulation have boomed in recent years. Due to the scarcity of in-domain robot data, prevailing methodologies tend to leverage large-scale human video datasets to extract generalizable features for visuomotor policy learning. Despite the progress achieved, prior endeavors disregard the interactive dynamics that capture behavior patterns and physical interaction during the manipulation process, resulting in an inadequate understanding of the relationship between objects and the environment. To this end, we propose a general pre-training pipeline that learns Manipulation by Predicting the Interaction (MPI) and enhances the visual representation.Given a pair of keyframes representing the initial and final states, along with language instructions, our algorithm predicts the transition frame and detects the interaction object, respectively. These two learning objectives achieve superior comprehension towards &quot;how-to-interact&quot; and &quot;where-to-interact&quot;. We conduct a comprehensive evaluation of several challenging robotic tasks.The experimental results demonstrate that MPI exhibits remarkable improvement by 10% to 64% compared with previous state-of-the-art in real-world robot platforms as well as simulation environments. Code and checkpoints are publicly shared at https://github.com/OpenDriveLab/MPI.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《Learning Manipulation by Predicting Interaction》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2406.00439</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Learning Manipulation by Predicting Interaction》从视频或连续第一视角观测中学习行为过程，目标是把视觉经验转化为可迁移的机器人动作。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>该文将 强化学习、世界模型/仿真、跨帧时间建模 引入 数据集、基准与综述，使对象、动作、几何或声音的变化可以在多个时刻间保持关联。</p></section><section class="analysis-section"><h2>方法描述</h2><p>模型围绕 强化学习、世界模型/仿真、跨帧时间建模 组织数据流，保留对象身份、运动、几何或声音随时间的变化；摘要没有披露的层数与损失权重不作推定。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 已核验的项目或代码地址：https://github.com/OpenDriveLab/MPI</p></section><section class="analysis-section"><h2>评估与结果</h2><p>MPI 在仿真与真机的多项困难操作任务中，相对先前最佳方法提升 10% 至 64%。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《Learning Manipulation by Predicting Interaction》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2406.00439</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2406.00439" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2406.00439</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li><li><a href="https://github.com/OpenDriveLab/MPI" target="_blank" rel="noopener noreferrer">https://github.com/OpenDriveLab/MPI</a></li></ul></section>
+</main>
+
+</body>
+</html>

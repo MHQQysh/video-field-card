@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Faster Diffusion via Temporal Attention Decomposition</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-04-03 · arXiv 2404.02747</span>
+    <h1>Faster Diffusion via Temporal Attention Decomposition</h1>
+    <p class="detail-meta">Liu, Haozhe、Zhang, Wentian、Xie, Jinheng、Faccio, Francesco、Xu, Mengmeng、Xiang, Tao、Shou, Mike Zheng、Perez-Rua, Juan-Manuel、Schmidhuber, Jürgen</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频中的通用事件与过程理解</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2404.02747" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>We explore the role of attention mechanism during inference in text-conditional diffusion models. Empirical observations suggest that cross-attention outputs converge to a fixed point after several inference steps. The convergence time naturally divides the entire inference process into two phases: an initial phase for planning text-oriented visual semantics, which are then translated into images in a subsequent fidelity-improving phase. Cross-attention is essential in the initial phase but almost irrelevant thereafter. However, self-attention initially plays a minor role but becomes crucial in the second phase. These findings yield a simple and training-free method known as temporally gating the attention (TGATE), which efficiently generates images by caching and reusing attention outputs at scheduled time steps. Experimental results show when widely applied to various existing text-conditional diffusion models, TGATE accelerates these models by 10%-50%. The code of TGATE is available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Faster Diffusion via Temporal Attention Decomposition》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2024-04-03 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Faster Diffusion via Temporal Attention Decomposition》聚焦视频中的通用事件与过程理解：输入侧是长视频或步骤化视觉序列，目标是识别事件边界、步骤结构或过程演化。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Faster Diffusion via Temporal Attention Decomposition》以 Faster Diffusion via Temporal Attention 为核心方案，将扩散建模用于视频中的通用事件与过程理解。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Faster Diffusion via Temporal Attention Decomposition》采用扩散建模处理长视频或步骤化视觉序列，其输出任务是识别事件边界、步骤结构或过程演化。摘要只明确到上述主要技术路线，其余网络结构、损失和训练细节需查正文。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Faster Diffusion via Temporal Attention Decomposition》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Faster Diffusion via Temporal Attention Decomposition》摘要报告了定量实验；摘要中的关键数值为 10%、50%。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Faster Diffusion via Temporal Attention Decomposition》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2404.02747" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2404.02747</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

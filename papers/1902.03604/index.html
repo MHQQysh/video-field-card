@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>MOTS: Multi-Object Tracking and Segmentation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2019-02-10 · arXiv 1902.03604</span>
+    <h1>MOTS: Multi-Object Tracking and Segmentation</h1>
+    <p class="detail-meta">Paul Voigtlaender、Michael Krause、Aljosa Osep、Jonathon Luiten、Berin Balachandar Gnana Sekar、Andreas Geiger、Bastian Leibe</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/1902.03604" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>This paper extends the popular task of multi-object tracking to multi-object tracking and segmentation (MOTS). Towards this goal, we create dense pixel-level annotations for two existing tracking datasets using a semi-automatic annotation procedure. Our new annotations comprise 65,213 pixel masks for 977 distinct objects (cars and pedestrians) in 10,870 video frames. For evaluation, we extend existing multi-object tracking metrics to this new task. Moreover, we propose a new baseline method which jointly addresses detection, tracking, and segmentation with a single convolutional network. We demonstrate the value of our datasets by achieving improvements in performance when training on MOTS annotations. We believe that our datasets, metrics and baseline will become a valuable resource towards developing multi-object tracking approaches that go beyond 2D bounding boxes. We make our annotations, code, and models available at https://www.vision.rwth-aachen.de/page/mots.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《MOTS: Multi-Object Tracking and Segmentation》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/1902.03604</p></section><section class="analysis-section"><h2>论文概述</h2><p>《MOTS: Multi-Object Tracking and Segmentation》聚焦视频底层时空对应，解决跨帧对齐、分割、跟踪、显著性或时空超分辨率。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>该文将 像素分割、跨帧关联、时空卷积、跨帧时间建模 引入 视频分割、跟踪与运动估计，使对象、动作、几何或声音的变化可以在多个时刻间保持关联。</p></section><section class="analysis-section"><h2>方法描述</h2><p>模型围绕 像素分割、跨帧关联、时空卷积、跨帧时间建模 组织数据流，保留对象身份、运动、几何或声音随时间的变化；摘要没有披露的层数与损失权重不作推定。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>MOTS 在既有驾驶序列上新增 10,870 帧的像素级轨迹标注，共 977 个实例和 65,213 个掩码；数据下载信息见论文链接。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>MOTS 新标注包含 10,870 个视频帧、977 个车辆或行人实例以及 65,213 个像素掩码，并用于比较多目标跟踪分割方法。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《MOTS: Multi-Object Tracking and Segmentation》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/1902.03604</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/1902.03604" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1902.03604</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

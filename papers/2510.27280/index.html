@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>FOCUS: Efficient Keyframe Selection for Long Video Understanding</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-10-31 · arXiv 2510.27280</span>
+    <h1>FOCUS: Efficient Keyframe Selection for Long Video Understanding</h1>
+    <p class="detail-meta">Zhu, Zirui、Xu, Hailun、Luo, Yang、Liu, Yong、Sarkar, Kanchan、Yang, Zhenheng、You, Yang</p>
+    <div class="chips"><span class="chip lab">NUS HPC-AI Lab / HPC-AI Tech</span><span class="chip">长视频理解</span><span class="chip">关键帧选择</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2510.27280" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/NUS-HPC-AI-Lab/FOCUS" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Multimodal large language models (MLLMs) represent images and video frames as visual tokens. Scaling from single images to hour-long videos, however, inflates the token budget far beyond practical limits. Popular pipelines therefore either uniformly subsample or apply keyframe selection with retrieval-style scoring using smaller vision-language models. However, these keyframe selection methods still rely on pre-filtering before selection to reduce the inference cost and can miss the most informative moments. We propose FOCUS, Frame-Optimistic Confidence Upper-bound Selection, a training-free, model-agnostic keyframe selection module that selects query-relevant frames under a strict token budget. FOCUS formulates keyframe selection as a combinatorial pure-exploration (CPE) problem in multi-armed bandits: it treats short temporal clips as arms, and uses empirical means and Bernstein confidence radius to identify informative regions while preserving exploration of uncertain areas. The resulting two-stage exploration-exploitation procedure reduces from a sequential policy with theoretical guarantees, first identifying high-value temporal regions, then selecting top-scoring frames within each region. On two long-video question-answering benchmarks, FOCUS delivers substantial accuracy improvements while processing less than 2% of video frames. For videos longer than 20 minutes, it achieves an 11.9% gain in accuracy on LongVideoBench, demonstrating its effectiveness as a keyframe selection method and providing a simple and general solution for scalable long-video understanding with MLLMs. Code is available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>FOCUS: Efficient Keyframe Selection for Long Video Understanding：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 NUS HPC-AI Lab / HPC-AI Tech；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>FOCUS: Efficient Keyframe Selection for Long Video Understanding：多模态大语言模型 (MLLM) 将图像和视频帧表示为视觉标记。然而，从单个图像扩展到长达一小时的视频，使代币预算远远超出了实际限制。因此，</p></section><section class="analysis-section"><h2>核心贡献</h2><p>FOCUS: Efficient Keyframe Selection for Long Video Understanding：流行的管道要么统一进行子采样，要么使用较小的视觉语言模型通过检索式评分应用关键帧选择。我们提出 FOCUS（帧乐观置信上限选择），这是一种免训练、与模型无关的关键帧选择模块，可在严格的令牌预算下选择与查询相关的帧。</p></section><section class="analysis-section"><h2>方法描述</h2><p>FOCUS: Efficient Keyframe Selection for Long Video Understanding：因此，流行的管道要么统一子采样，要么使用较小的视觉语言模型应用关键帧选择和检索式评分。我们提出 FOCUS（帧乐观置信上限选择），这是一种免训练、与模型无关的关键帧选择模块，可在严格的令牌预算下选择与查询相关的帧。 FOCUS 将关键帧选择表述为多臂老虎机中的组合纯探索 (CPE) 问题：它将短时间片段视为臂，并使用经验方法和 Bernstein 置信半径来识别信息区域，同时保留对不确定区域的探索。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>FOCUS: Efficient Keyframe Selection for Long Video Understanding：代码可从此 https URL 获取。 卡片已记录官方代码链接：https://github.com/NUS-HPC-AI-Lab/FOCUS。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>FOCUS: Efficient Keyframe Selection for Long Video Understanding：由此产生的两阶段探索-利用过程减少了具有理论保证的顺序策略，首先识别高价值时间区域，然后选择每个区域内得分最高的帧。在两个长视频问答基准测试中，FOCUS 在处理不到 2% 的视频帧的同时，显着提高了准确性。对于长度超过 20 分钟的视频，它在 LongVideoBench 上的准确率提高了 11.9%，证明了其作为关键帧选择方法的有效性，并为使用 MLLM 进行可扩展的长视频理解提供了简单而通用的解决方案。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>NUS HPC-AI Lab 官方 FOCUS 仓库给出该论文，论文第一单位为 National University of Singapore，作者含 Yang You。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2510.27280" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2510.27280</a></li><li><a href="https://github.com/NUS-HPC-AI-Lab/FOCUS" target="_blank" rel="noopener noreferrer">https://github.com/NUS-HPC-AI-Lab/FOCUS</a></li></ul></section>
+</main>
+
+</body>
+</html>

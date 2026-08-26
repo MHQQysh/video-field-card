@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>SpaceDrive: Infusing Spatial Awareness into VLM-based Autonomous Driving</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-12-11 · arXiv 2512.10719</span>
+    <h1>SpaceDrive: Infusing Spatial Awareness into VLM-based Autonomous Driving</h1>
+    <p class="detail-meta">Peizheng Li、Zhenghao Zhang、David Holtz、Hang Yu、Yutong Yang、Yuzhi Lai、Rui Song、Andreas Geiger、Andreas Zell</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2512.10719" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/zhenghao2519/SpaceDrive" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>End-to-end autonomous driving methods built on vision language models (VLMs) have undergone rapid development driven by their universal visual understanding and strong reasoning capabilities obtained from the large-scale pretraining. However, we find that current VLMs struggle to understand fine-grained 3D spatial relationships which is a fundamental requirement for systems interacting with the physical world. To address this issue, we propose SpaceDrive, a spatial-aware VLM-based driving framework that treats spatial information as explicit positional encodings (PEs) instead of textual digit tokens, enabling joint reasoning over semantic and spatial representations. SpaceDrive employs a universal positional encoder to all 3D coordinates derived from multi-view depth estimation, historical ego-states, and text prompts. These 3D PEs are first superimposed to augment the corresponding 2D visual tokens. Meanwhile, they serve as a task-agnostic coordinate representation, replacing the digit-wise numerical tokens as both inputs and outputs for the VLM. This mechanism enables the model to better index specific visual semantics in spatial reasoning and directly regress trajectory coordinates rather than generating digit-by-digit, thereby enhancing planning accuracy. Extensive experiments validate that SpaceDrive achieves state-of-the-art open-loop performance on the nuScenes dataset and the second-best Driving Score of 78.02 on the Bench2Drive closed-loop benchmark over existing VLM-based methods. Code is available at: https://github.com/zhenghao2519/SpaceDrive.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《SpaceDrive: Infusing Spatial Awareness into VLM-based Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2512.10719</p></section><section class="analysis-section"><h2>论文概述</h2><p>《SpaceDrive: Infusing Spatial Awareness into VLM-based Autonomous Driving》研究 时序自动驾驶与规划、数据集、基准与综述，重点考察连续传感器信息如何支持驾驶感知、预测、规划或闭环评价。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>作者用 视觉语言模型 重组信息流，并配套数据、损失或评价协议验证这一设计是否解决《SpaceDrive: Infusing Spatial Awareness into VLM-based Autonomous Driving》的瓶颈。</p></section><section class="analysis-section"><h2>方法描述</h2><p>实现路径以 视觉语言模型 为主干：基础编码器提取局部证据，交互模块建立时间/模态对应，训练目标约束最终任务输出。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 nuScenes、Bench2Drive。 已核验的项目或代码地址：https://github.com/zhenghao2519/SpaceDrive</p></section><section class="analysis-section"><h2>评估与结果</h2><p>SpaceDrive 在 nuScenes 开环评测达到当时最佳，并在 Bench2Drive 闭环基准取得 78.02 Driving Score，位列既有 VLM 驾驶方法第二。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《SpaceDrive: Infusing Spatial Awareness into VLM-based Autonomous Driving》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2512.10719</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2512.10719" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2512.10719</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/zhenghao2519/SpaceDrive" target="_blank" rel="noopener noreferrer">https://github.com/zhenghao2519/SpaceDrive</a></li></ul></section>
+</main>
+
+</body>
+</html>

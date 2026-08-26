@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>MotionDirector: Motion Customization of Text-to-Video Diffusion Models</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-10-12 · arXiv 2310.08465</span>
+    <h1>MotionDirector: Motion Customization of Text-to-Video Diffusion Models</h1>
+    <p class="detail-meta">Zhao, Rui、Gu, Yuchao、Wu, Jay Zhangjie、Zhang, David Junhao、Liu, Jiawei、Wu, Weijia、Keppo, Jussi、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频生成、动画与可控编辑</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2310.08465" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/showlab/MotionDirector" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/showlab/MotionDirector" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Large-scale pre-trained diffusion models have exhibited remarkable capabilities in diverse video generations. Given a set of video clips of the same motion concept, the task of Motion Customization is to adapt existing text-to-video diffusion models to generate videos with this motion. For example, generating a video with a car moving in a prescribed manner under specific camera movements to make a movie, or a video illustrating how a bear would lift weights to inspire creators. Adaptation methods have been developed for customizing appearance like subject or style, yet unexplored for motion. It is straightforward to extend mainstream adaption methods for motion customization, including full model tuning, parameter-efficient tuning of additional layers, and Low-Rank Adaptions (LoRAs). However, the motion concept learned by these methods is often coupled with the limited appearances in the training videos, making it difficult to generalize the customized motion to other appearances. To overcome this challenge, we propose MotionDirector, with a dual-path LoRAs architecture to decouple the learning of appearance and motion. Further, we design a novel appearance-debiased temporal loss to mitigate the influence of appearance on the temporal training objective. Experimental results show the proposed method can generate videos of diverse appearances for the customized motions. Our method also supports various downstream applications, such as the mixing of different videos with their appearance and motion respectively, and animating a single image with customized motions. Our code and model weights will be released.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《MotionDirector: Motion Customization of Text-to-Video Diffusion Models》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/showlab/MotionDirector。本卡 date=2023-10-12 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《MotionDirector: Motion Customization of Text-to-Video Diffusion Models》聚焦视频生成、动画与可控编辑：输入侧是文本、图像、轨迹或参考视频条件，目标是生成或编辑具有时间一致性的视频序列。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《MotionDirector: Motion Customization of Text-to-Video Diffusion Models》以 MotionDirector 为核心方案，将扩散建模、低秩适配用于视频生成、动画与可控编辑。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《MotionDirector: Motion Customization of Text-to-Video Diffusion Models》采用扩散建模、低秩适配处理文本、图像、轨迹或参考视频条件，其输出任务是生成或编辑具有时间一致性的视频序列。摘要能确认的技术组合为扩散建模、低秩适配；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《MotionDirector: Motion Customization of Text-to-Video Diffusion Models》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/showlab/MotionDirector。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《MotionDirector: Motion Customization of Text-to-Video Diffusion Models》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《MotionDirector: Motion Customization of Text-to-Video Diffusion Models》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/showlab/MotionDirector。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2310.08465" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2310.08465</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li><li><a href="https://github.com/showlab/MotionDirector" target="_blank" rel="noopener noreferrer">https://github.com/showlab/MotionDirector</a></li></ul></section>
+</main>
+
+</body>
+</html>

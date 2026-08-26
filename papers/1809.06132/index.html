@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2018-09-17 · arXiv 1809.06132</span>
+    <h1>Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras</h1>
+    <p class="detail-meta">Zhaopeng Cui、Lionel Heng、Ye Chuan Yeo、Andreas Geiger、Marc Pollefeys、Torsten Sattler</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/1809.06132" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>We present a real-time dense geometric mapping algorithm for large-scale environments. Unlike existing methods which use pinhole cameras, our implementation is based on fisheye cameras which have larger field of view and benefit some other tasks including Visual-Inertial Odometry, localization and object detection around vehicles. Our algorithm runs on in-vehicle PCs at 15 Hz approximately, enabling vision-only 3D scene perception for self-driving vehicles. For each synchronized set of images captured by multiple cameras, we first compute a depth map for a reference camera using plane-sweeping stereo. To maintain both accuracy and efficiency, while accounting for the fact that fisheye images have a rather low resolution, we recover the depths using multiple image resolutions. We adopt the fast object detection framework YOLOv3 to remove potentially dynamic objects. At the end of the pipeline, we fuse the fisheye depth images into the truncated signed distance function (TSDF) volume to obtain a 3D map. We evaluate our method on large-scale urban datasets, and results show that our method works well even in complex environments.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/1809.06132</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras》研究 数据集、基准与综述，重点考察连续传感器信息如何支持驾驶感知、预测、规划或闭环评价。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>该文将 几何约束 引入 数据集、基准与综述，使对象、动作、几何或声音的变化可以在多个时刻间保持关联。</p></section><section class="analysis-section"><h2>方法描述</h2><p>模型围绕 几何约束 组织数据流，保留对象身份、运动、几何或声音随时间的变化；摘要没有披露的层数与损失权重不作推定。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>车载电脑上的完整稠密建图管线约以 15 Hz 运行，可支持纯视觉自动驾驶三维感知；摘要未列地图精度数值。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/1809.06132</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/1809.06132" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1809.06132</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li></ul></section>
+</main>
+
+</body>
+</html>

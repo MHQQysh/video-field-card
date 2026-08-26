@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-06-09 · arXiv 2606.10804</span>
+    <h1>SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning</h1>
+    <p class="detail-meta">Yan, Wenhao、Guo, Fengjia、Yang, Zhuoyi、Tang, Jie</p>
+    <div class="chips"><span class="chip lab">THUDM / 智谱 CogVideo 团队</span><span class="chip">角色动画</span><span class="chip">视频到视频</span><span class="chip">可控视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2606.10804" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://teal024.github.io/SCAIL-2/" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/zai-org/SCAIL-2" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Controlled character animation aims to transfer motion from a driving sequence to a reference character. Prior works heavily rely on intermediate representations, such as pose skeletons for motion and masked backgrounds for environment, inevitably resulting in information loss. In this work, we present SCAIL-2, a framework that adopts an end-to-end driving paradigm by directly concatenating latent visual information to the model&#x27;s input sequence. We enable end-to-end training through a data synthesis pipeline that produces MotionPair-60K, a curated dataset for several character animation subtasks. We unify the subtasks using decoupled conditions to accommodate different driving patterns, facilitated by In-Context Mask Conditioning and Mode-Specific RoPE, which provide soft guidance beyond textual instructions and visual information. To address synthetic discrepancy in detailed regions, we propose Bias-Aware DPO to construct preference items to mitigate the errors. Extensive experiments demonstrate that our method achieves state-of-the-art performance across various character animation tasks. Code, model weights, and a large subset of the dataset are available at: https://teal024.github.io/SCAIL-2/.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning：zai-org（原 THUDM/智谱开源组织）官方仓库明确将其作为官方论文实现，作者包含 CogVideo 团队核心成员，归入 thudm-cogvideo；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning：已有可控角色动画高度依赖姿态骨架和背景掩码等中间表示，容易丢失驱动视频中的细节与上下文。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning：论文提出 SCAIL-2，直接把驱动序列的潜视觉信息拼接到模型输入，并统一角色动画的多种子任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning：框架以 In-Context Mask Conditioning 和 Mode-Specific RoPE 解耦不同控制条件；再用 Bias-Aware DPO 构造偏好样本，缓解合成数据在细节区域的偏差。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning：数据合成管线产生 MotionPair-60K；官方公开代码、模型权重和数据集大子集，代码为 https://github.com/zai-org/SCAIL-2。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning：实验表明 SCAIL-2 在多类角色动画任务达到摘要所称的先进性能；摘要未报告具体数据集指标或结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>zai-org 官方仓库 https://github.com/zai-org/SCAIL-2 明确标注为“SCAIL-2: Unifying Controlled Character Animation with End-to-End In-Context Conditioning”的官方实现；arXiv 作者表包含 CogVideo/THUDM-智谱团队核心成员。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2606.10804" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2606.10804</a></li><li><a href="https://github.com/zai-org/SCAIL-2" target="_blank" rel="noopener noreferrer">https://github.com/zai-org/SCAIL-2</a></li><li><a href="https://teal024.github.io/SCAIL-2/" target="_blank" rel="noopener noreferrer">https://teal024.github.io/SCAIL-2/</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Test-time Correction: An Online 3D Detection System via Visual Prompting</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-12-11 · arXiv 2412.07768</span>
+    <h1>Test-time Correction: An Online 3D Detection System via Visual Prompting</h1>
+    <p class="detail-meta">Hanxue Zhang、Zetong Yang、Yanan Sun、Li Chen、Fei Xia、Fatma Güney、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">连续视觉检测</span><span class="chip">在线测试时校正</span><span class="chip">视觉提示</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2412.07768" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>This paper introduces Test-time Correction (TTC), an online 3D detection system that rectifies test-time errors using auxiliary feedback. Existing detectors receive an Online Adapter, a prompt-driven query generator. Image-based visual prompts arise from mismatches with 2D detections, road descriptions, or user clicks. Prompts from risky objects are maintained in a buffer to enable continuous correction in future frames. Experiments report improved instant error rectification under limited labels, zero-shot settings, and adverse conditions.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方 publications 页面以论文级条目列出 Test-time Correction: An Online 3D Detection System via Visual Prompting，并直接链接 arXiv 2412.07768。</p></section><section class="analysis-section"><h2>论文概述</h2><p>让在线三维检测器把当前反馈写入视觉提示缓存，在后续帧持续修正高风险目标。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>TTC 为冻结三维检测器增加 Online Adapter，把辅助反馈转成图像式视觉提示，并通过提示缓存让一次纠错延续到未来帧。</p></section><section class="analysis-section"><h2>方法描述</h2><p>系统从二维检测不一致、道路描述或用户点击构造高风险目标提示；提示驱动查询生成器修正当前检测，同时写入缓存供后续帧再次检索。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>TTC 在有限标签、零样本和恶劣条件下测试即时纠错，并观察提示缓存能否让后续帧持续受益。 公开摘要侧重方法和现象，没有完整披露定量结果；为避免编造，分数留待正文实验表核验。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方 publications 页面以论文级条目列出 Test-time Correction: An Online 3D Detection System via Visual Prompting，并直接链接 arXiv 2412.07768。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2412.07768" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2412.07768</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

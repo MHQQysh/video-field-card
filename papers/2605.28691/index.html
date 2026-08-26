@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>OSP-Next: Efficient High-Quality Video Generation with Sparse Sequence Parallelism, HiF8 Quantization, and Reinforcement Learning</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-05-27 · arXiv 2605.28691</span>
+    <h1>OSP-Next: Efficient High-Quality Video Generation with Sparse Sequence Parallelism, HiF8 Quantization, and Reinforcement Learning</h1>
+    <p class="detail-meta">Ge, Yunyang、He, Xianyi、Zhang, Zezhong、Lin, Bin、Zhu, Bin、Cheng, Xinhua、Yuan, Li</p>
+    <div class="chips"><span class="chip lab">PKU-YuanGroup / 兔展 AIGC 联合实验室</span><span class="chip">视频生成</span><span class="chip">并行训练</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2605.28691" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/PKU-YuanGroup/OSP-Next" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Diffusion Transformers achieve strong video generation quality, but the quadratic cost of full attention limits efficiency. We introduce OSP-Next, an efficient text-to-video generation model that integrates sparse attention, parallelism, quantization, and reinforcement learning. OSP-Next uses a hybrid full-sparse attention architecture, where the sparse component is implemented with Skiparse-2D Attention. This fixed-pattern mechanism applies token-wise and group-wise sparse attention along spatial dimensions, leveraging locality while maintaining native compatibility with FlashAttention kernels. Based on the local equivalence of rearrangement in Skiparse-2D Attention, we further propose Sparse Sequence Parallelism (SSP), which partitions subsequences across ranks and switches sparse patterns through a single All-to-All communication. Compared with Ulysses Sequence Parallelism (SP), SSP provides a native parallel strategy for sparse attention and reduces communication volume by 75%. OSP-Next also incorporates HiF8 quantization to enable stable joint training with 8-bit quantization and sparse fine-tuning, and applies Mix-GRPO post-training to improve the performance of the sparse model. Experiments show that OSP-Next achieves a VBench total score of 83.73%, surpassing the Wan2.1 baseline. Under the 5-second 720P and 5-second 768P settings, OSP-Next achieves up to 1.64$\times$ single-GPU speedup and over 1.52$\times$ eight-GPU speedup on NVIDIA H200 GPUs. In addition, with only a 0.4% drop in VBench total score, OSP-Next-HiF8 achieves 1.69$\times$ and 2.27$\times$ speedups under the two settings on a single Ascend 950PR, demonstrating the efficiency and performance of OSP-Next across hardware platforms.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OSP-Next: Efficient High-Quality Video Generation with Sparse Sequence Parallelism, HiF8 Quantization, and Reinforcement Learning：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 PKU-YuanGroup / 兔展 AIGC；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>OSP-Next: Efficient High-Quality Video Generation with Sparse Sequence Parallelism, HiF8 Quantization, and Reinforcement Learning：Diffusion Transformers 实现了强大的视频生成质量，但完全注意力的二次成本限制了效率。我们引入了 OSP-Next，这是一种高效的文本到视频生成模型，集成了稀疏注意力、并行性、量化和强化学习。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>OSP-Next: Efficient High-Quality Video Generation with Sparse Sequence Parallelism, HiF8 Quantization, and Reinforcement Learning：我们引入了 OSP-Next，一种高效的文本到视频生成模型，集成了稀疏注意力、并行性、量化和强化学习。 OSP-Next 使用混合全稀疏注意力架构，其中稀疏组件是通过 Skiparse-2D Attention 实现的。</p></section><section class="analysis-section"><h2>方法描述</h2><p>OSP-Next: Efficient High-Quality Video Generation with Sparse Sequence Parallelism, HiF8 Quantization, and Reinforcement Learning：我们介绍 OSP-Next，一种高效的文本到视频生成模型，集成了稀疏注意力、并行性、量化和强化学习。 OSP-Next 使用混合全稀疏注意力架构，其中稀疏组件是通过 Skiparse-2D Attention 实现的。这种固定模式机制沿空间维度应用标记式和分组式稀疏注意力，利用局部性，同时保持与 FlashAttention 内核的本机兼容性。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>OSP-Next: Efficient High-Quality Video Generation with Sparse Sequence Parallelism, HiF8 Quantization, and Reinforcement Learning：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。 卡片已记录官方代码链接：https://github.com/PKU-YuanGroup/OSP-Next。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>OSP-Next: Efficient High-Quality Video Generation with Sparse Sequence Parallelism, HiF8 Quantization, and Reinforcement Learning：实验表明，OSP-Next 的 VBench 总分达到 83.73%，超过了 Wan2.1 基线。在 5 秒 720P 和 5 秒 768P 设置下，OSP-Next 在 NVIDIA H200 GPU 上实现了高达 1.64$\times$ 的单 GPU 加速和超过 1.52$\times$ 的八 GPU 加速。此外，在VBench总分仅下降0.4%的情况下，OSP-Next-HiF8在单台Ascend 950PR上的两种设置下实现了1.69$\times$和2.27$\times$的加速，展示了OSP-Next跨硬件平台的效率和性能。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>PKU-YuanGroup 官方仓库 OSP-Next 的 README/引用信息直接关联该 arXiv 论文，并表明 YuanGroup 或北大-兔展 AIGC 团队贡献。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2605.28691" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2605.28691</a></li><li><a href="https://github.com/PKU-YuanGroup/OSP-Next" target="_blank" rel="noopener noreferrer">https://github.com/PKU-YuanGroup/OSP-Next</a></li></ul></section>
+</main>
+
+</body>
+</html>

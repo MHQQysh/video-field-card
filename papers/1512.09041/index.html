@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Actor-Action Semantic Segmentation with Grouping Process Models</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2015-12-31 · arXiv 1512.09041</span>
+    <h1>Actor-Action Semantic Segmentation with Grouping Process Models</h1>
+    <p class="detail-meta">Chenliang Xu、Jason J. Corso</p>
+    <div class="chips"><span class="chip lab">Chenliang Xu Group</span><span class="chip">Video-LLM 与视频理解</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/1512.09041" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Actor-action semantic segmentation made an important step toward advanced video understanding problems: what action is happening; who is performing the action; and where is the action in space-time. Current models for this problem are local, based on layered CRFs, and are unable to capture long-ranging interaction of video parts. We propose a new model that combines these local labeling CRFs with a hierarchical supervoxel decomposition. The supervoxels provide cues for possible groupings of nodes, at various scales, in the CRFs to encourage adaptive, high-order groups for more effective labeling. Our model is dynamic and continuously exchanges information during inference: the local CRFs influence what supervoxels in the hierarchy are active, and these active nodes influence the connectivity in the CRF; we hence call it a grouping process model. The experimental results on a recent large-scale video dataset show a large margin of 60% relative improvement over the state of the art, which demonstrates the effectiveness of the dynamic, bidirectional flow between labeling and grouping.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Actor-Action Semantic Segmentation with Grouping Process Models》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/1512.09041；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Actor-Action Semantic Segmentation with Grouping Process Models》聚焦视频底层时空对应，解决跨帧对齐、分割、跟踪、显著性或时空超分辨率。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>该模型把局部演员—动作 CRF 与层级超体素分组结合，使远距离视频区域也能通过高阶组共享标签信息。</p></section><section class="analysis-section"><h2>方法描述</h2><p>层级超体素在多个尺度提出候选分组，CRF 负责局部演员和动作标注；标注结果与分组线索双向、动态交换，逐步改进时空分割。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>在大规模演员—动作视频数据上，动态标注—分组模型相对当时最佳方法提高 60%。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Actor-Action Semantic Segmentation with Grouping Process Models》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/1512.09041；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/1512.09041" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1512.09041</a></li><li><a href="https://cliangxu.github.io/p/index.html" target="_blank" rel="noopener noreferrer">https://cliangxu.github.io/p/index.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

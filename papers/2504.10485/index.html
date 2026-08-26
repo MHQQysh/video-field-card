@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Decoupled Diffusion Sparks Adaptive Scene Generation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2025-04-15 · arXiv 2504.10485</span>
+    <h1>Decoupled Diffusion Sparks Adaptive Scene Generation</h1>
+    <p class="detail-meta">Yunsong Zhou、Naisheng Ye、William Ljungbergh、Tianyu Li、Jiazhi Yang、Zetong Yang、Hongzi Zhu、Christoffer Petersson、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2504.10485" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Controllable scene generation could reduce the cost of diverse data collection substantially for autonomous driving. Prior works formulate the traffic layout generation as predictive progress, either by denoising entire sequences at once or by iteratively predicting the next frame. However, full sequence denoising hinders online reaction, while the latter&#x27;s short-sighted next-frame prediction lacks precise goal-state guidance. Further, the learned model struggles to generate complex or challenging scenarios due to a large number of safe and ordinal driving behaviors from open datasets. To overcome these, we introduce Nexus, a decoupled scene generation framework that improves reactivity and goal conditioning by simulating both ordinal and challenging scenarios from fine-grained tokens with independent noise states. At the core of the decoupled pipeline is the integration of a partial noise-masking training strategy and a noise-aware schedule that ensures timely environmental updates throughout the denoising process. To complement challenging scenario generation, we collect a dataset consisting of complex corner cases. It covers 540 hours of simulated data, including high-risk interactions such as cut-in, sudden braking, and collision. Nexus achieves superior generation realism while preserving reactivity and goal orientation, with a 40% reduction in displacement error. We further demonstrate that Nexus improves closed-loop planning by 20% through data augmentation and showcase its capability in safety-critical data generation.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《Decoupled Diffusion Sparks Adaptive Scene Generation》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2504.10485</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Decoupled Diffusion Sparks Adaptive Scene Generation》围绕 时序自动驾驶与规划、数据集、基准与综述 展开，研究连续视觉观察中的空间内容如何随时间变化并被模型利用。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Nexus 将反应式短期交通演化与目标导向的长期场景生成解耦，避免整段去噪无法在线响应以及逐帧预测缺少终点约束。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法先编码帧级或传感器级观测，再用 扩散生成/规划、跨帧时间建模 聚合跨时刻信息，最后由任务解码头输出预测、生成结果、掩码或控制量。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Nexus 使用 540 小时仿真数据，包含切入、急刹和碰撞等高风险交互。位移误差降低 40%，数据增强使闭环规划提高 20%。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《Decoupled Diffusion Sparks Adaptive Scene Generation》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2504.10485</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2504.10485" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2504.10485</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

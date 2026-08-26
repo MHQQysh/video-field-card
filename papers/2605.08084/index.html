@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>123D: Unifying Multi-Modal Autonomous Driving Data at Scale</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-05-09 · arXiv 2605.08084</span>
+    <h1>123D: Unifying Multi-Modal Autonomous Driving Data at Scale</h1>
+    <p class="detail-meta">Daniel Dauner、Valentin Charraut、Bastian Berle、Tianyu Li、Long Nguyen、Jiabao Wang、Changhui Jing、Maximilian Igl、Holger Caesar、Boris Ivanovic、Yiyi Liao、Andreas Geiger、Kashyap Chitta</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span><span class="chip">机器人视频与视觉控制</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2605.08084" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/kesai-labs/py123d" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>The pursuit of autonomous driving has produced one of the richest sensor data collections in all of robotics. However, its scale and diversity remain largely untapped. Each dataset adopts different 2D and 3D modalities, such as cameras, lidar, ego states, annotations, traffic lights, and HD maps, with different rates and synchronization schemes. They come in fragmented formats requiring complex dependencies that cannot natively coexist in the same development environment. Further, major inconsistencies in annotation conventions prevent training or measuring generalization across multiple datasets. We present 123D, an open-source framework that unifies such multi-modal driving data through a single API. To handle synchronization, we store each modality as an independent timestamped event stream with no prescribed rate, enabling synchronous or asynchronous access across arbitrary datasets. Using 123D, we consolidate eight real-world driving datasets spanning 3,300 hours and 90,000 kilometers, together with a synthetic dataset with configurable collection scripts, and provide tools for data analysis and visualization. We conduct a systematic study comparing annotation statistics and assessing each dataset&#x27;s pose and calibration accuracy. Further, we showcase two applications 123D enables: cross-dataset 3D object detection transfer and reinforcement learning for planning, and offer recommendations for future directions. Code and documentation are available at https://github.com/kesai-labs/py123d.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《123D: Unifying Multi-Modal Autonomous Driving Data at Scale》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2605.08084</p></section><section class="analysis-section"><h2>论文概述</h2><p>《123D: Unifying Multi-Modal Autonomous Driving Data at Scale》研究 时序自动驾驶与规划、数据集、基准与综述、机器人视频与视觉控制，重点考察连续传感器信息如何支持驾驶感知、预测、规划或闭环评价。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>123D 统一相机、激光雷达、自车状态、交通灯、高清地图及二维/三维标注的格式、采样率和时间同步，使原本依赖不同工具链的数据集能够共同训练。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法先编码帧级或传感器级观测，再用 强化学习 聚合跨时刻信息，最后由任务解码头输出预测、生成结果、掩码或控制量。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>公开资源由 8 个真实驾驶数据集（3,300 小时、90,000 公里）和一套带可配置采集脚本的合成数据组成；分析与可视化工具随 123D 一并提供。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>123D 统一了 8 个真实驾驶数据集，共覆盖 3,300 小时、90,000 公里，并加入可配置采集脚本的合成数据；摘要未报告单一模型分数。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《123D: Unifying Multi-Modal Autonomous Driving Data at Scale》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2605.08084</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2605.08084" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2605.08084</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/kesai-labs/py123d" target="_blank" rel="noopener noreferrer">https://github.com/kesai-labs/py123d</a></li></ul></section>
+</main>
+
+</body>
+</html>

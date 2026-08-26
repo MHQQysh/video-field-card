@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>VideoBooth: Diffusion-based Video Generation with Image Prompts</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-12-01 · arXiv 2312.00777</span>
+    <h1>VideoBooth: Diffusion-based Video Generation with Image Prompts</h1>
+    <p class="detail-meta">Jiang, Yuming、Wu, Tianxing、Yang, Shuai、Si, Chenyang、Lin, Dahua、Qiao, Yu、Loy, Chen Change、Liu, Ziwei</p>
+    <div class="chips"><span class="chip lab">MMLab@NTU / S-Lab</span><span class="chip">个性化视频生成</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2312.00777" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://vchitect.github.io/VideoBooth-project/" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/Vchitect/VideoBooth" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Text-driven video generation witnesses rapid progress. However, merely using text prompts is not enough to depict the desired subject appearance that accurately aligns with users&#x27; intents, especially for customized content creation. In this paper, we study the task of video generation with image prompts, which provide more accurate and direct content control beyond the text prompts. Specifically, we propose a feed-forward framework VideoBooth, with two dedicated designs: 1) We propose to embed image prompts in a coarse-to-fine manner. Coarse visual embeddings from image encoder provide high-level encodings of image prompts, while fine visual embeddings from the proposed attention injection module provide multi-scale and detailed encoding of image prompts. These two complementary embeddings can faithfully capture the desired appearance. 2) In the attention injection module at fine level, multi-scale image prompts are fed into different cross-frame attention layers as additional keys and values. This extra spatial information refines the details in the first frame and then it is propagated to the remaining frames, which maintains temporal consistency. Extensive experiments demonstrate that VideoBooth achieves state-of-the-art performance in generating customized high-quality videos with subjects specified in image prompts. Notably, VideoBooth is a generalizable framework where a single model works for a wide range of image prompts with feed-forward pass.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>VideoBooth: Diffusion-based Video Generation with Image Prompts：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@NTU / S-Lab；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>VideoBooth: Diffusion-based Video Generation with Image Prompts：文本驱动的视频生成见证了快速进步。然而，仅使用文本提示不足以描述准确符合用户意图的所需主题外观，尤其是对于定制内容创建。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>VideoBooth: Diffusion-based Video Generation with Image Prompts：具体来说，我们提出了一个前馈框架VideoBooth，有两个专门的设计：1）我们建议以从粗到细的方式嵌入图像提示。来自图像编码器的粗略视觉嵌入提供图像提示的高级编码，而来自所提出的注意注入模块的精细视觉嵌入提供图像提示的多尺度和详细编码。</p></section><section class="analysis-section"><h2>方法描述</h2><p>VideoBooth: Diffusion-based Video Generation with Image Prompts：具体来说，我们提出了一个前馈框架VideoBooth，有两个专门的设计：1）我们建议以从粗到细的方式嵌入图像提示。来自图像编码器的粗略视觉嵌入提供图像提示的高级编码，而来自所提出的注意注入模块的精细视觉嵌入提供图像提示的多尺度和详细编码。 2）在精细级别的注意力注入模块中，多尺度图像提示被作为附加键和值输入到不同的跨帧注意力层中。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>VideoBooth: Diffusion-based Video Generation with Image Prompts：来自图像编码器的粗略视觉嵌入提供了图像提示的高级编码，而来自所提出的注意注入模块的精细视觉嵌入提供了图像提示的多尺度和详细编码。 卡片已记录官方代码链接：https://github.com/Vchitect/VideoBooth。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>VideoBooth: Diffusion-based Video Generation with Image Prompts：大量实验表明，VideoBooth 在生成具有图像提示中指定主题的定制高质量视频方面实现了最先进的性能。 摘要未报告具体结果数值，需查正文。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Vchitect 官方仓库 VideoBooth 直接收录该论文；论文作者/项目页包含 S-Lab, Nanyang Technological University 的成员或单位署名。</li><li>MMLab@NTU 官方 publication_year 年表逐条列出“VideoBooth: Diffusion-based Video Generation with Image Prompts”（arXiv:2312.00777），该官方年表是本条 ntu-s-lab 归属证据。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2312.00777" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2312.00777</a></li><li><a href="https://github.com/Vchitect/VideoBooth" target="_blank" rel="noopener noreferrer">https://github.com/Vchitect/VideoBooth</a></li><li><a href="https://www.mmlab-ntu.com/publication_year.html" target="_blank" rel="noopener noreferrer">https://www.mmlab-ntu.com/publication_year.html</a></li><li><a href="https://vchitect.github.io/VideoBooth-project/" target="_blank" rel="noopener noreferrer">https://vchitect.github.io/VideoBooth-project/</a></li></ul></section>
+</main>
+
+</body>
+</html>

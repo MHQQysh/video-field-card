@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>StreamingEffect: Real-Time Human-Centric Video Effect Generation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-05-16 · arXiv 2605.17019</span>
+    <h1>StreamingEffect: Real-Time Human-Centric Video Effect Generation</h1>
+    <p class="detail-meta">Song, Yiren、Liu, Cheng、Jiang, Yuxin、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频生成、动画与可控编辑</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2605.17019" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Streaming video effect generation is highly desirable for live human-centric applications such as e-commerce streaming, entertainment, and vlogging, yet remains difficult due to the lack of suitable data and deployable editing models. Unlike generic video generation, this task requires real-time video-to-video editing that adds expressive effects while preserving human identity, background content, and temporal consistency. Existing acceleration efforts mainly focus on text-to-video generation, while efficient distillation for video editing remains largely underexplored. In this paper, we present \textbf{StreamingEffect}, a real-time human-centric streaming video effect framework. We adopt an in-context video editing architecture and train a high-quality bidirectional teacher, then distill it into a causal autoregressive student and further reduce sampling from 50 steps to 4 steps. We also introduce keyframe control, allowing reference effect frames to be injected online and propagated through the stream for interactive editing. To address the data bottleneck, we construct \textbf{VideoEffect-130K}, to our knowledge the largest human-centric video effect dataset, containing 70K effect videos and 60K editing videos across 600 effect categories curated from short-video and editing platforms. Experiments show that our method enables real-time, high-quality 720p video editing on a single H200 GPU.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《StreamingEffect: Real-Time Human-Centric Video Effect Generation》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2026-05-16 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《StreamingEffect: Real-Time Human-Centric Video Effect Generation》聚焦视频生成、动画与可控编辑：输入侧是文本、图像、轨迹或参考视频条件，目标是生成或编辑具有时间一致性的视频序列。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《StreamingEffect: Real-Time Human-Centric Video Effect Generation》以 StreamingEffect 为核心方案，将自回归建模、知识蒸馏用于视频生成、动画与可控编辑。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《StreamingEffect: Real-Time Human-Centric Video Effect Generation》采用自回归建模、知识蒸馏处理文本、图像、轨迹或参考视频条件，其输出任务是生成或编辑具有时间一致性的视频序列。摘要能确认的技术组合为自回归建模、知识蒸馏；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《StreamingEffect: Real-Time Human-Centric Video Effect Generation》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《StreamingEffect: Real-Time Human-Centric Video Effect Generation》摘要未报告可独立复核的具体指标数值；数据划分、基线、消融和最终结果需查正文实验表。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《StreamingEffect: Real-Time Human-Centric Video Effect Generation》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2605.17019" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2605.17019</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

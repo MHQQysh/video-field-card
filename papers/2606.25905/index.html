@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>SurgAtlas: A Large-Scale Surgical Video-Language Dataset with 2,391 Hours of Open and Minimally Invasive Surgery</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-06-24 · arXiv 2606.25905</span>
+    <h1>SurgAtlas: A Large-Scale Surgical Video-Language Dataset with 2,391 Hours of Open and Minimally Invasive Surgery</h1>
+    <p class="detail-meta">Filippos Bellos、Andre S. Gala-Garza、Miaowei Wang、Alyssa M. Hardin、Ahmad M. Hider、Yayuan Li、Jing Bi、Susan Liang、Chenliang Xu、Donald S. Likosky、Jason J. Corso</p>
+    <div class="chips"><span class="chip lab">Chenliang Xu Group</span><span class="chip">Video-LLM 与视频理解</span><span class="chip">视频分割、跟踪与运动估计</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2606.25905" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>We introduce SurgAtlas, the largest surgical video-language dataset to date, comprising 15,291 videos (2,391 hours) spanning 18 surgical specialties and over 5,000 procedure types, sourced entirely from publicly available YouTube content. SurgAtlas is also the first surgical video-language dataset to include open surgery at scale, with 6,182 open procedure videos alongside over 9,000 minimally invasive recordings, and the first to establish standardized benchmarks for open-surgery video understanding. We additionally provide an expert-validated subset with verified visual question-answer pairs across diverse open and minimally invasive procedures, serving as a clinically grounded benchmark for surgical reasoning. Compared with existing surgical video-language datasets, SurgAtlas provides one of the most diverse annotation schemas, combining segment-level captions, step- and phase-level descriptions, video-level surgical descriptions, and reasoning-oriented question-answer pairs organized within a hierarchical taxonomy. These annotations are constructed through an automated multi-tier pipeline with LLM-based enrichment and a staged VQA generation framework with explicit groundedness verification. The scale and diversity of SurgAtlas enable training surgical foundation models with broad procedural coverage: we finetune Qwen3-VL-8B through a two-stage captioning-then-instruction pipeline and achieve competitive or state-of-the-art results on multiple established surgical benchmarks, including phase recognition, triplet detection, and reasoning question answering. More broadly, SurgAtlas provides a large native public video corpus that can support future large-scale pretraining of multimodal surgical AI systems and contribute to the development of next-generation foundation models for surgery.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《SurgAtlas: A Large-Scale Surgical Video-Language Dataset with 2,391 Hours of Open and Minimally Invasive Surgery》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/2606.25905；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</p></section><section class="analysis-section"><h2>论文概述</h2><p>建设大规模手术视频—语言语料，覆盖开放与微创操作，为手术阶段、动作和器械理解提供统一数据底座。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>作者用 视觉语言模型、强化学习、语言描述、生成对抗学习 重组信息流，并配套数据、损失或评价协议验证这一设计是否解决《SurgAtlas: A Large-Scale Surgical Video-Language Dataset with 2,391 Hours of Open and Minimally Invasive Surgery》的瓶颈。</p></section><section class="analysis-section"><h2>方法描述</h2><p>实现路径以 视觉语言模型、强化学习、语言描述、生成对抗学习 为主干：基础编码器提取局部证据，交互模块建立时间/模态对应，训练目标约束最终任务输出。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>SurgAtlas 含 15,291 段、2,391 小时手术视频，其中 6,182 段为开放手术、9,000 余段为微创手术；覆盖 18 个专科和 5,000 余种术式。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>Qwen3-VL-8B 经过字幕生成再指令微调的两阶段训练，在手术阶段识别、三元组检测和推理问答基准取得有竞争力或领先的结果；摘要未列各任务分数。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《SurgAtlas: A Large-Scale Surgical Video-Language Dataset with 2,391 Hours of Open and Minimally Invasive Surgery》的 arXiv 作者表包含 Chenliang Xu：https://arxiv.org/abs/2606.25905；团队官方 all-publications 索引：https://cliangxu.github.io/p/index.html</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2606.25905" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2606.25905</a></li><li><a href="https://cliangxu.github.io/p/index.html" target="_blank" rel="noopener noreferrer">https://cliangxu.github.io/p/index.html</a></li></ul></section>
+</main>
+
+</body>
+</html>

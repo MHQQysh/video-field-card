@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-03-12 · arXiv 2603.12267</span>
+    <h1>EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation</h1>
+    <p class="detail-meta">Xiong, Tianwei、Liew, Jun Hao、Huang, Zilong、Lin, Zhijie、Feng, Jiashi、Liu, Xihui</p>
+    <div class="chips"><span class="chip lab">MMLab@HKU</span><span class="chip">视频分词器</span><span class="chip">视频生成</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2603.12267" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://mmlab.hk/publication" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/HKU-MMLab/EVATok" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Autoregressive (AR) video generative models rely on video tokenizers that compress pixels into discrete token sequences. The length of these token sequences is crucial for balancing reconstruction quality against downstream generation computational cost. Traditional video tokenizers apply a uniform token assignment across temporal blocks of different videos, often wasting tokens on simple, static, or repetitive segments while underserving dynamic or complex ones. To address this inefficiency, we introduce $\textbf{EVATok}$, a framework to produce $\textbf{E}$fficient $\textbf{V}$ideo $\textbf{A}$daptive $\textbf{Tok}$enizers. Our framework estimates optimal token assignments for each video to achieve the best quality-cost trade-off, develops lightweight routers for fast prediction of these optimal assignments, and trains adaptive tokenizers that encode videos based on the assignments predicted by routers. We demonstrate that EVATok delivers substantial improvements in efficiency and overall quality for video reconstruction and downstream AR generation. Enhanced by our advanced training recipe that integrates video semantic encoders, EVATok achieves superior reconstruction and state-of-the-art class-to-video generation on UCF-101, with at least 24.4% savings in average token usage compared to the prior state-of-the-art LARP and our fixed-length baseline.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation：根据卡片所列官方年表、实验室 publication 页面或官方仓库与作者信息核验，归入 MMLab@HKU；具体证据见 membership_evidence。</p></section><section class="analysis-section"><h2>论文概述</h2><p>EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation：自回归 (AR) 视频生成模型依赖于将像素压缩为离散标记序列的视频标记器。这些令牌序列的长度对于平衡重建质量与下游生成计算成本至关重要。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation：为了解决这种低效率问题，我们引入了 $\textbf{EVATok}$，一个用于生成 $\textbf{E}$fficient $\textbf{V}$ideo $\textbf{A}$daptive $\textbf{Tok}$enizers 的框架。</p></section><section class="analysis-section"><h2>方法描述</h2><p>EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation：为了解决这种低效率问题，我们引入了 $\textbf{EVATok}$，一个生成 $\textbf{E}$fficient $\textbf{V}$ideo $\textbf{A}$daptive $\textbf{Tok}$enizers 的框架。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation：摘要未报告可下载的数据集、代码、模型权重或项目资源，需查正文与官方项目页。 卡片已记录官方代码链接：https://github.com/HKU-MMLab/EVATok。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>EVATok: Adaptive Length Video Tokenization for Efficient Visual Autoregressive Generation：我们的框架估计每个视频的最佳标记分配，以实现最佳质量成本权衡，开发轻量级路由器以快速预测这些最佳分配，并训练自适应标记器，根据路由器预测的分配对视频进行编码。我们证明，EVATok 显着提高了视频重建和下游 AR 生成的效率和整体质量。通过我们集成视频语义编码器的高级训练方法的增强，EVATok 在 UCF-101 上实现了卓越的重建和最先进的类到视频生成，与之前最先进的 LARP 和我们的固定长度基线相比，平均令牌使用量节省了至少 24.4%。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>MMLab@HKU 官方 Publication 页面列出“EVATok”及其作者，并标注实验室 PI/成员；arXiv 作者信息与页面相符。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2603.12267" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2603.12267</a></li><li><a href="https://github.com/HKU-MMLab/EVATok" target="_blank" rel="noopener noreferrer">https://github.com/HKU-MMLab/EVATok</a></li></ul></section>
+</main>
+
+</body>
+</html>

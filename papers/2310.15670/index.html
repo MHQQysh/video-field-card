@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Leveraging Vision-Centric Multi-Modal Expertise for 3D Object Detection</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-10-24 · arXiv 2310.15670</span>
+    <h1>Leveraging Vision-Centric Multi-Modal Expertise for 3D Object Detection</h1>
+    <p class="detail-meta">Linyan Huang、Zhiqi Li、Chonghao Sima、Wenhai Wang、Jingdong Wang、Yu Qiao、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">连续相机感知</span><span class="chip">时序知识蒸馏</span><span class="chip">三维目标检测</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2310.15670" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Current research is primarily dedicated to advancing the accuracy of camera-only 3D object detectors through knowledge transferred from LiDAR- or multi-modal-based counterparts. However, the domain gap between LiDAR and camera features, coupled with incompatibility in temporal fusion, hinders distillation. We introduce VCD, including an apprentice-friendly multi-modal expert and temporal-fusion-friendly distillation supervision. VCD-E uses camera features and LiDAR depth priors. A fine-grained trajectory-based distillation module individually rectifies motion misalignment for each object. VCD-A sets a new state of the art on nuScenes with 63.1% NDS.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方 publications 页面以论文级条目列出 Leveraging Vision-Centric Multi-Modal Expertise for 3D Object Detection，并直接链接 arXiv 2310.15670。</p></section><section class="analysis-section"><h2>论文概述</h2><p>用多模态教师改善纯相机三维检测，并专门解决时间融合时的特征域差距与物体运动错位。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>VCD 同时设计相机友好的多模态教师 VCD-E 与适合时间融合的蒸馏监督，减少激光雷达教师和纯相机学生之间的特征域差距。</p></section><section class="analysis-section"><h2>方法描述</h2><p>VCD-E 保持与相机学生相同的网络结构，只把激光雷达作为深度先验；轨迹级细粒度蒸馏逐个修正运动物体在时间融合中的位置错位。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 nuScenes。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>VCD 在 nuScenes 三维检测基准上比较纯相机学生、多模态教师及不同蒸馏模块，核心指标为 NDS。 纯相机学生 VCD-A 在 nuScenes 达到 63.1% NDS，摘要称其刷新当时相机三维检测结果。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方 publications 页面以论文级条目列出 Leveraging Vision-Centric Multi-Modal Expertise for 3D Object Detection，并直接链接 arXiv 2310.15670。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2310.15670" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2310.15670</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

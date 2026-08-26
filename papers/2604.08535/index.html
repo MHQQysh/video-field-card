@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Fail2Drive: Benchmarking Closed-Loop Driving Generalization</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-04-10 · arXiv 2604.08535</span>
+    <h1>Fail2Drive: Benchmarking Closed-Loop Driving Generalization</h1>
+    <p class="detail-meta">Simon Gerstenecker、Andreas Geiger、Katrin Renz</p>
+    <div class="chips"><span class="chip lab">Autonomous Vision Group</span><span class="chip">时序自动驾驶与规划</span><span class="chip">数据集、基准与综述</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2604.08535" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/autonomousvision/fail2drive" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Generalization under distribution shift remains a central bottleneck for closed-loop autonomous driving. Although simulators like CARLA enable safe and scalable testing, existing benchmarks rarely measure true generalization: they typically reuse training scenarios at test time. Success can therefore reflect memorization rather than robust driving behavior. We introduce Fail2Drive, the first paired-route benchmark for closed-loop generalization in CARLA, with 200 routes and 17 new scenario classes spanning appearance, layout, behavioral, and robustness shifts. Each shifted route is matched with an in-distribution counterpart, isolating the effect of the shift and turning qualitative failures into quantitative diagnostics. Evaluating multiple state-of-the-art models reveals consistent degradation, with an average success-rate drop of 22.8\%. Our analysis uncovers unexpected failure modes, such as ignoring objects clearly visible in the LiDAR and failing to learn the fundamental concepts of free and occupied space. To accelerate follow-up work, Fail2Drive includes an open-source toolbox for creating new scenarios and validating solvability via a privileged expert policy. Together, these components establish a reproducible foundation for benchmarking and improving closed-loop driving generalization. We open-source all code, data, and tools at https://github.com/autonomousvision/fail2drive .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>Autonomous Vision 官方 publications 页面以《Fail2Drive: Benchmarking Closed-Loop Driving Generalization》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2604.08535</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Fail2Drive: Benchmarking Closed-Loop Driving Generalization》研究 时序自动驾驶与规划、数据集、基准与综述，重点考察连续传感器信息如何支持驾驶感知、预测、规划或闭环评价。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>Fail2Drive 建立成对路线的闭环泛化基准，把同分布路线与只改变一种分布因素的路线配对，从而区分记忆和真实泛化。</p></section><section class="analysis-section"><h2>方法描述</h2><p>基准在 CARLA 中包含 200 条路线与 17 类新场景，覆盖外观、布局、行为和鲁棒性变化；同一路线配对设计用于隔离单个分布偏移的影响。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要明确提到的数据集或评测环境包括 CARLA。 已核验的项目或代码地址：https://github.com/autonomousvision/fail2drive</p></section><section class="analysis-section"><h2>评估与结果</h2><p>多种先进驾驶模型在成对分布偏移路线上的平均成功率下降 22.8%，说明常规 CARLA 高分会掩盖显著泛化缺口。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>Autonomous Vision 官方 publications 页面以《Fail2Drive: Benchmarking Closed-Loop Driving Generalization》收录本成果，且 arXiv 作者表包含 Andreas Geiger：https://www.cvlibs.net/publications.php；论文级锚点：https://arxiv.org/abs/2604.08535</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2604.08535" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2604.08535</a></li><li><a href="https://www.cvlibs.net/publications.php" target="_blank" rel="noopener noreferrer">https://www.cvlibs.net/publications.php</a></li><li><a href="https://github.com/autonomousvision/fail2drive" target="_blank" rel="noopener noreferrer">https://github.com/autonomousvision/fail2drive</a></li></ul></section>
+</main>
+
+</body>
+</html>

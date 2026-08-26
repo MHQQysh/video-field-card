@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>NativeMEM: Native Memory Compression for Long-Horizon Robotic Manipulation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2026-07-08 · arXiv 2607.06678</span>
+    <h1>NativeMEM: Native Memory Compression for Long-Horizon Robotic Manipulation</h1>
+    <p class="detail-meta">Ziye Wang、Modi Shi、Chaojun Ni、Jiazhi Yang、Mengdi Li、Zhizhong Su、Tianwei Lin、Hongyang Li</p>
+    <div class="chips"><span class="chip lab">OpenDriveLab / HKU</span><span class="chip">机器人视频与视觉控制</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2607.06678" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>How can pretrained Vision-Language-Action (VLA) models retain long-horizon visual histories with high-frequency updates without sacrificing efficiency? Existing approaches rely on external memory management, which restrains either the memory horizon or the reactiveness of pretrained policies. To this end, we present NativeMEM, a VLA policy that features long-term and real-time updated memory. At its core is an efficient memory encoding scheme, Native Memory Compression, which repurposes the VLA&#x27;s own vision encoder to compress each historical frame from each camera view into a single token. Appended to the input sequence, these memory tokens enable the pretrained VLA to attend over long-term history with negligible latency overhead, requiring neither an external planner nor a freshly initialized memory module. To align the memory tokens with the pretrained policy, we first develop a generic memory tokenizer under the supervision of a frozen VLA on memory-demanding data, and then unfreeze the VLA for task-specific fine-tuning. NativeMEM consistently outperforms prior methods, boosting success rates from 32.4% to 84.0% in simulation and up to 98.7% on real robots, while maintaining low inference latency and GPU memory usage. Notably, NativeMEM exhibits high data efficiency by achieving competitive results with prior arts using only 20% of the training data.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>OpenDriveLab 官方论文/项目索引以《NativeMEM: Native Memory Compression for Long-Horizon Robotic Manipulation》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2607.06678</p></section><section class="analysis-section"><h2>论文概述</h2><p>解决 VLA 在高频机器人操作中视觉历史不断增长的问题，使长程任务既保留关键帧记忆又控制计算量。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>NativeMEM 不增加外部规划器或新初始化记忆模块，而是把 VLA 自身视觉编码器改造成原生长期记忆压缩器。</p></section><section class="analysis-section"><h2>方法描述</h2><p>每个相机视角的每个历史帧都被压成一个 token 并追加到输入序列。训练先冻结 VLA，用需要记忆的数据监督通用 memory tokenizer；随后解冻 VLA 做任务微调。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>摘要未声明新数据集。 摘要未公开代码。论文与团队链接保存在 source_urls。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>仿真任务成功率从 32.4% 提升到 84.0%，真机任务最高达到 98.7%。只用 20% 训练数据即可取得与既有方法相当的结果，同时保持低推理延迟和低 GPU 显存占用。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>OpenDriveLab 官方论文/项目索引以《NativeMEM: Native Memory Compression for Long-Horizon Robotic Manipulation》收录本成果：https://opendrivelab.com/publications；论文级 arXiv 锚点：https://arxiv.org/abs/2607.06678</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2607.06678" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2607.06678</a></li><li><a href="https://opendrivelab.com/publications" target="_blank" rel="noopener noreferrer">https://opendrivelab.com/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2024-01-01 · arXiv 2401.00849</span>
+    <h1>COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training</h1>
+    <p class="detail-meta">Wang, Alex Jinpeng、Li, Linjie、Lin, Kevin Qinghong、Wang, Jianfeng、Lin, Kevin、Yang, Zhengyuan、Wang, Lijuan、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频语言理解与问答</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2401.00849" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>In the evolution of Vision-Language Pre-training, shifting from short-text comprehension to encompassing extended textual contexts is pivotal. Recent autoregressive vision-language models like \cite{flamingo, palme}, leveraging the long-context capability of Large Language Models, have excelled in few-shot text generation tasks but face challenges in alignment tasks. Addressing this gap, we introduce the contrastive loss into text generation models, presenting the COntrastive-Streamlined MultimOdal framework (\ModelName), strategically partitioning the language model into dedicated unimodal text processing and adept multimodal data handling components. \ModelName, our unified framework, merges unimodal and multimodal elements, enhancing model performance for tasks involving textual and visual data while notably reducing learnable parameters. However, these models demand extensive long-text datasets, yet the availability of high-quality long-text video datasets remains limited. To bridge this gap, this work introduces \VideoDatasetName, an inaugural interleaved video-text dataset featuring comprehensive captions, marking a significant step forward. Demonstrating its impact, we illustrate how \VideoDatasetName{} enhances model performance in image-text tasks. With 34% learnable parameters and utilizing 72\% of the available data, our model demonstrates significant superiority over OpenFlamingo~\cite{openflamingo}. For instance, in the 4-shot flickr captioning task, performance notably improves from 57.2% to 65.\%. The contributions of \ModelName{} and \VideoDatasetName{} are underscored by notable performance gains across 14 diverse downstream datasets encompassing both image-text and video-text tasks.</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。本卡 date=2024-01-01 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training》聚焦视频语言理解与问答：输入侧是视频及文本问题、描述或查询，目标是生成回答、描述、检索结果或时间证据。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training》以 COSMO 为核心方案，将自回归建模、对比学习、大语言模型工具编排、视觉语言模型用于视频语言理解与问答。摘要还明确声明构建或发布配套数据/基准，用于训练或评估该任务。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training》采用自回归建模、对比学习、大语言模型工具编排、视觉语言模型处理视频及文本问题、描述或查询，其输出任务是生成回答、描述、检索结果或时间证据。摘要能确认的技术组合为自回归建模、对比学习、大语言模型工具编排、视觉语言模型；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 摘要提到代码、数据、模型或资源，但当前批次未核到独立项目 URL，需从正文或作者页面继续确认。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training》摘要报告了定量实验；摘要中的关键数值为 34%、57.2%。这些数值的实验设置、基线和统计口径需以正文表格为准。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《COSMO: COntrastive Streamlined MultimOdal Model with Interleaved Pre-Training》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2401.00849" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2401.00849</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li></ul></section>
+</main>
+
+</body>
+</html>

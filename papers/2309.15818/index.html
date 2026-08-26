@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="视频研究团队论文静态卡片与中文分析">
+  <title>Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation</title>
+  <link rel="stylesheet" href="../../assets/styles.css">
+</head>
+<body>
+
+<main class="detail-shell">
+  <a class="back-link" href="../../">← 返回论文卡片库</a>
+  <header class="detail-header">
+    <span class="card-date">2023-09-27 · arXiv 2309.15818</span>
+    <h1>Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation</h1>
+    <p class="detail-meta">Zhang, David Junhao、Wu, Jay Zhangjie、Liu, Jia-Wei、Zhao, Rui、Ran, Lingmin、Gu, Yuchao、Gao, Difei、Shou, Mike Zheng</p>
+    <div class="chips"><span class="chip lab">NUS Show Lab</span><span class="chip">视频生成、动画与可控编辑</span><span class="chip">高效与流式视频</span></div>
+    <div class="detail-actions"><a class="button primary" href="https://www.alphaxiv.org/pdf/2309.15818" target="_blank" rel="noopener noreferrer">原文 · AlphaXiv PDF</a><a class="button" href="https://github.com/showlab/Show-1" target="_blank" rel="noopener noreferrer">项目主页</a><a class="button" href="https://github.com/showlab/Show-1" target="_blank" rel="noopener noreferrer">代码</a></div>
+  </header>
+  <section class="analysis-section"><h2>原始摘要</h2><p>Significant advancements have been achieved in the realm of large-scale pre-trained text-to-video Diffusion Models (VDMs). However, previous methods either rely solely on pixel-based VDMs, which come with high computational costs, or on latent-based VDMs, which often struggle with precise text-video alignment. In this paper, we are the first to propose a hybrid model, dubbed as Show-1, which marries pixel-based and latent-based VDMs for text-to-video generation. Our model first uses pixel-based VDMs to produce a low-resolution video of strong text-video correlation. After that, we propose a novel expert translation method that employs the latent-based VDMs to further upsample the low-resolution video to high resolution, which can also remove potential artifacts and corruptions from low-resolution videos. Compared to latent VDMs, Show-1 can produce high-quality videos of precise text-video alignment; Compared to pixel VDMs, Show-1 is much more efficient (GPU memory usage during inference is 15G vs 72G). Furthermore, our Show-1 model can be readily adapted for motion customization and video stylization applications through simple temporal attention layer finetuning. Our model achieves state-of-the-art performance on standard video generation benchmarks. Our code and model weights are publicly available at this https URL .</p></section>
+  <section class="analysis-section"><h2>研究单位与团队归属</h2><p>《Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/showlab/Show-1。本卡 date=2023-09-27 采用 arXiv 首次 submitted 日期，不等同于会议或期刊年份。</p></section><section class="analysis-section"><h2>论文概述</h2><p>《Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation》聚焦视频生成、动画与可控编辑：输入侧是文本、图像、轨迹或参考视频条件，目标是生成或编辑具有时间一致性的视频序列。该归类依据论文摘要中的任务定义，而非只按标题关键词判断。</p></section><section class="analysis-section"><h2>核心贡献</h2><p>《Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation》以 Show-1 为核心方案，将扩散建模、显式记忆机制用于视频生成、动画与可控编辑。摘要没有把贡献表述为独立数据集发布，主要贡献按模型、训练策略或任务设定理解。</p></section><section class="analysis-section"><h2>方法描述</h2><p>方法上，《Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation》采用扩散建模、显式记忆机制处理文本、图像、轨迹或参考视频条件，其输出任务是生成或编辑具有时间一致性的视频序列。摘要能确认的技术组合为扩散建模、显式记忆机制；未在摘要出现的超参数和实现细节不作推断。</p></section><section class="analysis-section"><h2>数据集与资源</h2><p>《Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation》摘要未点名可直接核验的公开数据集；具体训练集、测试集和划分需查正文。 已核到论文级项目/代码链接：https://github.com/showlab/Show-1。</p></section><section class="analysis-section"><h2>评估与结果</h2><p>《Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation》摘要声明达到或超过同期方法，但未给出足以独立复核的完整指标数值与对照表；需查正文实验表和附录。</p></section>
+  <section class="analysis-section"><h2>团队归属证据</h2><ul><li>《Show-1: Marrying Pixel and Latent Diffusion Models for Text-to-Video Generation》作者表中的 Shou, Mike Zheng 与 NUS Show Lab 对应，且 Show Lab 官方 Publications 页逐篇列出该论文。 论文级项目/代码为 https://github.com/showlab/Show-1。</li></ul></section>
+  <section class="analysis-section source-list"><h2>核验来源</h2><ul><li><a href="https://arxiv.org/abs/2309.15818" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/2309.15818</a></li><li><a href="https://sites.google.com/view/showlab/publications" target="_blank" rel="noopener noreferrer">https://sites.google.com/view/showlab/publications</a></li><li><a href="https://github.com/showlab/Show-1" target="_blank" rel="noopener noreferrer">https://github.com/showlab/Show-1</a></li></ul></section>
+</main>
+
+</body>
+</html>
