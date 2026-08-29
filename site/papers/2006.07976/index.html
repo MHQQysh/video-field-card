@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Actor-Context-Actor Relation Network for Spatio-Temporal Action Localization - 视频领域每日论文卡</title>
+    <meta name="description" content="它解决的是视频时空动作定位中“找出人并识别其动作”之外的关系缺口：只建模 actor–actor 或 actor–context 的直接成对关系，往往看不到某个支持演员与场景的互动对目标演员动作所提供的二阶线索。 面向多人、物体和背景共同决定动作的长视频分析场景：系统在短视频片段的关键帧检测所有人物，并为每个人输出动作类别，可用于 AVA 与 UCF101-24 这类帧级人物动作定位基准。 论文真正检验的是：在相同人物检测器与视频骨干上，先编码演员—稠密上下文关系，再对这些关系做 actor-context-actor 高阶推理并接入跨时间特征库，是否能比一阶或直接成对关系取得更高的动作定位 mAP，同时把注意力落到与动作有关的演员身体部位和物体区域。 研究背景：时空动作定位要求从视频中定位人物并识别其动作；与仅凭外观即可完成的物体检测不同，动作识别常需联合环境、其他人物和物体等上下文来判断互动。 核心痛点：直接的 actor–actor 或 actor–context 成对关系并不总够用，关键线索可能是“另一演员如何与同一场景区域互动”。已有图网络方法还依赖额外的预训练物体检测器，只使用检测到且属于预定义类别的物体，容易遗漏背景、未覆盖物体及物体局部。 任务定义：输入是一个约两秒的视频片段；人物检测器在中心关键帧找出所有演员框并复制到邻帧，视频骨干提取时空特征，系统最终为每个检测人物输出一个或多个动作类别置信度。 研究目标：目标是显式编码演员与稠密网格上下文的一阶关系，再推理不同演员的一阶关系之间的二阶联系，并用跨时间的演员—上下文特征库扩展可用的过去与未来信息，从而提高动作定位。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2006.07976">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2006.07976.webp" alt="Actor-Context-Actor Relation Network for Spatio-Temporal Action Localization" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">它解决的是视频时空动作定位中“找出人并识别其动作”之外的关系缺口：只建模 actor–actor 或 actor–context 的直接成对关系，往往看不到某个支持演员与场景的互动对目标演员动作所提供的二阶线索。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Actor-Context-Actor Relation Network for Spatio-Temporal Action Localization</h1>
+            <div class="detail-meta">2020-06-14 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2006.07976" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2006.07976" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2006.07976</span></div>
+            <p class="detail-summary">它解决的是视频时空动作定位中“找出人并识别其动作”之外的关系缺口：只建模 actor–actor 或 actor–context 的直接成对关系，往往看不到某个支持演员与场景的互动对目标演员动作所提供的二阶线索。 面向多人、物体和背景共同决定动作的长视频分析场景：系统在短视频片段的关键帧检测所有人物，并为每个人输出动作类别，可用于 AVA 与 UCF101-24 这类帧级人物动作定位基准。 论文真正检验的是：在相同人物检测器与视频骨干上，先编码演员—稠密上下文关系，再对这些关系做 actor-context-actor 高阶推理并接入跨时间特征库，是否能比一阶或直接成对关系取得更高的动作定位 mAP，同时把注意力落到与动作有关的演员身体部位和物体区域。 研究背景：时空动作定位要求从视频中定位人物并识别其动作；与仅凭外观即可完成的物体检测不同，动作识别常需联合环境、其他人物和物体等上下文来判断互动。 核心痛点：直接的 actor–actor 或 actor–context 成对关系并不总够用，关键线索可能是“另一演员如何与同一场景区域互动”。已有图网络方法还依赖额外的预训练物体检测器，只使用检测到且属于预定义类别的物体，容易遗漏背景、未覆盖物体及物体局部。 任务定义：输入是一个约两秒的视频片段；人物检测器在中心关键帧找出所有演员框并复制到邻帧，视频骨干提取时空特征，系统最终为每个检测人物输出一个或多个动作类别置信度。 研究目标：目标是显式编码演员与稠密网格上下文的一阶关系，再推理不同演员的一阶关系之间的二阶联系，并用跨时间的演员—上下文特征库扩展可用的过去与未来信息，从而提高动作定位。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">19 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：论文首页列出的单位包括 The Chinese University of Hong Kong、Columbia University、Scho…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2006.07976/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">它解决的是视频时空动作定位中“找出人并识别其动作”之外的关系缺口：只建模 actor–actor 或 actor–context 的直接成对关系，往往看不到某个支持演员与场景的互动对目标演员动作所提供的二阶线索。</p>
+  <ul class="reading-intro-points"><li>它解决的是视频时空动作定位中“找出人并识别其动作”之外的关系缺口：只建模 actor–actor 或 actor–context 的直接成对关系，往往看不到某个支持演员与场景的互动对目标演员动作所提供的二阶线索。</li><li>面向多人、物体和背景共同决定动作的长视频分析场景：系统在短视频片段的关键帧检测所有人物，并为每个人输出动作类别，可用于 AVA 与 UCF101-24 这类帧级人物动作定位基准。</li><li>论文真正检验的是：在相同人物检测器与视频骨干上，先编码演员—稠密上下文关系，再对这些关系做 actor-context-actor 高阶推理并接入跨时间特征库，是否能比一阶或直接成对关系取得更高的动作定位 mAP，同时把注意力落到与动作有关的演员身体部位和物体区域。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：论文首页列出的单位包括 The Chinese University of Hong Kong、Columbia University、School of CST, Xidian University 与 SenseTime Research。</li><li><strong>实验室 / 团队</strong>：论文首页明确署名 CUHK-SenseTime Joint Lab。</li><li><strong>作者与归属</strong>：Junting Pan—CUHK-SenseTime Joint Lab, The Chinese University of Hong Kong。</li><li><strong>作者与归属</strong>：Siyu Chen、Yu Liu、Jing Shao—SenseTime Research。</li><li><strong>作者与归属</strong>：Mike Zheng Shou—Columbia University。</li><li><strong>作者与归属</strong>：Hongsheng Li—CUHK-SenseTime Joint Lab, The Chinese University of Hong Kong；School of CST, Xidian University。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>它解决的是视频时空动作定位中“找出人并识别其动作”之外的关系缺口：只建模 actor–actor 或 actor–context 的直接成对关系，往往看不到某个支持演员与场景的互动对目标演员动作所提供的二阶线索。</li><li>面向多人、物体和背景共同决定动作的长视频分析场景：系统在短视频片段的关键帧检测所有人物，并为每个人输出动作类别，可用于 AVA 与 UCF101-24 这类帧级人物动作定位基准。</li><li>论文真正检验的是：在相同人物检测器与视频骨干上，先编码演员—稠密上下文关系，再对这些关系做 actor-context-actor 高阶推理并接入跨时间特征库，是否能比一阶或直接成对关系取得更高的动作定位 mAP，同时把注意力落到与动作有关的演员身体部位和物体区域。</li><li><strong>研究背景</strong>：时空动作定位要求从视频中定位人物并识别其动作；与仅凭外观即可完成的物体检测不同，动作识别常需联合环境、其他人物和物体等上下文来判断互动。</li><li><strong>核心痛点</strong>：直接的 actor–actor 或 actor–context 成对关系并不总够用，关键线索可能是“另一演员如何与同一场景区域互动”。已有图网络方法还依赖额外的预训练物体检测器，只使用检测到且属于预定义类别的物体，容易遗漏背景、未覆盖物体及物体局部。</li><li><strong>任务定义</strong>：输入是一个约两秒的视频片段；人物检测器在中心关键帧找出所有演员框并复制到邻帧，视频骨干提取时空特征，系统最终为每个检测人物输出一个或多个动作类别置信度。</li><li><strong>研究目标</strong>：目标是显式编码演员与稠密网格上下文的一阶关系，再推理不同演员的一阶关系之间的二阶联系，并用跨时间的演员—上下文特征库扩展可用的过去与未来信息，从而提高动作定位。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 actor-context-actor 关系这一建模对象：两个演员不只直接关联，而是通过各自与同一上下文区域的互动形成可用于动作判断的二阶关系。</li><li>设计 ACAR-Net，并以 HR²O 在保留空间布局的演员—上下文关系图之间执行高阶关系推理，而不是把推理限制在演员对或演员—物体对。</li><li>提出 ACFB，把整段视频不同时刻的一阶演员—上下文关系存入特征库，使当前演员能与过去和未来的演员及上下文做长期高阶推理。</li><li>在 AVA 与 UCF101-24 动作定位数据集上取得当时的 state-of-the-art，并在提交时位列 ActivityNet 排行榜第一。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：人物检测器给出关键帧演员框，视频骨干生成共享时空上下文；ACRN 风格编码器为每个演员构造一阶演员—上下文关系图，HR²O 在不同演员的关系图之间推理二阶关系，ACFB 提供跨时间的一阶关系，最后经全局平均池化与单层全连接分类器输出各动作类别置信度。</li><li><strong>输入与表示</strong>：输入为约两秒视频片段。骨干特征先沿时间平均为 X∈R^(C×H×W)；关键帧的 N 个演员框经 RoIAlign 得到 7×7 空间输出，再做空间最大池化形成 Ai∈R^C。每个 Ai 被平铺到 H×W 并与 X 按通道拼接，卷积后得到保留空间位置的一阶关系图 Fi。</li><li><strong>模型结构</strong>：HR²O 由若干改造的 non-local block 堆叠而成：二维卷积把每个 Fi 投影为同尺寸的 Q、K、V，在每个空间位置上跨演员计算注意力并聚合 V；聚合结果经归一化、ReLU、卷积与 dropout 后残差加回 Fi，继续送入下一 block。论文还实现了直接对 Ai、Aj 与上下文三元组施加 Relation Network 的替代版本，但其计算量随演员数呈 N² 增长。</li><li><strong>数据流</strong>：视频一支进入骨干得到网格上下文，关键帧另一支进入人物检测器得到演员框；RoIAlign 从共享上下文取演员特征，随后依次执行平铺与拼接、卷积编码一阶关系、HR²O 聚合其他演员在同一空间位置的关系、残差融合、全局平均池化和动作分类。启用 ACFB 时，从时间窗取出长期关系 Li：当前 Fi 产生 Q，长期 Li 产生 K/V，再完成跨时间注意力。</li><li><strong>关键技术</strong>：稠密网格上下文直接来自视频骨干，能包含背景、物体及物体局部，无需额外的定类物体检测器；卷积投影既汇聚局部信息，也让关系算子保持位置和演员顺序敏感；ACFB 存的是演员—上下文关系而非仅演员特征，因此可提供关系级长期信息。高阶推理只用动作标签监督；训练时互斥姿态用 softmax，非互斥的人—物与人—人互动用 sigmoid，再计算 binary cross-entropy。</li><li><strong>公式与超参数</strong>：核心计算为 Q^i,K^i,V^i=conv2D(F^i)，Att^i_(x,y)=softmax_j(&lt;Q^i_(x,y),K^j_(x,y)&gt;/sqrt(d))，再以 H̃^i_(x,y)=sum_j Att^i,j_(x,y)V^j_(x,y) 聚合；随后 H^i=Dropout(Conv2D(ReLU(norm(H̃^i))))，并残差融合 F′^i=F^i+H^i。嵌入维度 d=512。替代 RN 用 fθ([Ai,Aj,Vx,y]) 计算三元关系并按演员取均值。ACFB 中 Q 来自当前 Fi，K/V 来自长期 Li；默认堆叠两层改造 non-local block，时间窗总长为二十一秒。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：AVA 2.2 为默认数据集；其 430 个 15 分钟视频每隔 1 秒在关键帧标注人物框与动作标签，并评估 60 个动作类。</li><li><strong>数据集</strong>：AVA-Kinetics 含超过 238k 个独立视频、超过 624k 个标注帧；来自 Kinetics-700 的每个视频只标注单帧。</li><li><strong>数据集</strong>：UCF101-24 是 UCF101 的子集，含 3,207 个视频和 24 个动作类的时空标注。</li><li><strong>规模与划分</strong>：论文对 AVA 说明遵循基准指南但未列出训练集与验证集的具体数量；AVA-Kinetics 的每个 Kinetics 视频只有一个标注帧；UCF 实验明确采用第一划分。</li><li><strong>模型</strong>：AVA 消融使用 SlowFast R-50 8×8（无 non-local block），骨干预训练于 Kinetics-400；人物检测框来自 Faster R-CNN/ResNeXt-101-FPN。主结果还使用 SlowFast R-101（含或不含 NL）。正文未报告这些模型的参数量。</li><li><strong>硬件</strong>：正文的 AVA 与 UCF 实现细节给出了采样、优化器、批量和训练日程，但均未报告训练或推理所用 GPU/CPU 型号、设备数量或显存配置。</li><li><strong>代码</strong>：论文首页脚注明确给出训练代码仓库 <a href="https://github.com/Siyu-C/ACAR-Net；目录元数据的" target="_blank" rel="noopener noreferrer">https://github.com/Siyu-C/ACAR-Net；目录元数据的</a> code_url 仍按输入记录保留为空。</li><li><strong>训练平台</strong>：实验平台是 AVA、AVA-Kinetics 与 UCF 的离线视频数据及检测框，采用帧级空间动作定位评测；正文没有使用或报告仿真器、机器人、实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：AVA v2.1、AVA v2.2 的验证集，以及 AVA-Kinetics 的验证集与测试服务器；提交 AVA-Kinetics 测试服务器的模型用训练集和验证集合并训练。</li><li><strong>评估基准</strong>：UCF101-24 的第一划分，执行逐帧人物动作空间定位。</li><li><strong>评估指标</strong>：AVA 评估 60 个动作类，在 frame-level IoU 阈值 0.5 下报告 mAP；论文表格把更高 mAP 作为更优结果。</li><li><strong>评估指标</strong>：UCF：在第一划分上报告 IoU 阈值 0.5 的 frame-mAP；数值越高越好。</li><li><strong>对比方法</strong>：关系消融在同一 Baseline 上比较 STO、ACRN、AIA 与 HR²O，并在该组实验关闭长期特征支持，以隔离关系建模本身的影响。</li><li><strong>对比方法</strong>：AVA 主结果对比 ACRN、Zhang 等、Action TX、LFB、SlowFast 与 AIA；UCF 主结果对比 T-CNN、ACT、STEP、I3D、S3D-G 与 AIA，并区分仅视觉帧 V 和视觉帧加光流 V+F。</li><li><strong>关键结果</strong>：在 AVA 的 Kinetics-400 预训练比较中，Ours, R-101, 8×8 达到 30.0 val mAP，LFB, R-101+NL 为 27.4。</li><li><strong>关键结果</strong>：在 AVA 新版的单尺度、无翻转设置中，Kinetics-700 预训练的 Ours, R-101 达到 33.3 val mAP，AIA, R-101+NL 为 32.3。</li><li><strong>关键结果</strong>：AVA-Kinetics 上，自实现 SlowFast, R-101, 8×8 的 32.98 val mAP 提升为 Ours 的 35.84，正文报告 ACAR 带来 +2.86 mAP。</li><li><strong>关键结果</strong>：多尺度加水平翻转的 Ours++ ensemble 达到 40.49 val mAP 和 39.62 test mAP；测试集排名第一，领先其他参赛结果 +6.71 mAP。</li><li><strong>关键结果</strong>：UCF 第一划分上，SlowFast R-50, 8×4 基线为 82.4 frame-mAP，Ours w/o ACFB 为 84.3。</li><li><strong>消融实验</strong>：同一基线且关闭长期支持时，STO、ACRN、AIA、HR²O 分别为 26.10、26.71、26.79、27.83 mAP，高阶关系版本最高。</li><li><strong>消融实验</strong>：组件递增结果为 Baseline 25.39、Baseline+HR²O 27.83、完整 ACAR 28.84 mAP，说明高阶算子与 ACFB 都带来增益。</li><li><strong>消融实验</strong>：HR²O 实现对比中，简单平均、Relation Network、改造 non-local 分别为 26.97、27.18、27.83 mAP；改造 non-local 最好且正文称其比三元组 RN 更高效。</li><li><strong>消融实验</strong>：先聚合 actor 的顺序为 27.62，先编码 context 为 27.83 mAP；一层、两层、三层 HR²O 分别为 27.63、27.83、27.25，作者推测三层下降可能源于过拟合。</li><li><strong>消融实验</strong>：特征库消融中，HR²O 为 27.83、HR²O+LFB 为 27.75、HR²O+ACFB 为 28.84 mAP；ACFB 使用二十一秒时间窗，优于只存演员特征的 LFB。</li><li><strong>实验条件</strong>：AVA 消融采用 SlowFast R-50 8×8，输入 64 帧，慢支路 T=8、τ=8，快支路 α=4；同步 SGD 的 batch size 为 32 clips，训练 35k iterations，base learning rate 0.064，在 33k 与 34k 处除以 10，前 6k warm-up，weight decay 10−7、Nesterov momentum 0.9；推理短边缩放至 256 pixels，只用得分大于 0.85 的人物框。常规 AVA 主结果不做多尺度和翻转，Ours++ 才用 3 scales 与水平翻转。UCF 使用 SlowFast R-50 8×4、快支路 32 连续帧，训练 5.4k iterations，base learning rate 0.002，在 4.9k 与 5.1k 处除以 10，前四分之一日程 warm-up；训练只用真值框，推理使用检测器给出的全部框。所有评估都是离线视频上的帧级空间定位，不是机器人闭环或实车测试。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2006.15489/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Video Representation Learning with Visual Tempo Consistency</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2006.07034/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Benchmarking Unsupervised Object Representations for Video Sequences</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

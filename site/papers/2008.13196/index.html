@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Finding Action Tubes with a Sparse-to-Dense Framework - 视频领域每日论文卡</title>
+    <meta name="description" content="它解决时空动作检测中逐帧或逐片段密集检测再链接既只看到短期上下文、又重复计算的问题：从视频流的一次前向中产生时间区间、演员框轨迹与动作类别组成的动作管。 适用场景是需要在视频中同时判断动作发生区间、定位区间内演员并分类动作的时空检测；论文在 UCF101-24 未裁剪体育视频，以及动作贯穿全片的 JHMDB-21、UCFSports 短视频上验证。 论文真正检验的是：长短期信息融合能否提高稀疏帧上的检测与关联可靠性，以及按动作动态程度自适应决定采样量，能否让插值得到的稠密动作管在维持 video-mAP 的同时显著减少推理开销。 研究背景：时空动作检测比视频级动作识别或时间定位更细：它既要确定动作发生区间，又要在区间内定位演员，还要给出动作类别；目标因而是带类别与逐帧框序列的动作管，而不是单一视频标签。 核心痛点：既有 detect-and-link 管线先以每帧或短片段信息密集检测框，再用 Viterbi 等启发式算法链接。短期观察会混淆前段相似、后段才分化的 Long Jump 与 Pole Vault；逐帧检测在计入光流后还会进一步放大计算成本。 任务定义：给定视频 V，输出动作管集合 A={Φ_j}；每条 Φ_j 具有类别 c_j、起止帧 s_j/e_j，以及该区间内各时刻的四维边界框集合 B_j={b_t}。 研究目标：在单次前向中先稀疏地产生时间与空间候选，再借助框关联和线性插值恢复稠密动作管；同时显式融合长短期上下文，使速度—精度折中优于逐帧密集检测。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2008.13196">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2008.13196.webp" alt="Finding Action Tubes with a Sparse-to-Dense Framework" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">它解决时空动作检测中逐帧或逐片段密集检测再链接既只看到短期上下文、又重复计算的问题：从视频流的一次前向中产生时间区间、演员框轨迹与动作类别组成的动作管。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Finding Action Tubes with a Sparse-to-Dense Framework</h1>
+            <div class="detail-meta">2020-08-30 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2008.13196" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2008.13196" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2008.13196</span></div>
+            <p class="detail-summary">它解决时空动作检测中逐帧或逐片段密集检测再链接既只看到短期上下文、又重复计算的问题：从视频流的一次前向中产生时间区间、演员框轨迹与动作类别组成的动作管。 适用场景是需要在视频中同时判断动作发生区间、定位区间内演员并分类动作的时空检测；论文在 UCF101-24 未裁剪体育视频，以及动作贯穿全片的 JHMDB-21、UCFSports 短视频上验证。 论文真正检验的是：长短期信息融合能否提高稀疏帧上的检测与关联可靠性，以及按动作动态程度自适应决定采样量，能否让插值得到的稠密动作管在维持 video-mAP 的同时显著减少推理开销。 研究背景：时空动作检测比视频级动作识别或时间定位更细：它既要确定动作发生区间，又要在区间内定位演员，还要给出动作类别；目标因而是带类别与逐帧框序列的动作管，而不是单一视频标签。 核心痛点：既有 detect-and-link 管线先以每帧或短片段信息密集检测框，再用 Viterbi 等启发式算法链接。短期观察会混淆前段相似、后段才分化的 Long Jump 与 Pole Vault；逐帧检测在计入光流后还会进一步放大计算成本。 任务定义：给定视频 V，输出动作管集合 A={Φ_j}；每条 Φ_j 具有类别 c_j、起止帧 s_j/e_j，以及该区间内各时刻的四维边界框集合 B_j={b_t}。 研究目标：在单次前向中先稀疏地产生时间与空间候选，再借助框关联和线性插值恢复稠密动作管；同时显式融合长短期上下文，使速度—精度折中优于逐帧密集检测。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">15 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：上海交通大学电子信息与电气工程学院（中国）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2008.13196/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">它解决时空动作检测中逐帧或逐片段密集检测再链接既只看到短期上下文、又重复计算的问题：从视频流的一次前向中产生时间区间、演员框轨迹与动作类别组成的动作管。</p>
+  <ul class="reading-intro-points"><li>它解决时空动作检测中逐帧或逐片段密集检测再链接既只看到短期上下文、又重复计算的问题：从视频流的一次前向中产生时间区间、演员框轨迹与动作类别组成的动作管。</li><li>适用场景是需要在视频中同时判断动作发生区间、定位区间内演员并分类动作的时空检测；论文在 UCF101-24 未裁剪体育视频，以及动作贯穿全片的 JHMDB-21、UCFSports 短视频上验证。</li><li>论文真正检验的是：长短期信息融合能否提高稀疏帧上的检测与关联可靠性，以及按动作动态程度自适应决定采样量，能否让插值得到的稠密动作管在维持 video-mAP 的同时显著减少推理开销。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：上海交通大学电子信息与电气工程学院（中国）</li><li><strong>机构</strong>：上海大学上海先进通信与数据科学研究院（中国）</li><li><strong>机构</strong>：马来西亚多媒体大学</li><li><strong>机构</strong>：Adobe Research（美国）</li><li><strong>机构</strong>：南京大学计算机软件新技术国家重点实验室（中国）</li><li><strong>实验室 / 团队</strong>：论文首页明确署名的实验室是南京大学计算机软件新技术国家重点实验室；元数据中的 nju-mcg 是目录团队标签，首页没有把 MCG 写作署名机构。</li><li><strong>作者与归属</strong>：Yuxi Li、Weiyao Lin：上海交通大学电子信息与电气工程学院，同时隶属上海大学上海先进通信与数据科学研究院。</li><li><strong>作者与归属</strong>：Tao Wang、Rui Qian：上海交通大学电子信息与电气工程学院。</li><li><strong>作者与归属</strong>：John See：马来西亚多媒体大学。</li><li><strong>作者与归属</strong>：Ning Xu：Adobe Research。</li><li><strong>作者与归属</strong>：Limin Wang：南京大学计算机软件新技术国家重点实验室；Shugong Xu：上海大学上海先进通信与数据科学研究院。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>它解决时空动作检测中逐帧或逐片段密集检测再链接既只看到短期上下文、又重复计算的问题：从视频流的一次前向中产生时间区间、演员框轨迹与动作类别组成的动作管。</li><li>适用场景是需要在视频中同时判断动作发生区间、定位区间内演员并分类动作的时空检测；论文在 UCF101-24 未裁剪体育视频，以及动作贯穿全片的 JHMDB-21、UCFSports 短视频上验证。</li><li>论文真正检验的是：长短期信息融合能否提高稀疏帧上的检测与关联可靠性，以及按动作动态程度自适应决定采样量，能否让插值得到的稠密动作管在维持 video-mAP 的同时显著减少推理开销。</li><li><strong>研究背景</strong>：时空动作检测比视频级动作识别或时间定位更细：它既要确定动作发生区间，又要在区间内定位演员，还要给出动作类别；目标因而是带类别与逐帧框序列的动作管，而不是单一视频标签。</li><li><strong>核心痛点</strong>：既有 detect-and-link 管线先以每帧或短片段信息密集检测框，再用 Viterbi 等启发式算法链接。短期观察会混淆前段相似、后段才分化的 Long Jump 与 Pole Vault；逐帧检测在计入光流后还会进一步放大计算成本。</li><li><strong>任务定义</strong>：给定视频 V，输出动作管集合 A={Φ_j}；每条 Φ_j 具有类别 c_j、起止帧 s_j/e_j，以及该区间内各时刻的四维边界框集合 B_j={b_t}。</li><li><strong>研究目标</strong>：在单次前向中先稀疏地产生时间与空间候选，再借助框关联和线性插值恢复稠密动作管；同时显式融合长短期上下文，使速度—精度折中优于逐帧密集检测。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出单次前向的 sparse-to-dense 时空动作检测框架：先在稀疏采样位置检测，再沿预测时间区间关联并插值为稠密动作管。</li><li>设计 LFA：由时序金字塔产生全时域权重图，把每个时刻的三维特征与所有时刻的加权组合做残差融合，并将增强特征用于提议、框检测和关联。</li><li>设计 DTS：以插值框和真值管的平均 IoU 达到阈值所需的最小均匀采样数作为动态等级，学习每个时间提议的采样量，按动作复杂度而不是固定点数或固定步长采样。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：时序金字塔先给出动作时间提议；LFA 将全时域上下文注入原始三维特征；DTS 为每个时间提议预测动态等级并抽取稀疏二维特征；空间检测器产生框、类别、嵌入和位移；关联器与插值器最终恢复稠密动作管。</li><li><strong>输入与表示</strong>：输入视频被时间采样为长度 T 的帧张量，由三维卷积网络输出特征 F，其通道、时间和空间维记为 C、T_f、H、W。空间池化后的单维时序特征进入金字塔，时间提议表示为归一化区间 (s,e)，动作管以类别、起止帧和四维框序列表示。</li><li><strong>模型结构</strong>：主干采用 I3D；其后是由步长为 2 的一维卷积下采样路径和反卷积上采样路径组成的时序金字塔。LFA 的映射 R 由三个一维卷积块及批归一化、ReLU 构成；空间检测器含二维卷积的分类/回归分支与三维卷积的嵌入/位移分支。</li><li><strong>数据流</strong>：视频经主干得到三维特征；空间平均池化后建立时序金字塔并回归时间提议；LFA 计算全时域权重并增强原特征；DTS 按每个提议的预测动态等级，在 (s,e) 内用线性插值抽出若干二维特征；空间分支检测框，关联分支给出嵌入与位移；从首个样本中类别分数最高的框出发，逐次选择连通度最大的框，最后线性插值补齐逐帧框，管分数为各框平均分乘时间提议 actionness。</li><li><strong>关键技术</strong>：动态等级 d 的真值从少到多均匀抽样真值框，插值回整段并计算逐帧 IoU 均值，第一个达到 ε 的样本数即 d；训练时预测 d̂，推理取 n=min(⌈d̂⌉,N_max)。相邻框连通度对外观距离 D_a 与位移距离 D_s 的平均值取负指数。</li><li><strong>公式与超参数</strong>：LFA 先计算 S=σ(R(F_p;θ))，再令 F̂ 等于原特征 F 加上由 S 加权、以 T_f 归一化的全时域特征和。动态等级用加权 smooth L1 损失约束 d 与 d̂；嵌入损失以平方 L2 距离和间隔 α 拉近同实例、推开不同实例，位移损失监督 δ_i 接近下一采样框的中心偏移。实验设 α=2、ε=0.7、γ=0.1；N_max 在 UCF101-24、JHMDB-21、UCFSports 分别为 10、4、8；训练张量长度 T 分别为 96、32、48 帧。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：UCF101-24：3,207 个未裁剪视频、24 个体育动作类别，带逐帧边界框标注；采用第一划分。</li><li><strong>数据集</strong>：JHMDB-21：HMDB-51 的子集，共 928 个视频、21 类动作，视频已做时间裁剪；报告三个训练/测试划分的平均性能。</li><li><strong>数据集</strong>：UCFSports：150 个视频、10 个体育动作类别，视频已做时间裁剪；采用标准划分。</li><li><strong>规模与划分</strong>：规模与划分逐项见 datasets：UCF101-24 用第一划分，JHMDB-21 对三个训练/测试划分取平均，UCFSports 用标准划分；后两者虽经时间裁剪，但动作贯穿整段视频。</li><li><strong>模型</strong>：特征主干明确采用 I3D，空间检测分支执行分类与坐标回归；正文方法、实验设置及参考文献尾部均未报告模型参数量，也未说明可下载的预训练权重规格。</li><li><strong>硬件</strong>：实现细节仅报告在一块 NVIDIA Titan 1080 GPU 上实现；全文未给出 CPU、内存、训练时长或与训练卡分开的推理硬件配置。</li><li><strong>代码</strong>：逐页检查正文、首页脚注、致谢和参考文献末页，论文未给出代码仓库 URL 或代码发布承诺；因此沿用元数据中为空的 code_url。</li><li><strong>训练平台</strong>：实验资源是三套公开视频动作检测数据集；论文未报告仿真器、机器人、实车或其他物理执行平台，这些控制平台口径不适用于本视频检测实验。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：UCF101-24：第一划分上的时空动作检测。</li><li><strong>评估基准</strong>：JHMDB-21：三个划分取平均，并另用于推理时间测试。</li><li><strong>评估基准</strong>：UCFSports：标准划分上的时空动作检测。</li><li><strong>评估指标</strong>：video-mAP（越高越好）：预测管只有与尚未匹配真值管的 tube overlap 大于阈值 Δ 才算正例；主结果在 JHMDB-21、UCFSports 的 Δ=0.2/0.5 与 UCF101-24 的 Δ=0.3/0.5 报告。</li><li><strong>评估指标</strong>：推理效率同时报告每视频平均时延（秒，越低越好）与近似 FPS（越高越好）。</li><li><strong>对比方法</strong>：主结果表同时比较只用 RGB 的方法和使用 RGB+Flow 的方法；本模型输入仅为 RGB，因此跨方法解读时需保留输入模态差异。</li><li><strong>对比方法</strong>：采样消融比较 fixed point-avg、fixed point-4、fixed point-10、fixed step-avg 与 DTS；固定策略分别控制采样点数或时间步长。</li><li><strong>关键结果</strong>：JHMDB-21：仅 RGB 的本方法在 Δ=0.2/0.5 时 video-mAP 为 76.1/74.3（越高越好）。</li><li><strong>关键结果</strong>：UCFSports：仅 RGB 的本方法在 Δ=0.2/0.5 时 video-mAP 为 94.3/93.8（越高越好）。</li><li><strong>关键结果</strong>：UCF101-24：仅 RGB 的本方法在 Δ=0.3/0.5 时 video-mAP 为 71.1/54.0（越高越好）。</li><li><strong>关键结果</strong>：JHMDB-21 上每视频平均推理时间为 0.21 秒，约 168 FPS；作者报告相对最近竞争者最高加速 7.6×。</li><li><strong>消融实验</strong>：LFA 消融：完整模型在 UCF101-24、Δ=0.3 时为 71.1 video-mAP；去掉 LFA 后为 62.2，下降 8.9%（越高越好）。</li><li><strong>消融实验</strong>：关联向量消融：完整模型为 71.1；去掉 embedding 得 68.9（下降 2.2%），去掉 shift 得 69.6（下降 1.5%）video-mAP@0.3。</li><li><strong>消融实验</strong>：DTS 为 71.1 video-mAP@0.3、0.569 秒/视频；fixed point-avg 为 67.4、0.551 秒，DTS 在近似时延下准确率更高。</li><li><strong>消融实验</strong>：fixed step-avg 为 66.9、0.571 秒/视频，低于 DTS 的 71.1、0.569 秒；作者据此认为按动作复杂度自适应优于只按持续时间设步长。</li><li><strong>消融实验</strong>：固定点数采样呈精度—速度权衡：fixed point-4 为 63.3、0.412 秒，fixed point-10 为 67.5、0.654 秒；二者准确率均低于 DTS 的 71.1，后者为 0.569 秒。</li><li><strong>实验条件</strong>：所有消融均在 UCF101-24 上且只用 RGB。训练分两阶段：先冻结空间检测器和 LFA，训练主干与时间检测器学习提议及动态等级，再端到端联合训练；优化器为 SGD，累积 batch size 为 16。主结果是给定视频上的检测评测，不涉及机器人开环/闭环或实车；JHMDB-21 另跑一个 epoch 统计平均推理时间。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2009.07736/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">HOTA: A Higher Order Metric for Evaluating Multi-Object Tracking</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2008.00141/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Actor-Action Video Classification CSC 249/449 Spring 2020 Challenge Report</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

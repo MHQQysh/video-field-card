@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>What comprises a good talking-head video generation?: A Survey and Benchmark - 视频领域每日论文卡</title>
+    <meta name="description" content="这篇工作解决 talking-head 生成缺少客观、可复现且贴近人类感知的统一评测问题：它把身份保持、视觉质量、语义级唇同步和自然自发运动作为互补维度，而不是只用人工偏好或单一图像分数下结论。 它面向由一张或少量参考人脸加音频、面部关键点等驱动信号生成说话人视频的场景，并把固定头姿、自发运动、明显头姿/头动和特定人物四类条件纳入同一预处理与比较框架。 论文真正验证的是：所选或新设计的指标能否分别捕捉身份、清晰度与分布质量、语义口型、情绪和眨眼，并且方法排序在不同数据集、头姿分布与头动测试协议下是否仍然可信。 研究背景：Talking-head 生成要把参考人脸的外观与音频或关键点中的运动信息结合成连续视频；随着生成方法增多，能否用可复现的量化方式判断身份、同步、画质和自然度，成为方法进步的基础设施问题。 核心痛点：既有人工评测耗时、主观且难复现；现成量化分数又可能只在特定数据分布下有意义，忽略头姿/头动会误导排序，稀疏唇部关键点或全片偏移也难反映人类依赖语义判断口型同步的方式。 任务定义：生成任务输入是一张或少量参考人脸图像，以及音频语音、面部关键点等驱动源，输出是与驱动对应的逼真动态 talking-head 视频；本文的评测任务再把生成视频与配对真值送入统一预处理和多维指标。 研究目标：目标不是提出一个单独追求最高画质的生成器，而是审计现有指标、补足视频级感知指标、标准化数据预处理，并检验指标和模型结论对数据集、头姿及头动协议的敏感性。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2005.03201">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2005.03201.webp" alt="What comprises a good talking-head video generation?: A Survey and Benchmark" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">这篇工作解决 talking-head 生成缺少客观、可复现且贴近人类感知的统一评测问题：它把身份保持、视觉质量、语义级唇同步和自然自发运动作为互补维度，而不是只用人工偏好或单一图像分数下结论。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">What comprises a good talking-head video generation?: A Survey and Benchmark</h1>
+            <div class="detail-meta">2020-05-07 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2005.03201" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2005.03201" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2005.03201</span></div>
+            <p class="detail-summary">这篇工作解决 talking-head 生成缺少客观、可复现且贴近人类感知的统一评测问题：它把身份保持、视觉质量、语义级唇同步和自然自发运动作为互补维度，而不是只用人工偏好或单一图像分数下结论。 它面向由一张或少量参考人脸加音频、面部关键点等驱动信号生成说话人视频的场景，并把固定头姿、自发运动、明显头姿/头动和特定人物四类条件纳入同一预处理与比较框架。 论文真正验证的是：所选或新设计的指标能否分别捕捉身份、清晰度与分布质量、语义口型、情绪和眨眼，并且方法排序在不同数据集、头姿分布与头动测试协议下是否仍然可信。 研究背景：Talking-head 生成要把参考人脸的外观与音频或关键点中的运动信息结合成连续视频；随着生成方法增多，能否用可复现的量化方式判断身份、同步、画质和自然度，成为方法进步的基础设施问题。 核心痛点：既有人工评测耗时、主观且难复现；现成量化分数又可能只在特定数据分布下有意义，忽略头姿/头动会误导排序，稀疏唇部关键点或全片偏移也难反映人类依赖语义判断口型同步的方式。 任务定义：生成任务输入是一张或少量参考人脸图像，以及音频语音、面部关键点等驱动源，输出是与驱动对应的逼真动态 talking-head 视频；本文的评测任务再把生成视频与配对真值送入统一预处理和多维指标。 研究目标：目标不是提出一个单独追求最高画质的生成器，而是审计现有指标、补足视频级感知指标、标准化数据预处理，并检验指标和模型结论对数据集、头姿及头动协议的敏感性。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">19 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：论文首页未印出机构名称行；五位作者的联系信息均使用 University of Rochester 域名邮箱（ur.rochester.edu…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2005.03201/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">这篇工作解决 talking-head 生成缺少客观、可复现且贴近人类感知的统一评测问题：它把身份保持、视觉质量、语义级唇同步和自然自发运动作为互补维度，而不是只用人工偏好或单一图像分数下结论。</p>
+  <ul class="reading-intro-points"><li>这篇工作解决 talking-head 生成缺少客观、可复现且贴近人类感知的统一评测问题：它把身份保持、视觉质量、语义级唇同步和自然自发运动作为互补维度，而不是只用人工偏好或单一图像分数下结论。</li><li>它面向由一张或少量参考人脸加音频、面部关键点等驱动信号生成说话人视频的场景，并把固定头姿、自发运动、明显头姿/头动和特定人物四类条件纳入同一预处理与比较框架。</li><li>论文真正验证的是：所选或新设计的指标能否分别捕捉身份、清晰度与分布质量、语义口型、情绪和眨眼，并且方法排序在不同数据集、头姿分布与头动测试协议下是否仍然可信。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：论文首页未印出机构名称行；五位作者的联系信息均使用 University of Rochester 域名邮箱（ur.rochester.edu 或 rochester.edu）。</li><li><strong>实验室 / 团队</strong>：论文首页、作者脚注及正文未明确列出实验室名称；目录元数据中的 rochester-video 仅是收录标签，不作为论文署名事实。</li><li><strong>作者与归属</strong>：Lele Chen、Guofeng Cui、Ziyi Kou、Haitian Zheng、Chenliang Xu—首页均列 Rochester 域名邮箱；前三位另标注为 equal contribution，但正文未给出更细的单位映射。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>这篇工作解决 talking-head 生成缺少客观、可复现且贴近人类感知的统一评测问题：它把身份保持、视觉质量、语义级唇同步和自然自发运动作为互补维度，而不是只用人工偏好或单一图像分数下结论。</li><li>它面向由一张或少量参考人脸加音频、面部关键点等驱动信号生成说话人视频的场景，并把固定头姿、自发运动、明显头姿/头动和特定人物四类条件纳入同一预处理与比较框架。</li><li>论文真正验证的是：所选或新设计的指标能否分别捕捉身份、清晰度与分布质量、语义口型、情绪和眨眼，并且方法排序在不同数据集、头姿分布与头动测试协议下是否仍然可信。</li><li><strong>研究背景</strong>：Talking-head 生成要把参考人脸的外观与音频或关键点中的运动信息结合成连续视频；随着生成方法增多，能否用可复现的量化方式判断身份、同步、画质和自然度，成为方法进步的基础设施问题。</li><li><strong>核心痛点</strong>：既有人工评测耗时、主观且难复现；现成量化分数又可能只在特定数据分布下有意义，忽略头姿/头动会误导排序，稀疏唇部关键点或全片偏移也难反映人类依赖语义判断口型同步的方式。</li><li><strong>任务定义</strong>：生成任务输入是一张或少量参考人脸图像，以及音频语音、面部关键点等驱动源，输出是与驱动对应的逼真动态 talking-head 视频；本文的评测任务再把生成视频与配对真值送入统一预处理和多维指标。</li><li><strong>研究目标</strong>：目标不是提出一个单独追求最高画质的生成器，而是审计现有指标、补足视频级感知指标、标准化数据预处理，并检验指标和模型结论对数据集、头姿及头动协议的敏感性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>将 GRID、LRW、CREMA-D、VoxCeleb2、LRS3-TED 与 ObamaSet 组织为固定头姿、自发运动、明显头姿和特定人物四类 benchmark，并给出人脸跟踪与动态裁剪协议以减小原数据缩放、裁剪和头位差异。</li><li>提出 LRSD：用空间—时间唇读网络提取词级语义视觉表示，再比较生成片段与配对真值片段，从而补足稀疏 landmark 距离和 SyncNet 全片偏移难以判断间歇性语义失配的问题。</li><li>提出 ESD 与 BSD：分别针对情绪表达和眨眼训练时空卷积特征，借助 ArcLoss 增强类内紧致与类间分离，再以余弦相似度比较生成视频和真值视频。</li><li>在统一协议下横向评测代表性生成方法，并用头姿与头动分桶、混淆矩阵和附录扩展图揭示平均分会掩盖大姿态、大头动条件下的性能退化。</li><li>构建统一代码仓库，收录 image matting、few-shot generator、attention-based embedding 与 3D graphics module，并以统一结构支持不同 talking-head 生成方法的 benchmark。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：整体系统由统一数据预处理、候选 talking-head 生成方法、四属性评测器和协议敏感性分析组成；作者还实现一个组合既有机制的 baseline，目的在于提供可控参照，而不是把 survey 伪装成单一新生成模型。</li><li><strong>输入与表示</strong>：生成侧以参考图像提供 appearance feature，以音频、目标表情图像或面部关键点提供 motion feature；预处理侧逐帧检测 2D 人脸关键点并用眼区中心轨迹定位裁剪；评测侧把帧、视频片段或其身份/唇读/情绪/眨眼嵌入作为比较表示。</li><li><strong>模型结构</strong>：LRSD 的唇读网络先用 3D 卷积抽取时空特征，再由 ResNet-18 精炼空间特征，随后以 1D 卷积和全局平均池化聚合时间维，最后用 MLP 与 Softmax 预测词标签；词表取训练集中最常见的 300 个词。情绪与眨眼评测复用同类时空骨干但参数彼此独立。</li><li><strong>数据流</strong>：原始视频先逐帧检测关键点、平滑眼区中心并动态裁成人脸方块；统一处理后的参考帧和驱动信号进入各候选生成器得到视频。之后 ArcFace 嵌入计算 ArcSim，帧分布与像素结构进入 FID/SSIM/CPBD，唇部片段经唇读网络得到 LRSD，情绪或眼区片段经 ArcLoss 精炼的特征得到 ESD/BSD；最后按数据集、头姿和头动分桶分析分数。</li><li><strong>关键技术</strong>：预处理用 Hanning 平滑与随脸尺度变化的裁剪，使跨数据集输入更可比；baseline 在 Wang 骨干的注意力组合前加入 Information Exchange，用 ConvGate 从参考图像或关键点提取额外注意向量，并以特征级多分支非线性组合替代易受错位影响的线性 image matting。评估阶段再把均值结果拆成头姿/头动条件分布。</li><li><strong>公式与超参数</strong>：轨迹平滑采用 w_j=0.5−0.5cos(2πj/(N−1)) 的 Hanning 权重，窗口 N=11；裁剪左上角为 (x̄−r1·l, ȳ−r2·l)，其中 r1=10/9、r2=8/9。PDF 将正方形边长直接印为 41/18，未显式乘以 l，因而本文按原文保留这一量纲疑点。头动分数 M_x 取同一短片 yaw 头姿估计的最大值与最小值之差，作者限定这种近似只适用于例如少于 20 seconds 的短片。LRSD 公式在双竖线内以逗号并列 φ(x) 与 φ(x̂)，原文未给出清晰的差分运算或一致的方向定义，故不将其确定改写成平方欧氏差。ArcLoss 先归一化视频向量与权重再加入角度 margin m；ESD 以 v_i·v_j/(||v_i||||v_j||) 计算余弦相似度，BSD 在下一页明确沿用同式。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：固定头姿场景：GRID、LRW。</li><li><strong>数据集</strong>：自发运动场景：CREMA-D。</li><li><strong>数据集</strong>：明显头姿/头动场景：VoxCeleb2、LRS3-TED。</li><li><strong>数据集</strong>：特定人物长时视频场景：ObamaSet。</li><li><strong>规模与划分</strong>：GRID 为 27.5 hours/33 subjects，LRW 为 173 hours/1k+ subjects，CREMA-D 为 11.1 hours/91 subjects，VoxCeleb2 为 2.4k hours/6.1k subjects，LRS3-TED 为 438 hours/5k+ subjects，ObamaSet 为 14 hours/1 subject。另建的 blink 数据子集含 133,824 个训练 slices 和 59,253 个排除于训练的测试 slices；六套主 benchmark 未报告统一的 train/validation/test 样本数。</li><li><strong>模型</strong>：评测侧使用预训练 ArcFace 身份网络、FID 的 InceptionNet，以及唇读/情绪/眨眼分支中的 ResNet-18；生成 baseline 采用 Wang 等人的 few-shot video-to-video synthesis 骨干。论文未报告这些网络的参数规模。</li><li><strong>硬件</strong>：唯一明确给出型号的采集硬件是 MODALITY 语料使用的 SoftKinetic DepthSense 325，深度流为 60 frames per second、320 × 240 pixels；作者在预处理、指标、结果讨论及附录中均未报告训练或推理 GPU/CPU 型号、数量与耗时。</li><li><strong>代码</strong>：作者在首页明确给出全部评测代码：<a href="https://github.com/lelechen63/talking-head-generation-survey；论文还说明仓库包含" target="_blank" rel="noopener noreferrer">https://github.com/lelechen63/talking-head-generation-survey；论文还说明仓库包含</a> image matting、few-shot generator、attention-based embedding 与 3D graphics module。</li><li><strong>训练平台</strong>：这不是仿真器、机器人或实车平台实验，而是 Lab/Wild 离线音视频语料 benchmark；VoxCeleb2、LRS3、LRW 与 ObamaSet 的来源分别为 YouTube、TED、BBC news 和 Obama weekly addresses。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：固定头姿：GRID 与 LRW。</li><li><strong>评估基准</strong>：自发运动：CREMA-D。</li><li><strong>评估基准</strong>：明显头姿与真实噪声：VoxCeleb2 与 LRS3-TED。</li><li><strong>评估基准</strong>：单一特定人物的长期运动：ObamaSet。</li><li><strong>评估指标</strong>：ArcSim：ArcFace 图像嵌入的余弦相似度，用于身份保持，越高越好。</li><li><strong>评估指标</strong>：SSIM 与 FID：前者比较结构感知相似性、越高越好；后者比较真实/生成特征分布、越低越好。CPBD 是无参考锐度指标，越高越清晰。</li><li><strong>评估指标</strong>：LRSD：比较生成片段与真值片段的词级唇读特征；结果表与正文把更高 LRSD 称为更好，但公式以逗号并列两项且未给出清晰差分运算，因此 distance 命名、运算和方向并不自洽。</li><li><strong>评估指标</strong>：ESD 与 BSD：分别对情绪特征和眨眼特征计算余弦相似度，二者都是越高越好。</li><li><strong>对比方法</strong>：主结果横向比较 baseline、Wang、Wiles、Zakharov、Jamaludin 与 Chen 六种实现，并在 VoxCeleb2、LRS3-TED、LRW、GRID 上使用同一组身份与画质指标。</li><li><strong>对比方法</strong>：语义唇读分支比较 real video、Chen、baseline、Wang、Wiles、Zakharov；情绪分支比较 baseline、Zakharov、Wiles、Vougioukas；眨眼分支还纳入 Jamaludin 与 Chen。</li><li><strong>关键结果</strong>：GRID 上 Wang 方法取得 ArcSim 0.92、SSIM 0.83、CPBD 0.33 和 FID 37.98；前三项越高越好，FID 越低越好。</li><li><strong>关键结果</strong>：VoxCeleb2 上 Chen 方法的 ArcSim 为 0.59，但 FID 为 330.88，显示身份相似度领先并不等于分布画质也领先。</li><li><strong>关键结果</strong>：LRS3-TED 的真实视频 Top-1 唇读准确率为 72.62%，baseline 生成视频仅 3.85%；同表中 baseline 的 LRSD 为 59.60%。</li><li><strong>关键结果</strong>：CREMA-D 上 Wiles 方法的 ESD 为 0.655，高于 baseline 的 0.467、Zakharov 的 0.391 与 Vougioukas 的 0.2665（越高越好）。</li><li><strong>关键结果</strong>：GRID 测试集上 Wiles 方法的 BSD 为 0.979，为表中最高；baseline 为 0.965，Wang 为 0.957（越高越好）。</li><li><strong>关键结果</strong>：ObamaSet 上 baseline 的 ArcSim 为 0.76、CPBD 为 0.32，Wang 的 SSIM 为 0.52、FID 为 83.61；ArcSim、SSIM、CPBD 越高越好而 FID 越低越好。作者同时指出生成运动与 audio/landmark 输入没有直接相关，并将随机重复运动归因于缺少个体运动建模模块。</li><li><strong>消融实验</strong>：协议因素分析表明：各方法在较小头动区间通常有更高 ArcSim；头动增大时 SSIM/FID 变差，而 CPBD 与头姿/头动没有清晰相关性，因此只报全测试集均值会掩盖条件差异。</li><li><strong>消融实验</strong>：方法设计取舍方面，作者曾在唇读网络上尝试 ArcLoss 与 Triplet metric-learning，但因收敛很慢而移除；对 baseline 的 Information Exchange、ConvGate 和多分支组合，正文没有给逐模块开关的数值消融表。</li><li><strong>实验条件</strong>：这是配对生成视频与真值视频上的离线评测，不是闭环仿真或实车控制。唇读网络在 LRS3-TED training set 训练，并在 LRS3-TED 与 VoxCeleb2 testing set 测试；ESD 用 CREMA-D testing set，BSD 用 GRID testing set。论文按各方法/数据集运行并分头姿、头动区间复核，未定义零样本或统一微调口径。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2005.06803/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">TAM: Temporal Adaptive Module for Video Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2004.07109/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Fully Convolutional Online Tracking</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

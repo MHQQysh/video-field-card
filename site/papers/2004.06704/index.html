@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FineGym: A Hierarchical Video Dataset for Fine-grained Action Understanding - 视频领域每日论文卡</title>
+    <meta name="description" content="FineGym 解决现有动作识别数据过于粗粒度的问题：既要把完整体操动作沿时间拆成子动作，又要区分外观极相近的技术元素。 面向体育技术分析、动作识别与时间定位：输入高水平体操比赛录像，可按完整 routine、集合与元素检查动作，也可研究自动评分、动作生成和多属性预测。 论文真正检验的是：稀疏采样、输入模态、时序建模、粗粒度视频预训练与姿态表示，在层级化且动作中心的细粒度数据上是否仍然有效。 研究背景：动作识别在 ActivityNet、Kinetics 等粗粒度基准上已取得很高准确率，但体育分析要求把完整活动拆成阶段并比较细微动作，背景线索无法替代对动作本身的理解。 核心痛点：现有数据与模型聚焦粗类别；体操场景还要同时解决沿时间轴分解动作、在语义层级内区分近邻子类，并应对快速运动、剧烈身体形变和几乎相同的姿态。 任务定义：给定体操比赛视频，任务既包括标出完整动作及其子动作的时间边界，也包括在事件—集合—元素层级做分类；经验研究覆盖动作分类与时间定位。 研究目标：用高质量层级数据揭示细粒度动作理解与粗粒度识别之间的缺口，并系统检验稀疏采样、输入模态、时序建模、预训练和中间姿态表示在 FineGym 上的适用性。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2004.06704">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2004.06704.webp" alt="FineGym: A Hierarchical Video Dataset for Fine-grained Action Understanding" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">FineGym 解决现有动作识别数据过于粗粒度的问题：既要把完整体操动作沿时间拆成子动作，又要区分外观极相近的技术元素。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">FineGym: A Hierarchical Video Dataset for Fine-grained Action Understanding</h1>
+            <div class="detail-meta">2020-04-14 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2004.06704" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2004.06704" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2004.06704</span></div>
+            <p class="detail-summary">FineGym 解决现有动作识别数据过于粗粒度的问题：既要把完整体操动作沿时间拆成子动作，又要区分外观极相近的技术元素。 面向体育技术分析、动作识别与时间定位：输入高水平体操比赛录像，可按完整 routine、集合与元素检查动作，也可研究自动评分、动作生成和多属性预测。 论文真正检验的是：稀疏采样、输入模态、时序建模、粗粒度视频预训练与姿态表示，在层级化且动作中心的细粒度数据上是否仍然有效。 研究背景：动作识别在 ActivityNet、Kinetics 等粗粒度基准上已取得很高准确率，但体育分析要求把完整活动拆成阶段并比较细微动作，背景线索无法替代对动作本身的理解。 核心痛点：现有数据与模型聚焦粗类别；体操场景还要同时解决沿时间轴分解动作、在语义层级内区分近邻子类，并应对快速运动、剧烈身体形变和几乎相同的姿态。 任务定义：给定体操比赛视频，任务既包括标出完整动作及其子动作的时间边界，也包括在事件—集合—元素层级做分类；经验研究覆盖动作分类与时间定位。 研究目标：用高质量层级数据揭示细粒度动作理解与粗粒度识别之间的缺口，并系统检验稀疏采样、输入模态、时序建模、预训练和中间姿态表示在 FineGym 上的适用性。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">12 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：The Chinese University of Hong Kong（论文首页署名机构）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2004.06704/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">FineGym 解决现有动作识别数据过于粗粒度的问题：既要把完整体操动作沿时间拆成子动作，又要区分外观极相近的技术元素。</p>
+  <ul class="reading-intro-points"><li>FineGym 解决现有动作识别数据过于粗粒度的问题：既要把完整体操动作沿时间拆成子动作，又要区分外观极相近的技术元素。</li><li>面向体育技术分析、动作识别与时间定位：输入高水平体操比赛录像，可按完整 routine、集合与元素检查动作，也可研究自动评分、动作生成和多属性预测。</li><li>论文真正检验的是：稀疏采样、输入模态、时序建模、粗粒度视频预训练与姿态表示，在层级化且动作中心的细粒度数据上是否仍然有效。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：The Chinese University of Hong Kong（论文首页署名机构）</li><li><strong>实验室 / 团队</strong>：CUHK-SenseTime Joint Lab（论文首页署名实验室）</li><li><strong>作者与归属</strong>：Dian Shao、Yue Zhao、Bo Dai、Dahua Lin 均在首页共同署名 CUHK-SenseTime Joint Lab, The Chinese University of Hong Kong；顶层 labs 中的 hku-mmlab 仅继承目录收录字段，不视为论文署名。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>FineGym 解决现有动作识别数据过于粗粒度的问题：既要把完整体操动作沿时间拆成子动作，又要区分外观极相近的技术元素。</li><li>面向体育技术分析、动作识别与时间定位：输入高水平体操比赛录像，可按完整 routine、集合与元素检查动作，也可研究自动评分、动作生成和多属性预测。</li><li>论文真正检验的是：稀疏采样、输入模态、时序建模、粗粒度视频预训练与姿态表示，在层级化且动作中心的细粒度数据上是否仍然有效。</li><li><strong>研究背景</strong>：动作识别在 ActivityNet、Kinetics 等粗粒度基准上已取得很高准确率，但体育分析要求把完整活动拆成阶段并比较细微动作，背景线索无法替代对动作本身的理解。</li><li><strong>核心痛点</strong>：现有数据与模型聚焦粗类别；体操场景还要同时解决沿时间轴分解动作、在语义层级内区分近邻子类，并应对快速运动、剧烈身体形变和几乎相同的姿态。</li><li><strong>任务定义</strong>：给定体操比赛视频，任务既包括标出完整动作及其子动作的时间边界，也包括在事件—集合—元素层级做分类；经验研究覆盖动作分类与时间定位。</li><li><strong>研究目标</strong>：用高质量层级数据揭示细粒度动作理解与粗粒度识别之间的缺口，并系统检验稀疏采样、输入模态、时序建模、预训练和中间姿态表示在 FineGym 上的适用性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>发布 FineGym：以顶级职业体操官方录像为数据源，同时提供事件—集合—元素三级语义标注与动作—子动作两级时间标注。</li><li>建立面向专家细粒度标签的采集流程：依据官方 codebook 定义类别，以属性决策树得到元素标签，并用培训、预试、参考材料和跨标注者验证控制质量。</li><li>给出多任务基准，覆盖事件、集合、元素分类和动作、子动作时间定位，并比较二维时序聚合、三维时空卷积、光流和姿态图卷积等代表方法。</li><li>通过采样帧数、输入模态、帧顺序与预训练分析，指出细粒度识别更依赖密集时间信息和运动建模，并暴露姿态估计在剧烈动作中的失败。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：FineGym 的核心不是新识别网络，而是数据构建与基准协议：官方比赛录像提供动作实例，层级标注模块形成语义类别和双层时间边界，决策树把属性判断落到元素标签，评测模块再用代表性分类与定位模型诊断挑战。</li><li><strong>输入与表示</strong>：输入是近年顶级职业体操比赛的完整官方录像，人工去冗余后均匀切成 10 分钟块；表示包含事件—集合—元素语义层级、动作—子动作时间边界，以及实验使用的 RGB、光流或人体姿态。</li><li><strong>模型结构</strong>：标注结构沿语义和时间轴分层：事件对应完整体操 routine；集合聚合技术与视觉相近的子动作；元素给出最细描述；每个已选集合还有由属性问题组成的人工决策树，根节点是集合标签，叶节点是元素标签。</li><li><strong>数据流</strong>：收集近年顶级比赛的官方完整高清录像→人工去冗余并切块→标注完整 routine 的起止与事件标签并丢弃中断样本→在选定集合中定位各子动作并赋集合标签→沿属性决策树回答问题直到叶节点，得到元素标签→通过培训、预试、参考幻灯与演示、跨标注者验证做质量控制。</li><li><strong>关键技术</strong>：关键在把专家官方 codebook 与人工决策树结合：先剔除视觉不可辨或不规范元素，再用属性查询逐步区分细微类别；多级时间/语义标注与跨标注者复核用于抑制层级误差传播。</li><li><strong>公式与超参数</strong>：论文未提出编号公式或新的优化目标；实验训练协议沿用原方法。明确采样设置包括：事件/集合级 TSN 将实例切成 3 段并从每段采一帧，帧数研究测试 1、3、5、7、12 帧。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：FineGym 由体操比赛官方视频构建，提供事件、集合、元素语义标签及动作、子动作时间边界；本文还用 ImageNet/Kinetics 作预训练来源，并以 UCF101、ActivityNet 作采样帧数对照。</li><li><strong>规模与划分</strong>：本文实验版含 303 场比赛录像、约 708 小时；统计表列出 15 个集合、530 个元素类别、4883 个动作实例和 32697 个子动作实例，其中 354 个元素类别至少有一个实例。实验提供自然长尾 Gym288 与较均衡 Gym99 设置。</li><li><strong>模型</strong>：评测覆盖逐帧语义加时序聚合的 TSN、TRN、TRNms、TSM、ActionVLAD，时空卷积 I3D/Non-local，以及姿态图卷积 ST-GCN；全文未报告这些模型的参数规模。</li><li><strong>硬件</strong>：论文只说明训练协议沿用各方法原论文；通读实验设置、结论及参考文献尾部，未报告训练或推理所用 GPU/CPU 型号与数量。</li><li><strong>代码</strong>：论文首页脚注明确写明数据集与代码可在 <a href="https://sdolivia.github.io/FineGym/" target="_blank" rel="noopener noreferrer">https://sdolivia.github.io/FineGym/</a> 获取；目录元数据的 code_url 仍按输入记录保留为空。</li><li><strong>训练平台</strong>：数据来自互联网中的顶级职业体操比赛官方录像；实验是这些视频上的离线动作识别与时间定位，未使用机器人、仿真器或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：基准覆盖事件/集合级分类、跨事件/事件内/集合内的元素级分类，以及录像中动作与动作实例内子动作的时间定位；元素级设置包括 Gym288、Gym99、VT、FX、FX-S1 和 UB-S1。</li><li><strong>评估指标</strong>：分类报告 mean-class accuracy 与 Top-1 accuracy（均为百分比，越高越好）；定位报告 mAP@tIoU，并在阈值 0.50–0.95 间每隔 0.05 取平均（越高越好）。</li><li><strong>对比方法</strong>：分类比较 ActionVLAD、TSN、TRN、TRNms、TSM、I3D、Non-local I3D、ST-GCN，以及 RGB、Flow、2Stream、Pose 模态；时序分析还比较原序/打乱帧与不同测试帧数。</li><li><strong>关键结果</strong>：集合级分类中，TSN 2Stream 的 mean-class accuracy 为 91.97、Top-1 accuracy 为 97.69，高于 RGB 的 89.85/95.25 与 Flow 的 91.64/96.42（表内均为百分制数值）。</li><li><strong>关键结果</strong>：元素级 Gym99 上，TSM 2Stream 的 mean-class accuracy 为 81.2、Top-1 accuracy 为 88.4；TSN 2Stream 对应为 76.4/86.0（表内均为百分制数值）。</li><li><strong>关键结果</strong>：SSN 的动作级定位平均 mAP 为 49.4，子动作级为 9.6；在 tIoU=0.90 时分别为 35.0 与 0.6，子动作定位明显更难。</li><li><strong>消融实验</strong>：采样帧数消融：TSN 在 Gym99 使用 1、3、5、7、12 帧时，准确率依次为 35.46、61.4、70.8、74.4、78.82；作者称 12 帧处趋于饱和，约占全部帧的 30%。</li><li><strong>消融实验</strong>：模态消融：Gym99 上 TSN 的 Flow mean-class accuracy 为 75.6，RGB 为 61.4，2Stream 为 76.4（表内均为百分制数值）；运动信息明显比静态外观更有帮助。</li><li><strong>消融实验</strong>：时序消融：TRN 在 UB-circles 测试时打乱帧会出现显著性能下降；TSM 以 3 帧训练后，测试帧数偏离训练设置时性能快速下滑，而平均池化的 TSN 更稳定。</li><li><strong>实验条件</strong>：实验均在预先裁剪的比赛视频上做离线分类或时间定位；训练协议默认遵循各方法原论文。元素级同时使用自然长尾与阈值均衡设置，并按跨事件、事件内和集合内三种范围报告。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2004.07109/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Fully Convolutional Online Tracking</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2004.03548/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Temporal Pyramid Network for Action Recognition</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

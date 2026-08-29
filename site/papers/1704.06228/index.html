@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Temporal Action Detection with Structured Segment Networks - 视频领域每日论文卡</title>
+    <meta name="description" content="它解决未裁剪长视频中的时序动作检测：既要判断动作类别，又要给出精确起止时间，并避免把只含判别片段的不完整 proposal 当成完整动作。 具体用于监控、视频分析等长视频处理：输入视频和一组不同时长的 temporal proposals，输出带类别标签与时间范围的完整动作实例。 论文真正检验的是：显式建模 starting、course、ending 阶段，配合类别/完整性分解判别、稀疏长时采样与 TAG proposal，能否同时提高 proposal 质量、动作识别和边界定位。 研究背景：时序动作检测面向未裁剪、可能很长的视频，除动作类别外还必须输出精确开始与结束位置；论文将其应用背景落在监控与视频分析等场景。 核心痛点：现有 snippet 分类器看到动作中的判别片段就可能对不完整 proposal 给出高响应，难以区分完整实例与动作碎片；三维卷积受短片段架构限制，循环模型又依赖密集采样，长时结构建模的计算代价高，而且既有方法缺少对 starting/ending 阶段和完整性的显式建模。 任务定义：输入是一段视频及一组具有起止时间、持续时长各异的 temporal action proposals；系统要筛掉背景和不完整候选，输出由类别标签与起止时间界定的完整动作实例集合。 研究目标：沿用 proposal 加分类的检测范式，但在时间维度显式分析完整动作的 starting、course、ending 结构，以可端到端训练的统一网络同时完成类别识别、完整性判断与边界精修。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1704.06228">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1704.06228.webp" alt="Temporal Action Detection with Structured Segment Networks" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">它解决未裁剪长视频中的时序动作检测：既要判断动作类别，又要给出精确起止时间，并避免把只含判别片段的不完整 proposal 当成完整动作。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Temporal Action Detection with Structured Segment Networks</h1>
+            <div class="detail-meta">2017-04-20 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1704.06228" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1704.06228" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1704.06228</span></div>
+            <p class="detail-summary">它解决未裁剪长视频中的时序动作检测：既要判断动作类别，又要给出精确起止时间，并避免把只含判别片段的不完整 proposal 当成完整动作。 具体用于监控、视频分析等长视频处理：输入视频和一组不同时长的 temporal proposals，输出带类别标签与时间范围的完整动作实例。 论文真正检验的是：显式建模 starting、course、ending 阶段，配合类别/完整性分解判别、稀疏长时采样与 TAG proposal，能否同时提高 proposal 质量、动作识别和边界定位。 研究背景：时序动作检测面向未裁剪、可能很长的视频，除动作类别外还必须输出精确开始与结束位置；论文将其应用背景落在监控与视频分析等场景。 核心痛点：现有 snippet 分类器看到动作中的判别片段就可能对不完整 proposal 给出高响应，难以区分完整实例与动作碎片；三维卷积受短片段架构限制，循环模型又依赖密集采样，长时结构建模的计算代价高，而且既有方法缺少对 starting/ending 阶段和完整性的显式建模。 任务定义：输入是一段视频及一组具有起止时间、持续时长各异的 temporal action proposals；系统要筛掉背景和不完整候选，输出由类别标签与起止时间界定的完整动作实例集合。 研究目标：沿用 proposal 加分类的检测范式，但在时间维度显式分析完整动作的 starting、course、ending 结构，以可端到端训练的统一网络同时完成类别识别、完整性判断与边界精修。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：香港中文大学信息工程系（Department of Information Engineering, The Chinese Universit…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1704.06228/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">它解决未裁剪长视频中的时序动作检测：既要判断动作类别，又要给出精确起止时间，并避免把只含判别片段的不完整 proposal 当成完整动作。</p>
+  <ul class="reading-intro-points"><li>它解决未裁剪长视频中的时序动作检测：既要判断动作类别，又要给出精确起止时间，并避免把只含判别片段的不完整 proposal 当成完整动作。</li><li>具体用于监控、视频分析等长视频处理：输入视频和一组不同时长的 temporal proposals，输出带类别标签与时间范围的完整动作实例。</li><li>论文真正检验的是：显式建模 starting、course、ending 阶段，配合类别/完整性分解判别、稀疏长时采样与 TAG proposal，能否同时提高 proposal 质量、动作识别和边界定位。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：香港中文大学信息工程系（Department of Information Engineering, The Chinese University of Hong Kong）。</li><li><strong>机构</strong>：瑞士苏黎世联邦理工学院计算机视觉实验室（Computer Vision Laboratory, ETH Zurich, Switzerland）。</li><li><strong>实验室 / 团队</strong>：Computer Vision Laboratory（ETH Zurich；论文首页明确署名的实验室）。</li><li><strong>作者与归属</strong>：Yue Zhao、Yuanjun Xiong、Zhirong Wu、Xiaoou Tang、Dahua Lin—香港中文大学信息工程系。</li><li><strong>作者与归属</strong>：Limin Wang—瑞士苏黎世联邦理工学院计算机视觉实验室。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>它解决未裁剪长视频中的时序动作检测：既要判断动作类别，又要给出精确起止时间，并避免把只含判别片段的不完整 proposal 当成完整动作。</li><li>具体用于监控、视频分析等长视频处理：输入视频和一组不同时长的 temporal proposals，输出带类别标签与时间范围的完整动作实例。</li><li>论文真正检验的是：显式建模 starting、course、ending 阶段，配合类别/完整性分解判别、稀疏长时采样与 TAG proposal，能否同时提高 proposal 质量、动作识别和边界定位。</li><li><strong>研究背景</strong>：时序动作检测面向未裁剪、可能很长的视频，除动作类别外还必须输出精确开始与结束位置；论文将其应用背景落在监控与视频分析等场景。</li><li><strong>核心痛点</strong>：现有 snippet 分类器看到动作中的判别片段就可能对不完整 proposal 给出高响应，难以区分完整实例与动作碎片；三维卷积受短片段架构限制，循环模型又依赖密集采样，长时结构建模的计算代价高，而且既有方法缺少对 starting/ending 阶段和完整性的显式建模。</li><li><strong>任务定义</strong>：输入是一段视频及一组具有起止时间、持续时长各异的 temporal action proposals；系统要筛掉背景和不完整候选，输出由类别标签与起止时间界定的完整动作实例集合。</li><li><strong>研究目标</strong>：沿用 proposal 加分类的检测范式，但在时间维度显式分析完整动作的 starting、course、ending 结构，以可端到端训练的统一网络同时完成类别识别、完整性判断与边界精修。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 Structured Segment Network，将每个候选的起始、过程、结束阶段编码为 structured temporal pyramid，再拼接成 proposal 的全局结构表示。</li><li>提出 activity classifier 与按类别设置的 completeness classifiers：前者从 course 阶段识别动作或背景，后者结合 proposal 及其前后上下文判断动作是否完整。</li><li>以稀疏 snippet 采样使长 proposal 的特征计算量不随时长增长并支持端到端训练；测试时把线性分类/回归响应前移到池化之前，复用高度重叠 proposal 的计算。</li><li>提出 Temporal Actionness Grouping：把 snippet actionness 的互补信号视为一维地形，用 watershed 得到高 actionness 区域并跨多组阈值合并、抑制重叠候选。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：SSN 由 temporal proposal、proposal 增广与三阶段划分、STPP、activity/completeness 分类器、按类别的位置回归器组成；TAG 可作为前端 proposal 生成器，分类与完整性分支负责留下完整实例，回归分支精修时间边界。</li><li><strong>输入与表示</strong>：视频表示为 snippet 序列，每个 snippet 由 RGB 图像与光流堆栈共同表征；每个 proposal 含开始和结束时间。模型向 proposal 前后各扩展其时长的一半形成上下文，再划分为 starting、course、ending，并把各阶段池化特征拼接为全局表示。</li><li><strong>模型结构</strong>：course 阶段用更深的 temporal pyramid 表示内部子阶段，starting 与 ending 用较简单的平均池化；activity classifier 只读取 course 特征并输出动作类别或背景，class-conditional completeness classifier 读取三阶段全局表示，位置回归器则对中心和对数时长进行类别条件的边界修正。</li><li><strong>数据流</strong>：先由 TAG 或其他 proposal 方法产生候选；随后增广候选并分成三阶段，在各 pooling region 稀疏取 snippet，经 RGB/光流双流 CNN 得到特征，STPP 分区平均并拼接；activity 与 completeness 概率相乘形成完整动作的联合分数，正且完整的候选再做位置回归，背景和不完整候选被过滤。</li><li><strong>关键技术</strong>：TAG 对 snippet actionness 的互补序列运行一维 watershed，在不同水位获得 basins，再从每个 basin 出发按 actionness 覆盖率吸收后续区域，汇总多阈值结果后做非极大抑制。训练以分段随机采样近似密集 STPP；推理利用平均池化与线性矩阵乘法可交换，把分类/回归响应预先算到 snippet 级。</li><li><strong>公式与超参数</strong>：STPP 对区间内特征做平均：u_i^(l)=1/|e_i^(l)-s_i^(l)+1|·Σv_t；course 使用 L=2、B1=1、B2=2，starting/ending 使用单层平均池化。分类损失为 L_cls=-log P(c_i|p_i) − 1(c_i≥1)log P(b_i|c_i,p_i)，总损失仅对完整正样本加入 λL_reg，且 L_reg 为 smooth L1。正样本与真值 IoU 至少为 0.7；不完整样本自身跨度有 80% 被真值包含且 IoU 低于 0.3。稀疏训练把增广 proposal 均分为 L=9 段，每段随机采一个 snippet。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：ActivityNet v1.2（用于消融与 proposal 评估）。</li><li><strong>数据集</strong>：ActivityNet v1.3（用于与现有方法比较并向测试服务器提交结果）。</li><li><strong>数据集</strong>：THUMOS14；其官方训练来源是 UCF101，但本文按通行协议在 THUMOS14 验证集训练、测试集评估。</li><li><strong>规模与划分</strong>：ActivityNet v1.2 含 9682 个视频、100 类，v1.3 含 19994 个视频、200 类，均按 2:1:1 划分训练/验证/测试。THUMOS14 有 1010 个验证视频和 1574 个测试视频，其中分别有 220 与 212 个视频带 20 类时序标注；评测排除 2 个错误标注测试视频。</li><li><strong>模型</strong>：特征提取使用 RGB 空间流与光流时间流组成的 two-stream CNN，并从 ImageNet 预训练模型初始化；论文只给出这一模型族描述，方法章节、实验设置和文末均未进一步报告骨干网络名称或参数规模。</li><li><strong>硬件</strong>：全文方法、实验设置直至参考文献尾部均未给出训练或推理 GPU/CPU 型号、数量和内存；只报告 ActivityNet 上训练约 5–15 小时，以及提取网络输出后的每视频处理从约 10 秒降至不足 0.5 秒，因此不能据此推断硬件规格。</li><li><strong>代码</strong>：论文首页脚注明确写明代码可在 <a href="http://yjxiong.me/others/ssn" target="_blank" rel="noopener noreferrer">http://yjxiong.me/others/ssn</a> 获取；顶层 code_url 仍按 papers.json 的原始元数据继承为空字符串。</li><li><strong>训练平台</strong>：全文实验是离线视频数据集评测，方法、实验设置和参考文献尾部均未使用或报告仿真器、机器人或实车平台；实际评测平台由 ActivityNet、THUMOS14 与 UCF101 数据协议构成。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：ActivityNet v1.2：消融、TAG proposal 与检测实验。</li><li><strong>评估基准</strong>：ActivityNet v1.3 testing：与挑战赛方法比较。</li><li><strong>评估基准</strong>：THUMOS14 testing：时序动作检测与 proposal 评估。</li><li><strong>评估指标</strong>：ActivityNet 报告 IoU=0.5、0.75、0.95 的 mAP，并以 IoU 从 0.5 到 0.95、步长 0.05 的 mAP 平均值比较方法；均为越高越好。</li><li><strong>评估指标</strong>：THUMOS14 报告 IoU=0.1、0.2、0.3、0.4、0.5 的 mAP，并以 mAP@0.5 作为方法比较口径；越高越好。</li><li><strong>评估指标</strong>：proposal 采用 average recall（AR），在相同 proposal 数量下越高越好，并结合不同 tIoU 下的 recall 判断候选边界质量。</li><li><strong>对比方法</strong>：TAG proposal 与 Sliding Windows、SCNN-prop、TAP、DAP 在受控且近似相同的候选数量下比较 AR。</li><li><strong>对比方法</strong>：THUMOS14 检测对比 Wang et al.、Oneata et al.、Richard et al.、S-CNN、Yeung et al. 与 Yuan et al.。</li><li><strong>对比方法</strong>：ActivityNet v1.3 测试集对比 Wang et al. 和两项 Singh et al. 挑战赛结果。</li><li><strong>关键结果</strong>：THUMOS14 候选数约 200 时，TAG 使用 200 个 proposals、AR=48.9，DAP 使用 200 个、AR=37.0，滑窗使用 204 个、AR=21.2；ActivityNet v1.2 使用 100 个 proposals 时，TAG 的 AR=71.7、滑窗 AR=34.8（表中 AR 按百分制，越高越好）。</li><li><strong>关键结果</strong>：THUMOS14 上，SSN 在 IoU=0.1/0.2/0.3/0.4/0.5 时的 mAP（%）分别为 60.3/56.2/50.6/40.8/29.1（mAP 越高越好）。</li><li><strong>关键结果</strong>：ActivityNet v1.3 testing 上，单模型 SSN 的 mAP（%）在 IoU=0.5/0.75/0.95 时分别为 43.26/28.70/5.63，IoU=0.5:0.05:0.95 的平均 mAP 为 28.28（越高越好）。</li><li><strong>消融实验</strong>：ActivityNet 的 STPP 消融中，显式增广并建模 starting/ending 的平均池化配置达到 24.6 mAP（%）；不增广的对应浅层配置仅 4.48，表明阶段结构是主要增益来源。</li><li><strong>消融实验</strong>：正文分类器消融写明单一分类器把 mAP 从分解设计的 23.7% 降到 17.9%；紧邻的消融表却把对应 TAG 分解配置列为 24.6，二者是论文内部数值不一致，稳妥结论仅是分解判别更好。</li><li><strong>消融实验</strong>：相同设置下，端到端训练的模型略优于 stage-wise 训练；location regression 与 multi-task learning 也持续提升检测准确率，说明联合优化特征、分类器与回归器有效。</li><li><strong>实验条件</strong>：这是未裁剪视频上的离线时序检测实验。SSN 以原始视频帧和 proposals 端到端训练，采用 RGB/光流双流、batch size 128、momentum 0.9，正/背景/不完整 proposal 比例为 1:1:6，完整性分支只用每个 minibatch 损失最高的 1/6 样本反传；ActivityNet v1.3 的测试结果由 test server 返回，且使用单模型而非 ensemble。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1704.08723/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Action Understanding with Multiple Classes of Actors</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1703.10898/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Thin-Slicing Network: A Deep Structured Model for Pose Estimation in Videos</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

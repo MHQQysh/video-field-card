@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project AutoVision: Localization and 3D Scene Perception for an Autonomous Vehicle with a Multi-Camera System - 视频领域每日论文卡</title>
+    <meta name="description" content="要解决的是：在相机作为唯一外感知传感器的自动驾驶车上，把多相机观测转化为车辆局部与全局定位结果以及稠密三维场景图，并把工作域扩展到城乡、昼夜和无 GNSS 区域。 具体场景是装有环视鱼眼近红外相机的线控 Isuzu D-Max 实车，在城市与乡村道路、白天、带近红外补光的夜间和无补光夜间运行；预建图区域使用稀疏地图定位，未建图区域使用卫星影像定位。 论文真正要验证的是：视觉惯性里程计、跨视角卫星匹配、稀疏地图定位和鱼眼稠密重建能否集成为一套实时多相机系统，并在无 GNSS 的城乡实车路线中同时给出可用定位精度与感知吞吐率。 研究背景：多数自动驾驶系统以 LiDAR 获取昼夜稳定的高精度点云；相机则成本较低、图像分辨率高、鱼眼垂直视场大，更利于语义理解。AutoVision 因而选择相机作为唯一外感知模态，用多视图几何补回深度，并把学习用于跨模态匹配和目标检测。 核心痛点：纯视觉方案需要环境光且不能直接输出三维点云；只依赖预建地图会把车辆限制在地图范围内，而全局位姿跳变又不适合稳定路径跟踪；此外，动态目标的深度若直接融合，会在稠密地图中留下拖影伪影。 任务定义：输入是同步的多路近红外鱼眼图像以及供视觉惯性里程计使用的 IMU 测量；系统输出平滑局部位姿、未建图区域的全局位置与航向、预建图区域的全局六自由度位姿，并由多视图深度、动态目标掩码和相机位姿融合出稠密网格。 研究目标：目标不是提出单一网络，而是把自动标定、局部里程计、两条全局定位分支和稠密感知整合到一台实车上，考察相机主导的系统能否在城乡、昼夜及无 GNSS 条件下实时定位和感知。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1809.05477">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1809.05477.webp" alt="Project AutoVision: Localization and 3D Scene Perception for an Autonomous Vehicle with a Multi-Camera System" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">要解决的是：在相机作为唯一外感知传感器的自动驾驶车上，把多相机观测转化为车辆局部与全局定位结果以及稠密三维场景图，并把工作域扩展到城乡、昼夜和无 GNSS 区域。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Project AutoVision: Localization and 3D Scene Perception for an Autonomous Vehicle with a Multi-Camera System</h1>
+            <div class="detail-meta">2018-09-14 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1809.05477" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1809.05477" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1809.05477</span></div>
+            <p class="detail-summary">要解决的是：在相机作为唯一外感知传感器的自动驾驶车上，把多相机观测转化为车辆局部与全局定位结果以及稠密三维场景图，并把工作域扩展到城乡、昼夜和无 GNSS 区域。 具体场景是装有环视鱼眼近红外相机的线控 Isuzu D-Max 实车，在城市与乡村道路、白天、带近红外补光的夜间和无补光夜间运行；预建图区域使用稀疏地图定位，未建图区域使用卫星影像定位。 论文真正要验证的是：视觉惯性里程计、跨视角卫星匹配、稀疏地图定位和鱼眼稠密重建能否集成为一套实时多相机系统，并在无 GNSS 的城乡实车路线中同时给出可用定位精度与感知吞吐率。 研究背景：多数自动驾驶系统以 LiDAR 获取昼夜稳定的高精度点云；相机则成本较低、图像分辨率高、鱼眼垂直视场大，更利于语义理解。AutoVision 因而选择相机作为唯一外感知模态，用多视图几何补回深度，并把学习用于跨模态匹配和目标检测。 核心痛点：纯视觉方案需要环境光且不能直接输出三维点云；只依赖预建地图会把车辆限制在地图范围内，而全局位姿跳变又不适合稳定路径跟踪；此外，动态目标的深度若直接融合，会在稠密地图中留下拖影伪影。 任务定义：输入是同步的多路近红外鱼眼图像以及供视觉惯性里程计使用的 IMU 测量；系统输出平滑局部位姿、未建图区域的全局位置与航向、预建图区域的全局六自由度位姿，并由多视图深度、动态目标掩码和相机位姿融合出稠密网格。 研究目标：目标不是提出单一网络，而是把自动标定、局部里程计、两条全局定位分支和稠密感知整合到一台实车上，考察相机主导的系统能否在城乡、昼夜及无 GNSS 条件下实时定位和感知。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">17 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：DSO National Laboratories</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1809.05477/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">要解决的是：在相机作为唯一外感知传感器的自动驾驶车上，把多相机观测转化为车辆局部与全局定位结果以及稠密三维场景图，并把工作域扩展到城乡、昼夜和无 GNSS 区域。</p>
+  <ul class="reading-intro-points"><li>要解决的是：在相机作为唯一外感知传感器的自动驾驶车上，把多相机观测转化为车辆局部与全局定位结果以及稠密三维场景图，并把工作域扩展到城乡、昼夜和无 GNSS 区域。</li><li>具体场景是装有环视鱼眼近红外相机的线控 Isuzu D-Max 实车，在城市与乡村道路、白天、带近红外补光的夜间和无补光夜间运行；预建图区域使用稀疏地图定位，未建图区域使用卫星影像定位。</li><li>论文真正要验证的是：视觉惯性里程计、跨视角卫星匹配、稀疏地图定位和鱼眼稠密重建能否集成为一套实时多相机系统，并在无 GNSS 的城乡实车路线中同时给出可用定位精度与感知吞吐率。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：DSO National Laboratories</li><li><strong>机构</strong>：ETH Zürich</li><li><strong>机构</strong>：National University of Singapore</li><li><strong>机构</strong>：MPI-IS and University of Tübingen</li><li><strong>机构</strong>：Microsoft, Switzerland</li><li><strong>机构</strong>：Chalmers University of Technology, Sweden</li><li><strong>实验室 / 团队</strong>：论文首页只列作者机构而未进一步命名实验室；顶层 autonomous-vision-tuebingen 是目录收录标签，不是论文首页的实验室署名。</li><li><strong>作者与归属</strong>：Lionel Heng、Benjamin Choi、Benson Kuan、Ye Chuan Yeo — DSO National Laboratories</li><li><strong>作者与归属</strong>：Zhaopeng Cui、Marcel Geppert、Peidong Liu — ETH Zürich</li><li><strong>作者与归属</strong>：Sixing Hu、Rang Nguyen、Gim Hee Lee — National University of Singapore</li><li><strong>作者与归属</strong>：Andreas Geiger — MPI-IS and University of Tübingen</li><li><strong>作者与归属</strong>：Marc Pollefeys — ETH Zürich；Microsoft, Switzerland</li><li><strong>作者与归属</strong>：Torsten Sattler — Chalmers University of Technology, Sweden</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>要解决的是：在相机作为唯一外感知传感器的自动驾驶车上，把多相机观测转化为车辆局部与全局定位结果以及稠密三维场景图，并把工作域扩展到城乡、昼夜和无 GNSS 区域。</li><li>具体场景是装有环视鱼眼近红外相机的线控 Isuzu D-Max 实车，在城市与乡村道路、白天、带近红外补光的夜间和无补光夜间运行；预建图区域使用稀疏地图定位，未建图区域使用卫星影像定位。</li><li>论文真正要验证的是：视觉惯性里程计、跨视角卫星匹配、稀疏地图定位和鱼眼稠密重建能否集成为一套实时多相机系统，并在无 GNSS 的城乡实车路线中同时给出可用定位精度与感知吞吐率。</li><li><strong>研究背景</strong>：多数自动驾驶系统以 LiDAR 获取昼夜稳定的高精度点云；相机则成本较低、图像分辨率高、鱼眼垂直视场大，更利于语义理解。AutoVision 因而选择相机作为唯一外感知模态，用多视图几何补回深度，并把学习用于跨模态匹配和目标检测。</li><li><strong>核心痛点</strong>：纯视觉方案需要环境光且不能直接输出三维点云；只依赖预建地图会把车辆限制在地图范围内，而全局位姿跳变又不适合稳定路径跟踪；此外，动态目标的深度若直接融合，会在稠密地图中留下拖影伪影。</li><li><strong>任务定义</strong>：输入是同步的多路近红外鱼眼图像以及供视觉惯性里程计使用的 IMU 测量；系统输出平滑局部位姿、未建图区域的全局位置与航向、预建图区域的全局六自由度位姿，并由多视图深度、动态目标掩码和相机位姿融合出稠密网格。</li><li><strong>研究目标</strong>：目标不是提出单一网络，而是把自动标定、局部里程计、两条全局定位分支和稠密感知整合到一台实车上，考察相机主导的系统能否在城乡、昼夜及无 GNSS 条件下实时定位和感知。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>实现面向多相机系统的实时直接视觉惯性里程计，以平滑局部位姿支撑路径跟踪、全局定位传播和稠密建图。</li><li>在未预建图区域，以地面环视全景和地理配准卫星影像做跨视角匹配，在已知初始位置与航向但不使用 GNSS 的条件下估计全局位置和航向。</li><li>在预建图区域，以地理配准稀疏三维地图和多相机图像的局部特征匹配进行全局六自由度定位，且不要求先验全局位姿。</li><li>构建实时多鱼眼稠密建图链路：平面扫描立体生成深度，TSDF 融合并光线投射成图，同时用动态目标掩码阻止车辆与行人的深度进入静态地图。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：自动标定模块统一相机内外参与相机—GNSS/INS、相机—LiDAR 外参；直接 VIO 提供连续局部位姿；CVM-Net 卫星分支负责未建图区域全局定位；稀疏地图重建与图像定位分支负责预建图区域全局位姿；平面扫描、动态目标检测和 TSDF 融合共同负责稠密感知。</li><li><strong>输入与表示</strong>：算法主输入是十二位近红外灰度鱼眼图；VIO 还读取 IMU。未建图定位把四向相机的圆柱投影拼成地面全景，并把全景与卫星块编码成同一描述子空间；预建图定位把地图点与 SIFT 描述子关联；稠密感知用深度图、相机位姿、二维动态目标掩码和保存有符号距离的 TSDF 体素表示场景。</li><li><strong>模型结构</strong>：VIO 包含跟踪与建图两个线程：前者最小化当前帧到最近关键帧的光度误差，后者用平面扫描初始化深度并在滑窗内联合优化位姿和结构。CVM-Net 是卫星/地面孪生网络，两支全卷积特征经对齐的 NetVLAD 聚合为全局描述子。感知支路把深度、局部位姿与动态掩码送入 TSDF 融合，光线投射输出当前视角网格。</li><li><strong>数据流</strong>：完成多传感器标定和时间同步后，近红外图像与 IMU 先进入 VIO 得到局部位姿。未建图时，局部位姿传播粒子，地面全景与最近卫星块的描述子距离给粒子赋权；预建图时，图像 SIFT 与稀疏地图点匹配后估计全局位姿。感知侧以已知相机位姿对多视图做平面扫描，先用检测框剔除动态目标深度，再将静态深度逐帧融合进 TSDF 并光线投射为三维地图。</li><li><strong>关键技术</strong>：鱼眼相机采用统一投影模型、plumb-bob 畸变模型和光度标定；相机—GNSS/INS 外参由手眼标定初始化后最小化重投影误差，相机—LiDAR 外参再以点到平面误差细化。卫星定位用粒子滤波和跨视角 NetVLAD 描述子；地图定位用广义 PnP、RANSAC 与 Active Search；稠密端直接在鱼眼图上平面扫描，并以微调后的 YOLOv3 掩蔽人和车辆。</li><li><strong>公式与超参数</strong>：全文没有编号公式；三项计算关系以文字定义：CVM-Net 粒子权重与两个全局描述子的欧氏距离成反比，平面扫描选择图像差异最小的深度假设，TSDF 体素保存截断有符号距离（物体内为负、外为正、表面为零）。传感器关键参数为 180° 鱼眼、2-megapixel、30 Hz、12-bit 近红外灰度；VIO 也以 30 Hz 输出。感知设置用 5 个前向相机的半分辨率图像，平面扫描平均 15 Hz，TSDF 融合约 20 Hz。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Microsoft COCO 是 YOLOv3 的原始训练来源；作者随后截去网络首尾层并用项目自有标注数据重训，但全文未报告该自有数据的名称、样本量或划分。</li><li><strong>规模与划分</strong>：论文没有把路线包装成发布数据集：VIO 结果覆盖一条 8.2km 城乡路线；卫星影像定位与稀疏地图定位复用城市、乡村各一条 5km 路线。项目自有标注数据的样本量以及训练、验证、测试划分均未报告。</li><li><strong>模型</strong>：学习模块包括 CVM-Net（孪生全卷积分支加对齐 NetVLAD）和以 Microsoft COCO 初始化、再用项目数据重训的 YOLOv3；几何模块使用 SIFT、Active Search、COLMAP 与 InfiniTAM。正文与参考文献尾部均未报告神经网络参数量或可下载检查点。</li><li><strong>硬件</strong>：车顶传感器包括四台彩色相机和十二台近红外相机，均为 180° 鱼眼、2-megapixel/30 Hz；算法只使用 12-bit 近红外灰度，彩色图仅用于可视化。双天线 GNSS/INS 与战术级 IMU 提供后处理厘米级定位真值，四台 LiDAR 的融合点云只评估感知；所有设备经 10 GbE 连接至配 GPU 的工业计算机，十六相机数据率为 1.38 GB/s 并写入四块 SSD。GPU 型号、数量及训练硬件均未报告。</li><li><strong>代码</strong>：论文未提供项目级代码地址或统一系统发布承诺；它只明确软件栈和外部实现，包括 ROS 2、RTI Connext DDS、COLMAP、InfiniTAM，并让读者查阅各定位与感知组件的已发表论文。</li><li><strong>训练平台</strong>：实车平台是改装为线控驾驶的 Isuzu D-Max 皮卡；软件节点基于 ROS 2，运行于 Windows 10，并通过 RTI Connext DDS 通信。全文未使用或报告仿真器。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：直接 VIO：四组立体相机配置，覆盖白天、夜间带近红外补光和夜间无补光条件；轨迹示例为 8.2km 城乡实车路线，以后处理 GNSS/INS 位姿为真值。</li><li><strong>评估基准</strong>：卫星影像全局定位：城市与乡村各一条 5km 实车路线，初始位置和航向由用户给定，VIO 局部位姿传播粒子，卫星—地面描述子负责赋权。</li><li><strong>评估基准</strong>：稀疏地图全局定位：复用两条 5km 路线，在没有先验全局位姿的条件下运行，车载管线速度约 2 Hz。</li><li><strong>评估基准</strong>：稠密感知：前向 5 相机的半分辨率图像用于平面扫描，随后在实车上进行 TSDF 融合与光线投射；动态目标检测仅给出可视化，没有独立准确率基准。</li><li><strong>评估指标</strong>：定位质量使用平移漂移百分比，以及位置误差（m）和航向误差（°）的平均数或中位数；这些误差均越低越好。</li><li><strong>评估指标</strong>：系统速度以 Hz 报告，固定模块设置下越高表示处理吞吐越快；论文没有给出深度或网格几何误差，也没有给出动态目标检测准确率。</li><li><strong>对比方法</strong>：VIO、卫星影像定位和稀疏地图定位均与 GNSS/INS 真值轨迹比较；车顶 LiDAR 融合点云被说明为感知真值来源，而不是这些定位模块的输入。</li><li><strong>对比方法</strong>：本文是集成系统概览，没有在同一协议下报告具名算法基线的横向对比；作者明确把更完整的算法与实验结果留在各组件论文中。</li><li><strong>关键结果</strong>：VIO 在四组立体相机配置下，白天与带 NIR 补光夜间的平移漂移均低于 1%，无 NIR 补光夜间低于 2%；示例路线长 8.2km（漂移越低越好）。</li><li><strong>关键结果</strong>：卫星影像定位在 5km 城市路线上的平均位置与航向误差为 9.92m 和 0.32°，在 5km 乡村路线为 9.29m 和 0.42°（均越低越好）。</li><li><strong>关键结果</strong>：稀疏地图定位在城市路线的位置误差均值和中位数为 3.31m、1.84m，航向误差为 2.6°、1.9°；乡村路线对应为 3.48m、1.81m 和 4.2°、3.3°（均越低越好）。</li><li><strong>关键结果</strong>：稀疏地图定位约 2 Hz；前向 5 相机、半分辨率的平面扫描平均 15 Hz；TSDF 建图约 20 Hz（固定模块设置下吞吐越高越快）。</li><li><strong>消融实验</strong>：论文未做受控模块消融；最接近条件对照的是 VIO 光照实验：白天与带 NIR 补光夜间均低于 1% 漂移，而无 NIR 补光夜间低于 2%。</li><li><strong>消融实验</strong>：轨迹图还给出定性失败分析：城市路线部分区域持续无法估计位姿；乡村路线高误差端可能来自道路两侧重复结构。后一个原因是作者的推测，不应写成确定因果。</li><li><strong>实验条件</strong>：所有报告路线都来自 AutoVision 实车而非仿真。GNSS 只进入离线稀疏地图重建，并通过 GNSS/INS 后处理提供定位真值；IMU 只供 VIO 使用，LiDAR 融合点云只供感知评估。未建图定位要求已知初始位置与航向，预建图定位则不要求先验全局位姿；论文没有报告完整自主驾驶闭环成功率。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1809.06132/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1807.08333/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">AutoLoc: Weakly-supervised Temporal Action Localization</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

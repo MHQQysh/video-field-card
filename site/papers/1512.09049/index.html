@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing - 视频领域每日论文卡</title>
+    <meta name="description" content="论文解决的是超体素算法很多却缺少统一选型依据的问题：它以时空均匀性、边界保持、区域压缩和简约性为共同目标，比较何时该用哪一种方法。 短且可整体载入内存的视频可用离线法；监控流、超长视频或弱算力机器更需要恒定内存的流式法。若需求更具体，论文把精确边界、视频压缩和细粒度活动分析分别对应到 GBH、SWA 与 TSP。 真正研究问题是基础质量基准能否预测中层语义表示的价值：作者跨六个数据集评七项质量指标，再以 CamVid 分类为代理任务，检验基准领先者是否也在识别中领先。 研究背景：图像分析通常先提取显著点或过分割成超像素，以获得比原始像素更具感知意义、也更易处理的单元；视频像素更多，却很少把带时间结构的超体素作为统一预处理。 核心痛点：已有方法缺少何时适用的直接比较。逐帧二维指标无法检验时间连贯性；不同算法又有各自参数与输出粒度，因此必须按方法、数据集对齐超体素数量。 任务定义：输入是视频体素构成的三维时空格，输出是一组覆盖全部格点且两两不相交的超体素。论文比较 Mean Shift、GB、GBH、streamGBH、NCut、SWA 和 TSP。 研究目标：目标不是找一个无条件最优算法，而是理解各方法在什么条件下表现好，并检验基础质量基准的领先者是否也在超体素分类这一识别代理任务中领先。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1512.09049">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1512.09049.webp" alt="LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文解决的是超体素算法很多却缺少统一选型依据的问题：它以时空均匀性、边界保持、区域压缩和简约性为共同目标，比较何时该用哪一种方法。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing</h1>
+            <div class="detail-meta">2015-12-31 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1512.09049" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1512.09049" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1512.09049</span></div>
+            <p class="detail-summary">论文解决的是超体素算法很多却缺少统一选型依据的问题：它以时空均匀性、边界保持、区域压缩和简约性为共同目标，比较何时该用哪一种方法。 短且可整体载入内存的视频可用离线法；监控流、超长视频或弱算力机器更需要恒定内存的流式法。若需求更具体，论文把精确边界、视频压缩和细粒度活动分析分别对应到 GBH、SWA 与 TSP。 真正研究问题是基础质量基准能否预测中层语义表示的价值：作者跨六个数据集评七项质量指标，再以 CamVid 分类为代理任务，检验基准领先者是否也在识别中领先。 研究背景：图像分析通常先提取显著点或过分割成超像素，以获得比原始像素更具感知意义、也更易处理的单元；视频像素更多，却很少把带时间结构的超体素作为统一预处理。 核心痛点：已有方法缺少何时适用的直接比较。逐帧二维指标无法检验时间连贯性；不同算法又有各自参数与输出粒度，因此必须按方法、数据集对齐超体素数量。 任务定义：输入是视频体素构成的三维时空格，输出是一组覆盖全部格点且两两不相交的超体素。论文比较 Mean Shift、GB、GBH、streamGBH、NCut、SWA 和 TSP。 研究目标：目标不是找一个无条件最优算法，而是理解各方法在什么条件下表现好，并检验基础质量基准的领先者是否也在超体素分类这一识别代理任务中领先。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：论文首页署名机构为 University of Michigan 的 Electrical Engineering and Computer S…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1512.09049/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文解决的是超体素算法很多却缺少统一选型依据的问题：它以时空均匀性、边界保持、区域压缩和简约性为共同目标，比较何时该用哪一种方法。</p>
+  <ul class="reading-intro-points"><li>论文解决的是超体素算法很多却缺少统一选型依据的问题：它以时空均匀性、边界保持、区域压缩和简约性为共同目标，比较何时该用哪一种方法。</li><li>短且可整体载入内存的视频可用离线法；监控流、超长视频或弱算力机器更需要恒定内存的流式法。若需求更具体，论文把精确边界、视频压缩和细粒度活动分析分别对应到 GBH、SWA 与 TSP。</li><li>真正研究问题是基础质量基准能否预测中层语义表示的价值：作者跨六个数据集评七项质量指标，再以 CamVid 分类为代理任务，检验基准领先者是否也在识别中领先。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：论文首页署名机构为 University of Michigan 的 Electrical Engineering and Computer Science。</li><li><strong>实验室 / 团队</strong>：首页署名块只列院系与大学，没有具名实验室；rochester-video 是目录团队标签，不是论文首页的实验室署名。</li><li><strong>作者与归属</strong>：Chenliang Xu 与 Jason J. Corso 均同列于 University of Michigan 的 Electrical Engineering and Computer Science，首页分别给出 cliangxu@umich.edu 与 jjcorso@eecs.umich.edu。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文解决的是超体素算法很多却缺少统一选型依据的问题：它以时空均匀性、边界保持、区域压缩和简约性为共同目标，比较何时该用哪一种方法。</li><li>短且可整体载入内存的视频可用离线法；监控流、超长视频或弱算力机器更需要恒定内存的流式法。若需求更具体，论文把精确边界、视频压缩和细粒度活动分析分别对应到 GBH、SWA 与 TSP。</li><li>真正研究问题是基础质量基准能否预测中层语义表示的价值：作者跨六个数据集评七项质量指标，再以 CamVid 分类为代理任务，检验基准领先者是否也在识别中领先。</li><li><strong>研究背景</strong>：图像分析通常先提取显著点或过分割成超像素，以获得比原始像素更具感知意义、也更易处理的单元；视频像素更多，却很少把带时间结构的超体素作为统一预处理。</li><li><strong>核心痛点</strong>：已有方法缺少何时适用的直接比较。逐帧二维指标无法检验时间连贯性；不同算法又有各自参数与输出粒度，因此必须按方法、数据集对齐超体素数量。</li><li><strong>任务定义</strong>：输入是视频体素构成的三维时空格，输出是一组覆盖全部格点且两两不相交的超体素。论文比较 Mean Shift、GB、GBH、streamGBH、NCut、SWA 和 TSP。</li><li><strong>研究目标</strong>：目标不是找一个无条件最优算法，而是理解各方法在什么条件下表现好，并检验基础质量基准的领先者是否也在超体素分类这一识别代理任务中领先。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>在统一基准中比较五种离线和两种流式超体素方法，并使用六个内容类型与标注方式互补的视频数据集。</li><li>提出体积化 UE3D 与 SA3D，并与 BRD、LC、EV、MSV、TEX 组成七项质量指标，覆盖人工标注相关与无关的性质。</li><li>加入 CamVid 超体素语义分类实验，把它作为高层视频分析的代理任务，并检验基础基准排序能否迁移到识别表现。</li><li>公开完整超体素库、基准代码、分类代码和文档，同时提供多个主流数据集的预计算超体素结果。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：LIBSVX 是统一生成、对齐和审计超体素的比较框架：基础基准直接评价超体素性质，不依附特定应用；分类支路再把超体素作为语义单元，测试这些性质能否预测高层任务价值。</li><li><strong>输入与表示</strong>：输入是空间与时间组成的体素格；每个超体素是该格的一个子集，全部子集的并集等于整段视频且任意两者不相交。颜色直方图和 texton 等特征可在这些体积单元上聚合。</li><li><strong>模型结构</strong>：七条路线覆盖互补机制：Mean Shift 以密度模态和拓扑持久性形成层次；GB 按区域内部差异贪心合并；GBH 以 Lab 直方图距离构建区域图层次；streamGBH 用层次与时间 Markov 假设近似全视频 GBH；NCut 以 Nyström 近似求谱嵌入后聚类；SWA 用代数多重网格递归粗化；TSP 从首帧超像素出发，以带双边核的高斯过程逐帧传播。</li><li><strong>数据流</strong>：先按数据集计算负担缩放视频，再为每个方法和数据集调参，生成从细到粗的结果。基准支路对单视频曲线做线性插值并在相同超体素数量处跨视频平均；分类支路在 CamVid 超体素体积上提取纹理、颜色、位置和光流特征，以体积内最频繁的真值类别赋标签；未触及任何真值标注帧的超体素会被忽略，不参与标签赋予或训练。由于视频标签稀疏，这一步可能给训练与测试引入更多噪声。随后训练线性 SVM，最后只在有真值的帧上评分。</li><li><strong>关键技术</strong>：结果同时使用每视频和每帧超体素数两种横轴：前者受视频长度影响，后者可能忽略时间质量。体积指标同时惩罚空间和时间边界破坏；GBH 与 SWA 的共同优势是层次计算中由粗层聚合特征替换或调制细层特征。</li><li><strong>公式与超参数</strong>：GB 以 τ(R)=k/|R| 放宽内部差异阈值，视频图让每个体素连接 26 个邻居。NCut 求归一化亲和矩阵特征系统再聚类，实验取 200 个 Nyström 样本并在 20% 体素上运行 k-means。streamGBH 窗口固定 10 帧，TSP 使用默认参数。UE3D 平均归一化泄漏体积，SA3D 用多数交叠指示函数累计正确覆盖，BRD 平均最近边界距离，LC 计算光流投影标签交集比例；EV、MSV、TEX 分别度量颜色解释量、切片尺寸波动和平均时间覆盖。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：BuffaloXiph：八段视频、24 类语义像素标签、638 个标注帧，每段 69–86 帧；同类但不连通区域不区分实例。</li><li><strong>数据集</strong>：SegTrack v2：14 个视频序列、24 个前景对象、947 个逐帧像素标注，覆盖运动模糊、外观变化、复杂形变、遮挡、慢运动和对象交互。</li><li><strong>数据集</strong>：BVDS：100 段 HD 视频、每段至多 121 帧，每 20 帧采样一次多位人工标注；无监督评价使用全部视频，不采用训练测试划分。</li><li><strong>数据集</strong>：CamVid：五段、超过十分钟的 30Hz 车载视频；以 11 类标签按 1Hz、部分按 15Hz 标注，共 701 个密集标注帧，并提供标准训练测试划分。</li><li><strong>数据集</strong>：Liu 等光流集：五段视频，每段 14–76 帧，具有稠密真值光流；本文只用它评价 LC。</li><li><strong>数据集</strong>：Middlebury Flow：八段视频，但真值只覆盖两帧，即一个光流估计；本文把每段作为只处理两帧的特例并用于 LC。</li><li><strong>规模与划分</strong>：BuffaloXiph、SegTrack v2、Middlebury Flow 保持原分辨率，Liu 缩至一半，BVDS 与 CamVid 缩至四分之一。NCut 在前两组分割数据上固定为 240×160，且不进入 BVDS、CamVid 实验。CamVid 质量基准使用全部 17898 帧；针对第 5 节，作者先人工剔除损坏帧，再把数据组织成每段约 100 帧的短片，这也界定了该质量基准的“每视频”组织口径。分类训练为两段白天加一段黄昏，测试为一段白天加一段黄昏。</li><li><strong>模型</strong>：分割侧比较七种经典算法，不存在统一基础模型或参数规模。CamVid 分类使用线性 SVM：先将二维切片膨胀 3 像素，再提取各 100 维的 texton 与 dense SIFT 直方图、RGB 和 HSV 每通道 8 个 bin，以及垂直速度、水平速度和速率幅值各 8 个 bin 的光流直方图，并加入位置描述。</li><li><strong>硬件</strong>：成本在 Linux 笔记本上测量，硬件为 Intel Core i7-3740QM @ 2.70GHz、32GB RAM；正文实验设置、方法脚注、分类章节、结论与致谢均未报告 GPU。除 NCut 使用 8 线程外其余方法单线程，NCut 缩放到 240×160；其余多为 C 实现，NCut 为 Matlab，TSP 为 Matlab+MEX。</li><li><strong>代码</strong>：论文给出 <a href="http://www.supervoxels.com，称完整库、benchmarking" target="_blank" rel="noopener noreferrer">http://www.supervoxels.com，称完整库、benchmarking</a> code、classification code 和文档可下载，并提供预计算结果。Mean Shift 与 TSP 分别调用作者实现，分类调用 LIBSVM；目录元数据的 code_url 为空不等于正文未发布代码。</li><li><strong>训练平台</strong>：实验平台是上述笔记本上的视频数据基准；CamVid 素材由行驶汽车采集，但不是实车在线部署。论文没有机器人实验，结论仅把机器人操控列为 GBH 精确边界能力的潜在场景。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：BuffaloXiph、SegTrack v2、BVDS 和 CamVid 用于主要质量比较；六个数据集都有逐帧或密集采样人工标注。</li><li><strong>评估基准</strong>：Liu 等数据与 Middlebury Flow 只评价基于真值光流的标签一致性 LC。</li><li><strong>评估基准</strong>：CamVid 另作语义分类基准，遵循标准划分；NCut 因高内存需求被排除，整段视频输出只在标注帧评分。</li><li><strong>评估指标</strong>：人工标注相关指标为 UE3D（越低越好，真值段外泄漏）、SA3D（越高越好，正确覆盖）、BRD（越低越好，边界最近距离）和 LC（越高越好，光流投影标签一致性）。</li><li><strong>评估指标</strong>：无人工标注指标为 EV（越高越好，颜色压缩解释量）、MSV（越低越好，切片尺寸波动）和 TEX（越高越好，时间覆盖）；分类另报告像素级平均类准确率与全局像素准确率。</li><li><strong>对比方法</strong>：统一比较 Mean Shift、GB、GBH、streamGBH、NCut、SWA、TSP，其中五种离线、两种流式；CamVid 分类保留除 NCut 外的方法，并参考 Brostow 等的像素随机森林结果。</li><li><strong>关键结果</strong>：TSP 通常在 UE3D、LC 和 MSV 上最好；GBH 赢得 BRD 并在所画范围取得最长 TEX；SWA 的 EV 总体最好。SA3D 领先者随数据集及横轴口径改变，GBH、SWA、TSP 构成稳定第一梯队。</li><li><strong>关键结果</strong>：耗时与峰值内存为：GB 115 s/6.9 GB，GBH 1166 s/9.4 GB，streamGBH 1000 s/1.6 GB，SWA 934 s/19.9 GB，TSP 1440 s/0.9 GB，MeanShift 101 s/3.8 GB，NCut 1198 s/20.9 GB。</li><li><strong>关键结果</strong>：CamVid 分类中 GBH、SWA、TSP 整体同样强，streamGBH 与 GBH 很接近。Brostow 像素随机森林基线为 53.0% 平均类准确率和 69.1% 全局准确率，并同时使用外观与几何线索；本文超体素设置只用外观线索，因此并非完全同条件的直接比较。约 500 个超体素时，本文方案通常全局准确率更高、平均类准确率更低。</li><li><strong>关键结果</strong>：GBH 在 pedestrian 上领先，TSP 与 SWA 在 car 上领先。作者推测，sign symbol 和 bicyclist 等小区域缩至原分辨率四分之一后太小，因而难以捕获；这不是经消融确认的因果结论。</li><li><strong>消融实验</strong>：论文未报告组件移除式消融；最接近的是横轴口径敏感性诊断。每视频口径受视频长度影响，每帧口径可能忽略时间质量，因此两种口径都保留。</li><li><strong>消融实验</strong>：GBH 与流式近似 streamGBH 的分类表现很接近；成本分别为 1166 s/9.4 GB 与 1000 s/1.6 GB，显示流式近似节省峰值内存。</li><li><strong>消融实验</strong>：分类实验把多数真值直接赋标签与线性 SVM 预测分开画出；曲线采用实际分割点而非插值，并覆盖每 100 帧约 100–900 个超体素。</li><li><strong>消融实验</strong>：BVDS 补充稳健性诊断把视频按运动物体、非刚体运动与显著相机运动分组；各方法排序总体保持一致，唯一例外是显著相机运动组中 TSP 的 TEX 优于 GB。当前正文 PDF 只给出定性排序和这一例外，因此不抄写未在正文出现的补充数值。</li><li><strong>实验条件</strong>：每个方法在每个数据集单独调参；单视频曲线线性插值后在相同数量处跨视频平均。主图为每视频 0–2000 个、每帧 0–1500 个超体素。成本输入为 352×288×85，除 NCut 的 8 线程与 240×160 缩放外均单线程。CamVid 分类使用标准划分和线性 SVM，只在标注帧评分，曲线采用实际分割点。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1601.02129/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Temporal Action Localization in Untrimmed Videos via Multi-stage CNNs</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1512.09041/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Actor-Action Semantic Segmentation with Grouping Process Models</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

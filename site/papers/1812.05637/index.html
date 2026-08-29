@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dynamic Graph Modules for Modeling Object-Object Interactions in Activity Recognition - 视频领域每日论文卡</title>
+    <meta name="description" content="这项工作解决视频动作识别中复杂物体—物体交互被普通卷积表示隐式化的问题：识别器必须同时保留单帧内不同物体的空间关系，以及跨帧中同一物体或不同物体之间交互的时间变化。 具体场景既包括流式到达、只看到开头若干帧的在线识别，也包括整段处理：Something-Something 的短、裁剪、单标签手—物体动作，以及 ActivityNet 的长、未裁剪、多标签活动。 论文真正检验的是：随时间更新并显式传递区域消息的隐藏图，能否比把区域平均池化后送入 LSTM 更好地保留物体交互；随着视频前缀变长能否持续提高准确率；同一模块能否再提升静态骨干的整段识别。 研究背景：深度学习与新视频数据集推动了动作识别，但决定动作语义的复杂物体—物体交互仍常被忽略；这类动作既取决于同帧不同物体之间的关系，也取决于这些关系跨帧如何变化。 核心痛点：现有视频表示或 non-local 特征要么不能在对象层显式建模关系，要么不能处理流式视频；位置级 non-local 还会把相距很远、通常无关的位置联系起来，而把区域均值送入 LSTM 又会丢失区域的空间关系。 任务定义：输入视频先采样为帧；同一批输入帧分别进入三维卷积骨干和 RPN：RPN 只产生 RoI 框及坐标，框坐标投影到骨干特征图后，再由 RoIAlign 从特征图抽取区域特征。区域序列顺序更新带权有向隐藏图，并在每个特征时刻输出动作类别；静态版本另融合整段视频的全局骨干特征。 研究目标：目标是在同一可插拔图模块中同时显式捕获单帧空间交互与跨帧时间交互，使模型能从视频开始处渐进处理流式输入，并在短裁剪视频与长未裁剪视频上提升既有动作识别骨干。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1812.05637">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1812.05637.webp" alt="Dynamic Graph Modules for Modeling Object-Object Interactions in Activity Recognition" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">这项工作解决视频动作识别中复杂物体—物体交互被普通卷积表示隐式化的问题：识别器必须同时保留单帧内不同物体的空间关系，以及跨帧中同一物体或不同物体之间交互的时间变化。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Dynamic Graph Modules for Modeling Object-Object Interactions in Activity Recognition</h1>
+            <div class="detail-meta">2018-12-14 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1812.05637" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1812.05637" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1812.05637</span></div>
+            <p class="detail-summary">这项工作解决视频动作识别中复杂物体—物体交互被普通卷积表示隐式化的问题：识别器必须同时保留单帧内不同物体的空间关系，以及跨帧中同一物体或不同物体之间交互的时间变化。 具体场景既包括流式到达、只看到开头若干帧的在线识别，也包括整段处理：Something-Something 的短、裁剪、单标签手—物体动作，以及 ActivityNet 的长、未裁剪、多标签活动。 论文真正检验的是：随时间更新并显式传递区域消息的隐藏图，能否比把区域平均池化后送入 LSTM 更好地保留物体交互；随着视频前缀变长能否持续提高准确率；同一模块能否再提升静态骨干的整段识别。 研究背景：深度学习与新视频数据集推动了动作识别，但决定动作语义的复杂物体—物体交互仍常被忽略；这类动作既取决于同帧不同物体之间的关系，也取决于这些关系跨帧如何变化。 核心痛点：现有视频表示或 non-local 特征要么不能在对象层显式建模关系，要么不能处理流式视频；位置级 non-local 还会把相距很远、通常无关的位置联系起来，而把区域均值送入 LSTM 又会丢失区域的空间关系。 任务定义：输入视频先采样为帧；同一批输入帧分别进入三维卷积骨干和 RPN：RPN 只产生 RoI 框及坐标，框坐标投影到骨干特征图后，再由 RoIAlign 从特征图抽取区域特征。区域序列顺序更新带权有向隐藏图，并在每个特征时刻输出动作类别；静态版本另融合整段视频的全局骨干特征。 研究目标：目标是在同一可插拔图模块中同时显式捕获单帧空间交互与跨帧时间交互，使模型能从视频开始处渐进处理流式输入，并在短裁剪视频与长未裁剪视频上提升既有动作识别骨干。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Rochester · Rochester、New York、USA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1812.05637/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">这项工作解决视频动作识别中复杂物体—物体交互被普通卷积表示隐式化的问题：识别器必须同时保留单帧内不同物体的空间关系，以及跨帧中同一物体或不同物体之间交互的时间变化。</p>
+  <ul class="reading-intro-points"><li>这项工作解决视频动作识别中复杂物体—物体交互被普通卷积表示隐式化的问题：识别器必须同时保留单帧内不同物体的空间关系，以及跨帧中同一物体或不同物体之间交互的时间变化。</li><li>具体场景既包括流式到达、只看到开头若干帧的在线识别，也包括整段处理：Something-Something 的短、裁剪、单标签手—物体动作，以及 ActivityNet 的长、未裁剪、多标签活动。</li><li>论文真正检验的是：随时间更新并显式传递区域消息的隐藏图，能否比把区域平均池化后送入 LSTM 更好地保留物体交互；随着视频前缀变长能否持续提高准确率；同一模块能否再提升静态骨干的整段识别。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Rochester（Rochester, New York, USA）</li><li><strong>机构</strong>：University of Michigan（Ann Arbor, Michigan, USA）</li><li><strong>实验室 / 团队</strong>：论文首页作者信息只署名两所大学，未列出具体实验室名称。</li><li><strong>作者与归属</strong>：Hao Huang、Wei Zhang、Chenliang Xu — University of Rochester。</li><li><strong>作者与归属</strong>：Luowei Zhou、Jason J. Corso — University of Michigan。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>这项工作解决视频动作识别中复杂物体—物体交互被普通卷积表示隐式化的问题：识别器必须同时保留单帧内不同物体的空间关系，以及跨帧中同一物体或不同物体之间交互的时间变化。</li><li>具体场景既包括流式到达、只看到开头若干帧的在线识别，也包括整段处理：Something-Something 的短、裁剪、单标签手—物体动作，以及 ActivityNet 的长、未裁剪、多标签活动。</li><li>论文真正检验的是：随时间更新并显式传递区域消息的隐藏图，能否比把区域平均池化后送入 LSTM 更好地保留物体交互；随着视频前缀变长能否持续提高准确率；同一模块能否再提升静态骨干的整段识别。</li><li><strong>研究背景</strong>：深度学习与新视频数据集推动了动作识别，但决定动作语义的复杂物体—物体交互仍常被忽略；这类动作既取决于同帧不同物体之间的关系，也取决于这些关系跨帧如何变化。</li><li><strong>核心痛点</strong>：现有视频表示或 non-local 特征要么不能在对象层显式建模关系，要么不能处理流式视频；位置级 non-local 还会把相距很远、通常无关的位置联系起来，而把区域均值送入 LSTM 又会丢失区域的空间关系。</li><li><strong>任务定义</strong>：输入视频先采样为帧；同一批输入帧分别进入三维卷积骨干和 RPN：RPN 只产生 RoI 框及坐标，框坐标投影到骨干特征图后，再由 RoIAlign 从特征图抽取区域特征。区域序列顺序更新带权有向隐藏图，并在每个特征时刻输出动作类别；静态版本另融合整段视频的全局骨干特征。</li><li><strong>研究目标</strong>：目标是在同一可插拔图模块中同时显式捕获单帧空间交互与跨帧时间交互，使模型能从视频开始处渐进处理流式输入，并在短裁剪视频与长未裁剪视频上提升既有动作识别骨干。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出类似循环隐状态的动态隐藏图：它是允许自连接的完整有向图，每到一个新时刻先接收当前 RoI 的消息，再重算图内边并自更新，从而累积空间与时间交互。</li><li>给出视觉图实例：用线性投影后的区域—节点外观相似度建立软连接，以 softmax 分配流入消息，再用学习门控融合旧节点状态和新消息，并按节点相似度动态更新有向边。</li><li>给出位置图实例：以提案框和虚拟节点框的 IoU 作为连接权重，用坐标移位让节点框向高权重提案移动，因此可跟踪相互重叠或邻近物体的相对时空位置变化。</li><li>设计图上虚拟注意力节点作为逐时刻分类上下文和下一时刻查询，并实现流式、静态两种完整模型；静态模型把图上下文与全局卷积特征融合后识别动作。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：动态图模块位于卷积骨干、RPN 与 RoIAlign 之后，充当跨时间的对象级记忆：它把当前区域消息写入隐藏图、在图内传播交互信息，再由注意力汇聚出供 MLP 分类的上下文，因此无需预先看到视频末尾。</li><li><strong>输入与表示</strong>：视频表示为按时间排序的特征图；每个特征图保留 top-N RPN 提案及边框坐标。每个 RoI 与隐藏节点均使用 1024 维特征，节点还携带左上角、右下角构成的虚拟边框坐标；首个时刻的提案初始化节点特征与坐标。</li><li><strong>模型结构</strong>：流式模型把采样输入帧分别送入三维卷积骨干与 RPN：前者产生按时间排列的特征图，后者在输入帧上提出 RoI 框；框坐标投影到骨干特征图后，RoIAlign 抽取区域特征，继而进入视觉图或位置图、虚拟注意力节点和 MLP，在每个特征时刻给出预测。静态模型同样把整段采样帧输入三维卷积骨干和 RPN，再将平均池化的全局骨干特征与图特征分别归一化、拼接，经全连接、批归一化和 ReLU 得到融合特征并分类。</li><li><strong>数据流</strong>：首先对首个特征图的提案做最大池化以初始化上下文，并用提案初始化隐藏图。随后每个新特征图的全部提案按视觉相似度或 IoU 向各节点传消息，节点融合消息后重新计算图内边并再次传播；注意力以旧上下文查询更新后的节点，汇聚新上下文送入分类器。下一时刻复用更新后的图和上下文，因而可对视频前缀连续预测。</li><li><strong>关键技术</strong>：视觉图以投影点积度量区域与节点、节点与节点的相似度，分别完成跨输入消息传递和图内自更新，并用 sigmoid 门控避免完全覆盖旧状态。位置图用 IoU 和 L1 归一化传递消息，以 ReLU 更新特征，同时把虚拟框移动到旧位置与提案加权位置之间。图上注意力引入排列不变的虚拟节点，既汇总当前判别区域，又作为下一时刻的查询。</li><li><strong>公式与超参数</strong>：视觉分支计算 Fv(b,x)=h(b)^Tg(x)，softmax 后得到消息权重，并以 x←σx+(1−σ)x̂、σ=sigmoid(Wx+Ŵx̂) 更新节点；位置分支令 Fl(b,x)=IoU(b,x)，经 L1 归一化后作 x←ReLU(x+x̂)，虚拟坐标取旧坐标与提案加权坐标的中点。注意力由旧 q 查询新节点并计算 q(t+1)=Σαx。区域和节点特征为 1024 维；静态融合的骨干特征为 2048 维、图特征为 1024 维。Something-Something 每帧保留 top 20 提案、隐藏图设 5 个节点，ActivityNet 为 top 40 提案、10 个节点。骨干训练使用 dropout 0.5、batch size 24、初始学习率 0.00125、SGD momentum 0.9、weight decay 0.0001；静态模型先 warm-up 3 epochs，再把学习率降低 10 倍。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Something-Something v1：超过 100K 个短视频，平均时长约 3–6 秒，共 174 个动作类别，每个视频恰有一个标签；采用官方划分。</li><li><strong>数据集</strong>：Something-Something v2：约 220K 个短视频，平均时长约 3–6 秒，与前一版本同为 174 个动作类别和单标签视频；采用官方划分。</li><li><strong>数据集</strong>：ActivityNet：训练集含 10K 个视频、15K 个活动实例和 200 类；验证集含 5K 个视频、7K 个活动实例；采用官方划分。</li><li><strong>规模与划分</strong>：两版 Something-Something 与 ActivityNet 均按官方划分训练和测试。训练 ActivityNet 骨干时，把活动实例切成约 5 秒且重叠率为 20% 的 clips；推理时则切成互不重叠的 5 秒 clips，并从每段均匀采样 32 帧。</li><li><strong>模型</strong>：骨干是先在 Kinetics 训练、再在目标数据集微调的三维卷积模型；RPN 使用在 Microsoft COCO 上预训练的 ResNet-50。完整模型固定骨干，只训练图模块、融合层与分类层；正文和附录报告了特征维度，但未给出总参数量。</li><li><strong>硬件</strong>：论文实验设置与实现细节附录逐项给出数据预处理、batch、优化器和学习率，但没有报告训练或推理所用 GPU、CPU 的型号、数量、显存或运行时间。</li><li><strong>代码</strong>：论文正文、结论、完整附录与参考文献尾部均未给出代码仓库地址，也未说明代码已经发布或承诺发布。</li><li><strong>训练平台</strong>：实验平台限于 Something-Something 与 ActivityNet 视频数据集上的网络训练和离线评测；全文未使用或报告仿真器、机器人、机械臂、实车等具身平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Something-Something v1：短、裁剪、单标签视频；同时评估流式前缀识别与静态整段识别。</li><li><strong>评估基准</strong>：Something-Something v2：短、裁剪、单标签视频；报告验证集以及静态模型的排行榜测试结果。</li><li><strong>评估基准</strong>：ActivityNet：长、未裁剪、可含多个标签的视频；静态模型在整段视频层面评估。</li><li><strong>评估指标</strong>：Something-Something 使用 top-k 识别准确率，重点报告 top-1 与 top-5，数值越高越好。</li><li><strong>评估指标</strong>：ActivityNet 使用 mAP，并同时报告 top-1 与 top-3，三项均为数值越高越好。</li><li><strong>对比方法</strong>：流式实验比较区域特征均值池化后输入 LSTM 的 baseline、Visual Graph、Location Graph，并以 ECO Lite 作为近期在线方法参照。</li><li><strong>对比方法</strong>：静态实验与多种时序或图式动作识别方法以及作者自己的 backbone 对比，并在表中明确区分 RGB-only 与 Flow+RGB 输入口径。</li><li><strong>关键结果</strong>：流式 Something-Something v1 最后一个特征图的 top-1 准确率（表中为百分数）为 Visual Graph 41.7、Location Graph 38.2，ECO Lite 为 41.3；越高越好。</li><li><strong>关键结果</strong>：流式 Something-Something v2 最后一个特征图的 top-1 准确率（表中为百分数）为 Visual Graph 54.0、Location Graph 50.5；越高越好。</li><li><strong>关键结果</strong>：静态 Something-Something v1 验证集上，backbone 的 top-1/top-5 为 46.0/76.1，Visual Graph 为 47.1/76.2，Location Graph 为 47.1/76.3；论文称 top-1 绝对提升 1.1%，越高越好。</li><li><strong>关键结果</strong>：静态 Something-Something v2 验证集上，backbone 的 top-1/top-5 为 59.7/86.4，Visual Graph 与 Location Graph 均为 61.4/86.8；论文称 top-1 绝对提升 1.7%，越高越好。</li><li><strong>关键结果</strong>：ActivityNet 静态 RGB 评测中，backbone 的 mAP/top-1/top-3 为 70.2/69.2/83.5，Visual Graph 为 71.5/70.3/84.5，Location Graph 为 71.8/70.3/84.8；越高越好。</li><li><strong>消融实验</strong>：固定静态 backbone 后加入图模块：Something-Something v1 的 top-1 从 46.0 提到 47.1，v2 从 59.7 提到 61.4，对应论文报告的绝对增益 1.1% 与 1.7%。</li><li><strong>消融实验</strong>：两种图实例对照显示，流式 v1 的 Visual/Location 为 41.7/38.2，流式 v2 为 54.0/50.5；作者只把视觉图更高归因于其可能拥有更多参数，保留了推测语气。</li><li><strong>消融实验</strong>：时间前缀曲线显示两种图的准确率随输入帧增加而稳定上升，并在第 7 个特征图附近进入平台；区域均值加 LSTM 的 baseline 明显更低。</li><li><strong>消融实验</strong>：论文没有单列更细的正式消融，正文结果表与完整附录均未分别移除图内自更新、虚拟注意力或坐标移位来报告数值。</li><li><strong>实验条件</strong>：Something-Something 推理从整段均匀采 32 帧，短边缩放到 256 后中心裁剪为 224×224；ActivityNet 把视频切成互不重叠的 5 秒 clips，每段采 32 帧并以 top-k pooling 汇总。表格结果使用 RGB 输入；ActivityNet 对照还明确未用音频、光流或 ensemble。完整模型训练时固定三维卷积 backbone。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1901.03460/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">DMC-Net: Generating Discriminative Motion Cues for Fast Compressed Video Action Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1812.02898/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">TDAN: Temporally Deformable Alignment Network for Video Super-Resolution</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

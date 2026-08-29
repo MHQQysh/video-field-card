@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fully Convolutional Online Tracking - 视频领域每日论文卡</title>
+    <meta name="description" content="FCOT 解决单目标视频跟踪中回归分支难以像分类分支那样在线适配的问题：它用目标滤波器统一分类与无锚框回归，让边界框预测随目标外观变化而更新，同时抑制在线样本的误差累积。 给定视频首帧目标框，系统逐帧估计任意目标状态；它面向存在遮挡、光照变化、背景干扰、形变及相似物体混淆的在线单目标跟踪，并以实时速度运行。 论文真正检验的是：在统一的全卷积目标滤波框架中，把在线学习扩展到无锚框回归，并用首帧真值校正在线动态回归模型，能否在保持实时性的同时提高边界框精度、鲁棒性与高 IoU 条件下的表现。 研究背景：视觉目标跟踪在给定首帧边界框后，要在视频每一帧估计任意目标的状态；典型跟踪器以分类分支粗定位目标，再由回归分支生成精确边界框。 核心痛点：分类分支可通过在线判别学习吸收背景与历史帧信息，但既有回归分支依赖锚框或框采样与细化，设计复杂且要求高质量样本；在线预测误差还会累积，使回归难以按目标持续适配。 任务定义：输入是首帧带真值框的目标和后续测试帧；模型在线维护目标专属的分类滤波器与回归滤波器，输出目标中心得分图及四边偏移图，再恢复每帧边界框。 研究目标：构建一个简单、高效、精确的全卷积在线跟踪器，把特征提取、分类和无锚框回归统一在目标滤波器架构中，并让分类与回归两支都能在线优化。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2004.07109">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2004.07109.webp" alt="Fully Convolutional Online Tracking" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">FCOT 解决单目标视频跟踪中回归分支难以像分类分支那样在线适配的问题：它用目标滤波器统一分类与无锚框回归，让边界框预测随目标外观变化而更新，同时抑制在线样本的误差累积。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Fully Convolutional Online Tracking</h1>
+            <div class="detail-meta">2020-04-15 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2004.07109" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2004.07109" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2004.07109</span></div>
+            <p class="detail-summary">FCOT 解决单目标视频跟踪中回归分支难以像分类分支那样在线适配的问题：它用目标滤波器统一分类与无锚框回归，让边界框预测随目标外观变化而更新，同时抑制在线样本的误差累积。 给定视频首帧目标框，系统逐帧估计任意目标状态；它面向存在遮挡、光照变化、背景干扰、形变及相似物体混淆的在线单目标跟踪，并以实时速度运行。 论文真正检验的是：在统一的全卷积目标滤波框架中，把在线学习扩展到无锚框回归，并用首帧真值校正在线动态回归模型，能否在保持实时性的同时提高边界框精度、鲁棒性与高 IoU 条件下的表现。 研究背景：视觉目标跟踪在给定首帧边界框后，要在视频每一帧估计任意目标的状态；典型跟踪器以分类分支粗定位目标，再由回归分支生成精确边界框。 核心痛点：分类分支可通过在线判别学习吸收背景与历史帧信息，但既有回归分支依赖锚框或框采样与细化，设计复杂且要求高质量样本；在线预测误差还会累积，使回归难以按目标持续适配。 任务定义：输入是首帧带真值框的目标和后续测试帧；模型在线维护目标专属的分类滤波器与回归滤波器，输出目标中心得分图及四边偏移图，再恢复每帧边界框。 研究目标：构建一个简单、高效、精确的全卷积在线跟踪器，把特征提取、分类和无锚框回归统一在目标滤波器架构中，并让分类与回归两支都能在线优化。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：南京大学 · Nanjing University</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2004.07109/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">FCOT 解决单目标视频跟踪中回归分支难以像分类分支那样在线适配的问题：它用目标滤波器统一分类与无锚框回归，让边界框预测随目标外观变化而更新，同时抑制在线样本的误差累积。</p>
+  <ul class="reading-intro-points"><li>FCOT 解决单目标视频跟踪中回归分支难以像分类分支那样在线适配的问题：它用目标滤波器统一分类与无锚框回归，让边界框预测随目标外观变化而更新，同时抑制在线样本的误差累积。</li><li>给定视频首帧目标框，系统逐帧估计任意目标状态；它面向存在遮挡、光照变化、背景干扰、形变及相似物体混淆的在线单目标跟踪，并以实时速度运行。</li><li>论文真正检验的是：在统一的全卷积目标滤波框架中，把在线学习扩展到无锚框回归，并用首帧真值校正在线动态回归模型，能否在保持实时性的同时提高边界框精度、鲁棒性与高 IoU 条件下的表现。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：南京大学（Nanjing University）</li><li><strong>机构</strong>：南京大学软件新技术国家重点实验室（State Key Laboratory for Novel Software Technology）</li><li><strong>实验室 / 团队</strong>：软件新技术国家重点实验室（论文首页明确署名的实验室）</li><li><strong>作者与归属</strong>：Yutao Cui、Cheng Jiang、Limin Wang、Gangshan Wu — 南京大学软件新技术国家重点实验室</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>FCOT 解决单目标视频跟踪中回归分支难以像分类分支那样在线适配的问题：它用目标滤波器统一分类与无锚框回归，让边界框预测随目标外观变化而更新，同时抑制在线样本的误差累积。</li><li>给定视频首帧目标框，系统逐帧估计任意目标状态；它面向存在遮挡、光照变化、背景干扰、形变及相似物体混淆的在线单目标跟踪，并以实时速度运行。</li><li>论文真正检验的是：在统一的全卷积目标滤波框架中，把在线学习扩展到无锚框回归，并用首帧真值校正在线动态回归模型，能否在保持实时性的同时提高边界框精度、鲁棒性与高 IoU 条件下的表现。</li><li><strong>研究背景</strong>：视觉目标跟踪在给定首帧边界框后，要在视频每一帧估计任意目标的状态；典型跟踪器以分类分支粗定位目标，再由回归分支生成精确边界框。</li><li><strong>核心痛点</strong>：分类分支可通过在线判别学习吸收背景与历史帧信息，但既有回归分支依赖锚框或框采样与细化，设计复杂且要求高质量样本；在线预测误差还会累积，使回归难以按目标持续适配。</li><li><strong>任务定义</strong>：输入是首帧带真值框的目标和后续测试帧；模型在线维护目标专属的分类滤波器与回归滤波器，输出目标中心得分图及四边偏移图，再恢复每帧边界框。</li><li><strong>研究目标</strong>：构建一个简单、高效、精确的全卷积在线跟踪器，把特征提取、分类和无锚框回归统一在目标滤波器架构中，并让分类与回归两支都能在线优化。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 FCOT：以全卷积编码器—解码器和目标滤波器统一分类与回归，配合上采样解码器、多尺度分类预测和多尺度回归头，支持两分支在线学习。</li><li>提出回归模型生成器 RMG，由动态模型生成器和基于最速下降的校正器组成：先从在线预测样本生成动态回归滤波器，再用首帧增强真值样本迭代校正。</li><li>设计逐像素无锚框回归，直接预测目标中心到边界框四条边的偏移，并只在中心邻域训练回归，从而避免锚框放置与额外框细化结构。</li><li>在 VOT2018、GOT-10k、LaSOT、TrackingNet、UAV123、NFS 与 OTB100 七个基准上评测，并报告超过 40 FPS 的单 GPU 推理速度。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：ResNet-50 编码器—解码器提取共享通用特征；两个分类头分别生成粗、细中心得分特征，回归头提取四边偏移特征；对应模型生成器产生目标专属滤波器，分类器定位中心，卷积回归器输出边界偏移。</li><li><strong>输入与表示</strong>：在线训练支路接收带框训练帧，测试支路接收当前帧；分类目标表示为以真值中心为峰值的高斯图，回归目标在特征图位置 (x,y) 上表示为到左、右、上、下边界的四维距离向量 (l*,r*,t*,b*)。</li><li><strong>模型结构</strong>：骨干为 ResNet-50：编码器覆盖 ResNet 的第一至第四层，解码器含三层卷积和两次上采样，通用特征空间下采样率为四；高分辨率分类与回归头由一层卷积、两层可变形卷积、三层组归一化和两层 ReLU 构成。</li><li><strong>数据流</strong>：首帧经平移、旋转和模糊增强后形成静态训练集，模型预测器先初始化并用最速下降优化静态分类与回归滤波器。跟踪时，当前帧经共享骨干和任务头得到特征，分类滤波器融合粗细得分图定位中心，回归滤波器输出四边偏移；随后把最高分类分数帧加入在线集，并周期性生成在线回归模型，与静态模型加权得到当前滤波器。</li><li><strong>关键技术</strong>：多尺度分类把 Score Map-18 与 Score Map-72 加权融合：低分辨率图提供抗相似物干扰的粗位置，高分辨率图细化中心；RMG 则用精确 ROI pooling 加卷积生成动态滤波器，并由首帧真值驱动的校正器抑制回归误差累积。</li><li><strong>公式与超参数</strong>：分类融合为 M_cls=αM_cls^coarse+βM_cls^fine，其中 α、β 分别给粗、细得分图加权；回归为 M_reg=θ(ω(I_t))*f_reg，其中 θ(ω(I_t)) 是当前帧的回归特征，f_reg 是目标专属卷积滤波器。特征步长 s=4，离线只在目标中心半径 2 的邻域回归。RMG 最小化四边偏移残差平方和加 η 正则，并用 Gauss–Newton 近似 Hessian 求最速下降步长 α；在线模型按 f_cur=λf_on+(1−λ)f_st 混合。离线总损失为 L_tot=γL_cls+δL_reg，分类损失与训练策略沿用 DiMP，回归采用 IoU loss，优化器为 ADAM；γ、δ 仅被说明为超参数，正文未给出具体值。首帧增强得到 23 个初始样本；整网训练 100 个 epoch，再冻结其余网络训练校正器 5 个 epoch；学习率在第 25 和第 45 个 epoch 乘 0.2。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：离线训练明确涉及 GOT-10k 的训练划分；最终在 VOT2018、GOT-10k、LaSOT、TrackingNet、UAV123、OTB100 与 NFS 七个基准上测试。</li><li><strong>规模与划分</strong>：VOT2018 含 60 段视频。GOT-10k 含超过 10000 段视频，测试集为 180 段，训练集与测试集的对象类别零重叠；GOT-10k 测试专用模型仅用其 train split 训练。LaSOT 测试集有 280 段视频，平均每段 2500 帧。TrackingNet 提供超过 30K 段视频、超过 14 million 个稠密边界框标注，测试集为 511 段、平均每段 441 帧。UAV123 含 123 段视频和超过 110K 帧；NFS 含 100 段视频、共 380K 帧；OTB100 评测使用 100 段视频。除 GOT-10k 的专门协议外，正文实现细节没有另列通用离线训练集组成、训练/验证比例或随机划分。</li><li><strong>模型</strong>：通用特征骨干为 ResNet-50；回归模型是 ((4 × 256) × 3 × 3) 卷积核，两个分类模型大小均为 (256 × 4 × 4)。</li><li><strong>硬件</strong>：整网离线训练约 50 小时，使用 8 张 RTX 2080ti GPU；推理在单张 RTX 2080ti GPU 上于 GOT-10k 达到平均超过 40 FPS。</li><li><strong>代码</strong>：论文首页明确称代码与模型已发布在 <a href="https://github.com/MCG-NJU/FCOT；实现基于" target="_blank" rel="noopener noreferrer">https://github.com/MCG-NJU/FCOT；实现基于</a> PyTorch 与 Pytracking 项目。</li><li><strong>训练平台</strong>：论文的运行平台是 PyTorch/Pytracking 与 GPU，实验对象是已录制的视频跟踪基准；全文实验设置没有报告仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：主实验覆盖 VOT2018、GOT-10k、LaSOT、TrackingNet、UAV123、NFS 和 OTB100；消融统一在 VOT2018 上完成。</li><li><strong>评估指标</strong>：VOT2018 使用 Accuracy、Robustness（失败率，越低越好）与 EAO（越高越好）。</li><li><strong>评估指标</strong>：GOT-10k 使用 AO、SR@0.5、SR@0.75；其余 OPE 基准报告成功率或 AUC、Precision 和 Normalized Precision，均越高越好。</li><li><strong>对比方法</strong>：主要对照含 DiMP、SiamFC++、OCEAN、SiamBAN、ATOM、SiamRPN++ 等近期方法，并在各表中加入相应经典跟踪器；所有对照均在相同基准指标下与 FCOT 横向比较。</li><li><strong>关键结果</strong>：VOT2018：FCOT 的 Accuracy 为 0.612、Robustness 为 0.112（越低越好）、EAO 为 0.491（越高越好）。</li><li><strong>关键结果</strong>：GOT-10k：SR@0.5 为 76.6、SR@0.75 为 52.1、AO 为 63.4（表中单位均为 %），三项均越高越好。</li><li><strong>关键结果</strong>：TrackingNet：Precision 为 72.6、Normalized Precision 为 82.9、Success 为 75.4（表中单位均为 %），均越高越好。</li><li><strong>关键结果</strong>：LaSOT：Normalized Precision 为 67.8%、Success 为 57.2%，均越高越好。</li><li><strong>关键结果</strong>：UAV123：AUC 为 65.6、Precision 为 87.3（表中单位均为 %），均越高越好。</li><li><strong>关键结果</strong>：NFS 的 30 FPS 版本：AUC 为 62.7%、Precision 为 75.4%，均越高越好。</li><li><strong>关键结果</strong>：OTB100：Precision 为 92.2%、Success 为 69.9%，均越高越好。</li><li><strong>消融实验</strong>：Table I 的逐步结果（Accuracy/Robustness/EAO）为：基线 0.547/0.126/0.443；加入多尺度回归后 0.553/0.112/0.451；再加入多尺度分类后 0.553/0.112/0.447；加入上采样后 0.597/0.122/0.463；最后加入 Online-Reg 后 0.612/0.112/0.491。Robustness 越低越好，其余越高越好。</li><li><strong>消融实验</strong>：融合率 λ_reg=0.6 时取得 Accuracy 0.612、Robustness 0.112、EAO 0.491；表中该组为最佳。</li><li><strong>消融实验</strong>：仅静态模型（λ_reg=0.0）EAO 为 0.466，而仅在线模型（λ_reg=1.0）EAO 为 0.442，说明单用在线预测样本反而较差。</li><li><strong>消融实验</strong>：Table II 的 Init-Filter/Init-Rect/Online 组件结果（Accuracy/Robustness/EAO）为：仅 Init-Filter 0.597/0.122/0.463；Init-Filter+Init-Rect 0.605/0.131/0.466；仅 Online 0.599/0.126/0.442；三者合并 0.612/0.112/0.491。</li><li><strong>消融实验</strong>：Table III 中传统 DiMP 式更新（Trad）的最佳 EAO 为 0.464，仍低于不使用在线回归的 0.466；RMG 更新（Ours）在 λ_reg=0.6 时达到 Accuracy 0.612、Robustness 0.112、EAO 0.491。</li><li><strong>实验条件</strong>：所有结果来自离线视频基准测试，并非仿真或实车闭环；GOT-10k 按标准协议仅用 train split 训练，消融固定在 VOT2018，主结果则在各基准测试集上执行。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2005.03201/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">What comprises a good talking-head video generation?: A Survey and Benchmark</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2004.06704/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">FineGym: A Hierarchical Video Dataset for Fine-grained Action Understanding</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

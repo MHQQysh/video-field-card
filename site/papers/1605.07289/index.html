@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EventNet Version 1.1 Technical Report - 视频领域每日论文卡</title>
+    <meta name="description" content="这篇报告解决的是 EventNet 原始视频语料的可靠性问题：仅凭 YouTube 标题抓取会引入错误事件标签，同一上传者的大量视频又会让分类器学习用户特征而非事件本身，因此作者重做清洗与补充。 它用于大规模视频事件识别与事件特定概念检测：研究者既可把一个视频判为某个事件类别，也可在只关心单一事件或概念时使用线性 SVM 二分类器。 论文真正验证的是：在修订后的 EventNet 1.1 上，逐帧 AlexNet 经时序最大池化与基于 fc7 特征的 SVM 能达到怎样的多类/二类准确率，以及扩大 SVM 负样本规模会怎样改变结果。 研究背景：原 EventNet 包含 99,382 个视频、500 个事件和 4,490 个事件特定概念，但作者指出视频语料质量仍有较大改进空间；本报告据此重构语料并重训事件与概念分类模型。 核心痛点：语料有四类具体故障：标题关键词会把与目标事件无关的视频纳入，例如“running”混入电视节目 Running Man；同一 YouTube 用户的大量视频会使分类器学习用户特征而非事件；部分链接已经失效；同一视频还可能重复出现在不同事件类别。 任务定义：输入是 EventNet 的 YouTube 视频语料：先按标签正确性、上传者偏差、可访问性和跨类重复做清洗与补抓；建模时每个视频均匀抽取约 40 个关键帧，输出视频级事件类别，或输出单一事件及事件特定概念的二分类判断。 研究目标：研究目标是把语料质量控制与可用模型连起来：先消除可定位的数据偏差并补足小类，再在统一数据划分上训练事件 CNN 和事件/概念 SVM，以检验修订语料能否支持可量化的视频级分类。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1605.07289">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1605.07289.webp" alt="EventNet Version 1.1 Technical Report" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">这篇报告解决的是 EventNet 原始视频语料的可靠性问题：仅凭 YouTube 标题抓取会引入错误事件标签，同一上传者的大量视频又会让分类器学习用户特征而非事件本身，因此作者重做清洗与补充。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">EventNet Version 1.1 Technical Report</h1>
+            <div class="detail-meta">2016-05-24 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1605.07289" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1605.07289" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1605.07289</span></div>
+            <p class="detail-summary">这篇报告解决的是 EventNet 原始视频语料的可靠性问题：仅凭 YouTube 标题抓取会引入错误事件标签，同一上传者的大量视频又会让分类器学习用户特征而非事件本身，因此作者重做清洗与补充。 它用于大规模视频事件识别与事件特定概念检测：研究者既可把一个视频判为某个事件类别，也可在只关心单一事件或概念时使用线性 SVM 二分类器。 论文真正验证的是：在修订后的 EventNet 1.1 上，逐帧 AlexNet 经时序最大池化与基于 fc7 特征的 SVM 能达到怎样的多类/二类准确率，以及扩大 SVM 负样本规模会怎样改变结果。 研究背景：原 EventNet 包含 99,382 个视频、500 个事件和 4,490 个事件特定概念，但作者指出视频语料质量仍有较大改进空间；本报告据此重构语料并重训事件与概念分类模型。 核心痛点：语料有四类具体故障：标题关键词会把与目标事件无关的视频纳入，例如“running”混入电视节目 Running Man；同一 YouTube 用户的大量视频会使分类器学习用户特征而非事件；部分链接已经失效；同一视频还可能重复出现在不同事件类别。 任务定义：输入是 EventNet 的 YouTube 视频语料：先按标签正确性、上传者偏差、可访问性和跨类重复做清洗与补抓；建模时每个视频均匀抽取约 40 个关键帧，输出视频级事件类别，或输出单一事件及事件特定概念的二分类判断。 研究目标：研究目标是把语料质量控制与可用模型连起来：先消除可定位的数据偏差并补足小类，再在统一数据划分上训练事件 CNN 和事件/概念 SVM，以检验修订语料能否支持可量化的视频级分类。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">13 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Columbia University · 四位作者在论文首页的共同署名单位、地点为 New York、NY 等</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1605.07289/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">这篇报告解决的是 EventNet 原始视频语料的可靠性问题：仅凭 YouTube 标题抓取会引入错误事件标签，同一上传者的大量视频又会让分类器学习用户特征而非事件本身，因此作者重做清洗与补充。</p>
+  <ul class="reading-intro-points"><li>这篇报告解决的是 EventNet 原始视频语料的可靠性问题：仅凭 YouTube 标题抓取会引入错误事件标签，同一上传者的大量视频又会让分类器学习用户特征而非事件本身，因此作者重做清洗与补充。</li><li>它用于大规模视频事件识别与事件特定概念检测：研究者既可把一个视频判为某个事件类别，也可在只关心单一事件或概念时使用线性 SVM 二分类器。</li><li>论文真正验证的是：在修订后的 EventNet 1.1 上，逐帧 AlexNet 经时序最大池化与基于 fc7 特征的 SVM 能达到怎样的多类/二类准确率，以及扩大 SVM 负样本规模会怎样改变结果。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Columbia University（四位作者在论文首页的共同署名单位，地点为 New York, NY, USA）</li><li><strong>实验室 / 团队</strong>：论文首页作者信息只列 Columbia University，未署名具体实验室；目录中的 nus-show-lab 是收录归属，不作为论文署名事实。</li><li><strong>作者与归属</strong>：Dongang Wang、Zheng Shou、Hongyi Liu、Shih-Fu Chang — Columbia University</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>这篇报告解决的是 EventNet 原始视频语料的可靠性问题：仅凭 YouTube 标题抓取会引入错误事件标签，同一上传者的大量视频又会让分类器学习用户特征而非事件本身，因此作者重做清洗与补充。</li><li>它用于大规模视频事件识别与事件特定概念检测：研究者既可把一个视频判为某个事件类别，也可在只关心单一事件或概念时使用线性 SVM 二分类器。</li><li>论文真正验证的是：在修订后的 EventNet 1.1 上，逐帧 AlexNet 经时序最大池化与基于 fc7 特征的 SVM 能达到怎样的多类/二类准确率，以及扩大 SVM 负样本规模会怎样改变结果。</li><li><strong>研究背景</strong>：原 EventNet 包含 99,382 个视频、500 个事件和 4,490 个事件特定概念，但作者指出视频语料质量仍有较大改进空间；本报告据此重构语料并重训事件与概念分类模型。</li><li><strong>核心痛点</strong>：语料有四类具体故障：标题关键词会把与目标事件无关的视频纳入，例如“running”混入电视节目 Running Man；同一 YouTube 用户的大量视频会使分类器学习用户特征而非事件；部分链接已经失效；同一视频还可能重复出现在不同事件类别。</li><li><strong>任务定义</strong>：输入是 EventNet 的 YouTube 视频语料：先按标签正确性、上传者偏差、可访问性和跨类重复做清洗与补抓；建模时每个视频均匀抽取约 40 个关键帧，输出视频级事件类别，或输出单一事件及事件特定概念的二分类判断。</li><li><strong>研究目标</strong>：研究目标是把语料质量控制与可用模型连起来：先消除可定位的数据偏差并补足小类，再在统一数据划分上训练事件 CNN 和事件/概念 SVM，以检验修订语料能否支持可量化的视频级分类。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>建立一套面向 EventNet 的语料精炼流程：人工复核错误标签，限制单一 YouTube 用户在同一事件中的视频，删除失效链接，并过滤跨事件类别重复的视频。</li><li>对清洗后不足 50 个视频的 14 个事件重新抓取并继续执行同一质量规则，最终形成含 67,641 个视频、500 个事件、5,028 个事件特定概念且每事件超过 50 个视频的版本。</li><li>在数据协议上把同一上传者的视频固定在同一个训练、验证或测试划分中，并从与目标事件语义不重叠的 ActivityNet 类别采样背景视频，分别处理上传者泄漏与背景拒识。</li><li>在同一修订语料上训练两类可用模型：ImageNet 预训练 AlexNet 微调得到多类事件 CNN，fc7 特征配合线性 SVM 得到事件和事件特定概念二分类器，并报告事件分类对比。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：流程由三个角色互补的模块构成：语料模块负责清洗、补抓并更新事件特定概念；事件 CNN 负责逐帧多类预测和视频级事件识别；事件与概念 SVM 模块把 fc7 表示转换成按类别独立的二分类分数。</li><li><strong>输入与表示</strong>：CNN 对每个视频均匀抽取约 40 帧作为关键帧并逐帧处理；SVM 支路从每帧抽取 4,096 维 fc7 激活并做 L2 归一化，以该向量作为线性分类器输入。</li><li><strong>模型结构</strong>：事件网络以 ImageNet 预训练 AlexNet 为骨干，把 fc8 改成 500 个事件节点，并加入由 ActivityNet 非重叠类别构成的背景类；二分类支路采用 LIBSVM 线性 SVM，事件和概念分类器均取 C=100。</li><li><strong>数据流</strong>：清洗与补抓后的语料先按事件划分；视频帧进入 AlexNet 得到逐帧事件分数，再沿时间做最大池化形成视频级事件向量。事件 SVM 将本事件训练帧作为正样本、其他事件帧作为负样本，经 fc7 与 L2 归一化后训练；概念 SVM 则把关联该概念的视频帧设为正样本，并从其他事件等量采样负视频。</li><li><strong>关键技术</strong>：关键控制包括：同一上传者的视频不跨数据划分；用语义不重叠的 ActivityNet 视频构造背景类；事件 SVM 比较两种负样本规模；概念更新时删除只出现在少于 3 个视频中的概念，并人工核验剩余概念。</li><li><strong>公式与超参数</strong>：论文未给出显式数学公式。CNN 训练 450,000 次迭代、batch 256、momentum 0.9、weight decay 0.0005，初始学习率 0.01 且每 10,000 次除以 10；事件 SVM 分别用 5K/20K 负样本，fc7 特征为 4,096 维并做 L2 归一化，LIBSVM 取 C=100。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：EventNet 1.1：67,641 个视频、500 个事件、5,028 个事件特定概念，每个事件超过 50 个视频。</li><li><strong>数据集</strong>：ImageNet：用于预训练事件 CNN 的 AlexNet 骨干。</li><li><strong>数据集</strong>：ActivityNet：从与 EventNet 的 500 个事件语义不重叠的类别中随机取视频，作为背景类训练数据。</li><li><strong>规模与划分</strong>：每个事件随机按 70%/10%/20% 划为训练、验证和测试集，同一 YouTube 上传者的视频保持在同一划分；每视频均匀抽取约 40 帧。二分类测试以本事件测试视频为正样本，并从其他事件随机取等量负视频。</li><li><strong>模型</strong>：基础视觉模型是 ImageNet 预训练 AlexNet，并在修订语料上微调事件 CNN；另以 5K 或 20K 异类负帧训练事件线性 SVM，并用相同的 fc7+L2+LIBSVM 路线训练事件特定概念分类器，C=100。</li><li><strong>硬件</strong>：训练硬件仅明确报告为一块具有 12G 显存的 Titan X GPU；正文实验设置及结论没有给出 CPU、内存主机或推理硬件。</li><li><strong>代码</strong>：论文没有给出代码仓库或已发布下载地址，只承诺未来把新版 EventNet 放到网上供公众下载，因此元数据中的 project_url 与 code_url 均为空。</li><li><strong>训练平台</strong>：数据采集与留存平台是 YouTube 和作者服务器：作者从 YouTube 抓取并检查视频，同时保存视频及上传者、上传时间、标题等信息；论文未使用仿真器、机器人或实车实验平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：EventNet 1.1 多类事件分类测试：直接在该版本测试集上做视频级事件预测。</li><li><strong>评估基准</strong>：逐事件二分类测试：本事件的测试视频为正样本，从其他事件随机抽取等量视频作为负样本。</li><li><strong>评估指标</strong>：多类分类报告 Top-1 与 Top-5 accuracy，数值越高越好。</li><li><strong>评估指标</strong>：逐事件二分类报告 accuracy，数值越高越好；该指标来自正负样本数量相等的测试设置。</li><li><strong>对比方法</strong>：多类口径比较 CNN、使用 5K 负样本的事件 SVM 和使用 20K 负样本的事件 SVM；二分类口径只比较两个 SVM 负样本规模。</li><li><strong>对比方法</strong>：该表同时形成一个负样本规模对照：保持 SVM 特征与分类器不变，只把每事件异类负帧从 5K 扩到 20K。</li><li><strong>关键结果</strong>：多类测试中，CNN 的 Top-1=0.3067、Top-5=0.5327；SVM(5K) 为 0.1842/0.3809，SVM(20K) 为 0.1933/0.3799，CNN 在两项多类指标上都更高。</li><li><strong>关键结果</strong>：平衡二分类测试中，SVM(5K) accuracy=0.6342，SVM(20K) accuracy=0.7422，扩大负样本规模对应更高的二分类准确率。</li><li><strong>关键结果</strong>：作者把 CNN 优于 SVM 的多类结果归因于：相对 EventNet 的规模，训练 SVM 时采用的负样本数量仍然较小。</li><li><strong>关键结果</strong>：概念模型没有单独结果表：第 3.2 节只报告清理后共有 5,028 个事件特定概念、1,512 个唯一概念及其 SVM 训练流程，未给出概念分类准确率。</li><li><strong>消融实验</strong>：论文未报告独立模块消融或清洗前后下游性能对照；Table 1 中唯一的受控变化是 SVM 负样本由 5K 增至 20K：二分类 0.6342→0.7422，多类 Top-1 0.1842→0.1933，而 Top-5 0.3809→0.3799。</li><li><strong>实验条件</strong>：数据按事件作 70%/10%/20% 划分并保证同一上传者不跨集合；每个视频约取 40 帧，逐帧分类后以时间最大池化得到视频级分数。多类结果使用原测试集，二分类结果则使用等量随机负视频构成的平衡测试，因此两种 accuracy 口径不能直接互比。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1608.00797/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">CUHK &amp; ETHZ &amp; SIAT Submission to ActivityNet Challenge 2016</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1604.07669/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Real-time Action Recognition with Enhanced Motion Vector CNNs</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

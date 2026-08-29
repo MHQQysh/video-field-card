@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SF-Net: Single-Frame Supervision for Temporal Action Localization - 视频领域每日论文卡</title>
+    <meta name="description" content="弱监督只给视频级类别，完整监督却要反复回看并标出每个实例的时间边界；SF-Net 改用每个动作实例一个带类别和时间戳的单帧标注，目标是在低标注开销下学习长未剪辑视频中的动作时间定位。 适用于视频档案中的动作检索与剪辑：例如记者从街道路侧摄像视频中找车祸时，只需为每起事故找出一个代表帧，再按需要截取前后片段，不一定先获得精确起止边界。 论文真正检验的是：单个正帧能否提供足够的时间线索，再配合逐帧 actionness、伪背景挖掘和伪动作帧扩展，同时缩小弱监督与全监督在段定位上的差距，并支持每实例单帧定位。 研究背景：时间动作定位要在长、未剪辑测试视频里检测并分类每个动作实例。完整监督提供实例起止边界，视频级弱监督成本较低但缺少时间位置；单帧监督位于两者之间，每个实例只标一个正帧。 核心痛点：既有弱监督 TAL 的定位性能仍落后于全监督；已有单帧监督工作面向整段视频分类，不能直接解决动作时间边界。核心困难是只见一个正帧时，模型既缺少完整动作范围，也没有显式背景标签。 任务定义：训练视频可含多个类别和多个实例，每个实例仅给时间戳 t 与类别 y，y 属于动作类别集合，索引 0 表示背景。测试时有两个输出：段定位给每个实例的起止时间与类别；单帧定位给每个检测实例的一个时间戳与类别。 研究目标：在接近视频级弱监督的标注流程下，利用单帧产生的时间提示显式区分动作与背景，学习可用于时间边界的逐帧表示，并验证同一模型能否兼顾传统段定位和按实例取一个代表帧的新任务。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2003.06845">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2003.06845.webp" alt="SF-Net: Single-Frame Supervision for Temporal Action Localization" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">弱监督只给视频级类别，完整监督却要反复回看并标出每个实例的时间边界；SF-Net 改用每个动作实例一个带类别和时间戳的单帧标注，目标是在低标注开销下学习长未剪辑视频中的动作时间定位。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">SF-Net: Single-Frame Supervision for Temporal Action Localization</h1>
+            <div class="detail-meta">2020-03-15 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2003.06845" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2003.06845" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2003.06845</span></div>
+            <p class="detail-summary">弱监督只给视频级类别，完整监督却要反复回看并标出每个实例的时间边界；SF-Net 改用每个动作实例一个带类别和时间戳的单帧标注，目标是在低标注开销下学习长未剪辑视频中的动作时间定位。 适用于视频档案中的动作检索与剪辑：例如记者从街道路侧摄像视频中找车祸时，只需为每起事故找出一个代表帧，再按需要截取前后片段，不一定先获得精确起止边界。 论文真正检验的是：单个正帧能否提供足够的时间线索，再配合逐帧 actionness、伪背景挖掘和伪动作帧扩展，同时缩小弱监督与全监督在段定位上的差距，并支持每实例单帧定位。 研究背景：时间动作定位要在长、未剪辑测试视频里检测并分类每个动作实例。完整监督提供实例起止边界，视频级弱监督成本较低但缺少时间位置；单帧监督位于两者之间，每个实例只标一个正帧。 核心痛点：既有弱监督 TAL 的定位性能仍落后于全监督；已有单帧监督工作面向整段视频分类，不能直接解决动作时间边界。核心困难是只见一个正帧时，模型既缺少完整动作范围，也没有显式背景标签。 任务定义：训练视频可含多个类别和多个实例，每个实例仅给时间戳 t 与类别 y，y 属于动作类别集合，索引 0 表示背景。测试时有两个输出：段定位给每个实例的起止时间与类别；单帧定位给每个检测实例的一个时间戳与类别。 研究目标：在接近视频级弱监督的标注流程下，利用单帧产生的时间提示显式区分动作与背景，学习可用于时间边界的逐帧表示，并验证同一模型能否兼顾传统段定位和按实例取一个代表帧的新任务。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">19 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Technology Sydney, Australia（论文首页署名机构）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2003.06845/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">弱监督只给视频级类别，完整监督却要反复回看并标出每个实例的时间边界；SF-Net 改用每个动作实例一个带类别和时间戳的单帧标注，目标是在低标注开销下学习长未剪辑视频中的动作时间定位。</p>
+  <ul class="reading-intro-points"><li>弱监督只给视频级类别，完整监督却要反复回看并标出每个实例的时间边界；SF-Net 改用每个动作实例一个带类别和时间戳的单帧标注，目标是在低标注开销下学习长未剪辑视频中的动作时间定位。</li><li>适用于视频档案中的动作检索与剪辑：例如记者从街道路侧摄像视频中找车祸时，只需为每起事故找出一个代表帧，再按需要截取前后片段，不一定先获得精确起止边界。</li><li>论文真正检验的是：单个正帧能否提供足够的时间线索，再配合逐帧 actionness、伪背景挖掘和伪动作帧扩展，同时缩小弱监督与全监督在段定位上的差距，并支持每实例单帧定位。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Technology Sydney, Australia（论文首页署名机构）</li><li><strong>机构</strong>：Facebook（论文首页署名机构）</li><li><strong>实验室 / 团队</strong>：论文首页只署名 University of Technology Sydney 与 Facebook，没有给出具体实验室名称；元数据中的 nus-show-lab 是目录收录标签，其依据保留在 membership_evidence，不能等同为论文首页署名。</li><li><strong>作者与归属</strong>：Fan Ma、Linchao Zhu、Yi Yang—University of Technology Sydney, Australia。</li><li><strong>作者与归属</strong>：Shengxin Zha、Gourab Kundu、Matt Feiszli、Zheng Shou—Facebook。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>弱监督只给视频级类别，完整监督却要反复回看并标出每个实例的时间边界；SF-Net 改用每个动作实例一个带类别和时间戳的单帧标注，目标是在低标注开销下学习长未剪辑视频中的动作时间定位。</li><li>适用于视频档案中的动作检索与剪辑：例如记者从街道路侧摄像视频中找车祸时，只需为每起事故找出一个代表帧，再按需要截取前后片段，不一定先获得精确起止边界。</li><li>论文真正检验的是：单个正帧能否提供足够的时间线索，再配合逐帧 actionness、伪背景挖掘和伪动作帧扩展，同时缩小弱监督与全监督在段定位上的差距，并支持每实例单帧定位。</li><li><strong>研究背景</strong>：时间动作定位要在长、未剪辑测试视频里检测并分类每个动作实例。完整监督提供实例起止边界，视频级弱监督成本较低但缺少时间位置；单帧监督位于两者之间，每个实例只标一个正帧。</li><li><strong>核心痛点</strong>：既有弱监督 TAL 的定位性能仍落后于全监督；已有单帧监督工作面向整段视频分类，不能直接解决动作时间边界。核心困难是只见一个正帧时，模型既缺少完整动作范围，也没有显式背景标签。</li><li><strong>任务定义</strong>：训练视频可含多个类别和多个实例，每个实例仅给时间戳 t 与类别 y，y 属于动作类别集合，索引 0 表示背景。测试时有两个输出：段定位给每个实例的起止时间与类别；单帧定位给每个检测实例的一个时间戳与类别。</li><li><strong>研究目标</strong>：在接近视频级弱监督的标注流程下，利用单帧产生的时间提示显式区分动作与背景，学习可用于时间边界的逐帧表示，并验证同一模型能否兼顾传统段定位和按实例取一个代表帧的新任务。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>首次把每实例单帧监督用于动作时间边界定位，并通过真实标注流程与耗时研究说明它相对完整边界标注可显著节省人力。</li><li>提出两种互补伪标签机制：从锚定单帧向邻近上下文扩展伪动作帧，并跨视频从未标注帧中选择伪背景帧，把两类帧继续用于分类器训练。</li><li>构建统一 SF-Net：分类模块同时负责有标签帧与视频级类别，actionness 模块逐帧判断动作/背景，二者与帧分类、视频分类和动作性目标联合训练。</li><li>除段定位外定义每个动作实例只输出一个时间戳和类别的单帧定位任务，并在 GTEA、BEOID、THUMOS14 上同时评估两种定位口径。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：分类模块为每帧输出动作类别分数，并经时间池化承担视频级分类；并行 actionness 模块为每帧输出是否属于任意目标动作的标量。动作帧与背景帧挖掘器扩大可监督帧集合，三类训练目标共同更新两个分支。</li><li><strong>输入与表示</strong>：每个训练实例给一个锚帧时间戳 t 和类别 y，动作类别以 y 表示，索引 0 留给背景。一个批次的 N 个视频帧特征组成 X∈R^{N×T×D}，T 是统一时间长度、D 是特征维度；短视频在时间维零填充。</li><li><strong>模型结构</strong>：分类分支把 X 送入三层全连接网络，得到逐帧类别张量 C∈R^{N×T×(Nc+1)}，再分别接 Softmax 帧分类与时间池化视频分类。actionness 分支由两层时间卷积和一层全连接构成，输出 A∈R^{N×T}，经 Sigmoid 形成二分类概率。</li><li><strong>数据流</strong>：训练时先从单帧标注生成伪动作帧和伪背景帧，再由 C 计算标注帧/伪帧分类损失与池化后的视频级损失，由 A 对正动作帧和伪背景帧计算动作性损失。推理时先得到 C 与 A，按视频级类别筛选后，把分类分数与 actionness 分数逐帧相加并阈值化，连续过阈帧组成动作段；段内最大激活帧作为单帧定位结果。</li><li><strong>关键技术</strong>：动作帧挖掘以标注帧为锚，向前后分别扩展；候选邻域须预测类别一致，且锚类别分数不低于 ξ 倍锚帧分数，否则该方向停止，附录固定 r=5、ξ=0.9。背景挖掘在一个批次的多视频未标注帧中，按背景类分数排序取 top-ηK，其中 K 是已标注帧数、η 是背景帧与标注帧之比。</li><li><strong>公式与超参数</strong>：标注帧损失写为 L_lframe=-Σ_i y_i log p_i^l/K；伪背景损失为 L_bframe=-Σ log p^b/(ηK)，并以 L_frame=L_lframe+L_bframe/Nc 合并。动作性损失分别惩罚正帧的 -log σ(A^l) 与伪背景的 -log(1-σ(A^b))；视频级分支每类取 top-k 激活求均值，其中 k=T_i/8，再做多标签交叉熵。总目标 L=L_frame+αL_video+βL_actionness。默认 α=β=1、学习率 10−3（原文排版，表示十的负三次方）、批量 32；η 在 THUMOS14 为 5、在 GTEA/BEOID 为 1，迭代次数依次为 5000、500、2000；动作扩展 r=5、ξ=0.9。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：THUMOS14：主训练、测试与人工单帧标注分析数据集。</li><li><strong>数据集</strong>：GTEA：厨房日常活动视频，用于主实验和标注速度研究。</li><li><strong>数据集</strong>：BEOID：第一视角交互视频，用于主实验与定性定位展示。</li><li><strong>数据集</strong>：ActivityNet1.2：仅在附录做从真值时间段随机采样单帧的额外仿真实验。</li><li><strong>规模与划分</strong>：THUMOS14 有 1010 个验证视频、1574 个测试视频和 101 类，其中 20 类在 200 个验证视频与 213 个测试视频中有时间标注，沿用验证集训练、测试集评估，平均每视频 15 个实例。GTEA 有 28 个视频、7 类细粒度厨房活动、四名参与者，每视频约 1800 个 RGB 帧并含 7 个动作序列（含背景）。BEOID 有 58 个视频，平均 12.5 个实例、约 60s、30 类，按 80-20% 随机划分训练/测试。ActivityNet1.2 仅说明使用验证集，未在本文报告其视频数或类别数。</li><li><strong>模型</strong>：用 Kinetics 预训练 I3D 抽取 RGB 与光流特征；RGB 短边缩放到 256 后中心裁剪为 224×224，光流用 TV-L1，双流预测再融合，I3D 每次输入 16 帧堆栈。论文没有报告基础模型参数量。</li><li><strong>硬件</strong>：检查正文实现细节以及 Appendix A–F 后，论文均未报告训练或推理所用 GPU/CPU 型号、数量与运行时；已报告的是优化器、批量大小、学习率和迭代次数，不能据此推断硬件。</li><li><strong>代码</strong>：论文首页摘要明确给出代码仓库 <a href="https://github.com/Flowerfan/SF-Net；顶层" target="_blank" rel="noopener noreferrer">https://github.com/Flowerfan/SF-Net；顶层</a> code_url 仍按输入元数据逐字继承为空，不用卡片中的论文事实反向改写元数据。</li><li><strong>训练平台</strong>：实验全部基于离线视频数据集，没有仿真器、机器人或实车平台。附录另描述自制单帧标注工具：标注者暂停视频选类别，工具自动记录时间戳，观看结束后把记录保存为 CSV 文件。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：THUMOS14：测试集上的主段定位、单帧定位、模块消融和敏感性分析。</li><li><strong>评估基准</strong>：GTEA：段定位、标注一致性及标注耗时研究。</li><li><strong>评估基准</strong>：BEOID：段定位、标注一致性和定性结果。</li><li><strong>评估基准</strong>：ActivityNet1.2：验证集上的单帧监督仿真补充实验。</li><li><strong>评估指标</strong>：段定位采用 mAP@IoU，数值越高越好；主模块消融的 AVG 是 IoU 0.1 至 0.7 的平均值，而 THUMOS14 方法对比表的 AVG 是 IoU 0.1 至 0.5 的平均值，两种 AVG 不能混用。</li><li><strong>评估指标</strong>：单帧定位采用 mAP@hit，越高越好；只有预测帧位于真值动作段的时间范围内且类别正确，才记为一次命中。</li><li><strong>评估指标</strong>：补充独立评估以视频级 mAP 衡量分类、以不同 IoU 下的类别无关 AP 衡量边界定位；二者均是越高越好。</li><li><strong>对比方法</strong>：THUMOS14 方法对比同时覆盖全监督 TAL、弱监督 TAL，以及 Moltisanti 等单帧监督方法；同一表中区分真值区间采样的模拟单帧与人工标注单帧。</li><li><strong>对比方法</strong>：模块对照依次为 Full、Weak、SF、SFB、SFBA、SFBAE：从单帧帧分类开始，逐步加入伪背景、actionness 与动作帧扩展。</li><li><strong>对比方法</strong>：单帧来源对照包括人工 Annotation、动作段内均匀采样 TS，以及靠近动作中点的高斯采样 TS in GT。</li><li><strong>关键结果</strong>：人工单帧 SF-Net 在 THUMOS14 的 IoU 0.1/0.3/0.5/0.7 上取得 71.0/53.2/29.3/9.6 mAP，IoU 0.1 至 0.5 的 AVG 为 51.5；同表弱监督 Nguyen 等方法的 AVG 为 45.5。</li><li><strong>关键结果</strong>：在 GTEA、BEOID、THUMOS14 上，最终 SFBAE 的 IoU 0.1 至 0.7 AVG 分别为 31.0±1.63、30.1±1.22、40.6±0.40；相应全监督结果为 31.5、33.6、43.8，均是越高越好。</li><li><strong>关键结果</strong>：对 21 个总时长 93 分钟的 GTEA 视频，标注每 1 分钟视频平均需 45s、50s、300s，依次对应视频级标签、单帧标签和完整段边界标签。</li><li><strong>关键结果</strong>：THUMOS14 上加入单帧监督后，视频分类 mAP 从 97.8 升至 98.5；类别无关 AP@IoU=0.3/0.5/0.7 则从 42.1/18.1/5.5 升至 58.8/32.4/9.4，说明主要增益来自定位。</li><li><strong>关键结果</strong>：ActivityNet1.2 验证集上，SF-Net 在 IoU 0.5/0.7/0.9 的 mAP 为 37.8/24.6/10.3，AVG 为 22.8；3C-Net 对应 37.2/23.7/9.2 与 21.7。</li><li><strong>关键结果</strong>：四名标注者在 GTEA 分别标出 369/366/377/367 个实例，对照全监督总段数 367；BEOID 为 604/602/589/599 对 594；THUMOS14 为 3014/2920/2980/2986 对 3007。三组计数均接近总段数，但该表比较的是实例计数而非起止边界误差。</li><li><strong>关键结果</strong>：三项数据集的人工单帧相对位置分布显示，标注者倾向在动作中部暂停，落在全监督真值动作段外的帧很少；横轴只是帧在真值动作段中的相对位置、纵轴是标注帧比例，因此该结果描述标注位置分布，不等同于段边界定位性能。</li><li><strong>消融实验</strong>：THUMOS14 上，SF、SFB、SFBA、SFBAE 的 IoU 0.1 至 0.7 AVG 依次为 31.7±0.41、33.9±0.31、39.9±0.43、40.6±0.40，伪背景与 actionness 带来主要提升。</li><li><strong>消融实验</strong>：在 GTEA 上加入背景挖掘和 actionness 反而下降；作者主要归因于该数据几乎没有背景帧，因此以动作/背景区分为目标的模块不适配。</li><li><strong>消融实验</strong>：人工 Annotation 的 mAP@hit/段定位 AVG 为 60.2±0.70/40.6±0.40，均匀 TS 为 57.6±0.60/40.5±0.28，中点高斯 TS in GT 为 52.8±0.85/36.7±0.52。</li><li><strong>消融实验</strong>：背景比例 η 从 3 到 9 时作者称模型趋于稳定，AVG 位于 41.0 至 41.3；η=0 时 AVG 仅 31.7。</li><li><strong>消融实验</strong>：损失权重敏感性中，α 或 β 分别试 0.2、0.5、0.8，另一个固定为默认 1，AVG 落在 41.0 至 41.9，作者据此认为模型对这些权重不敏感。</li><li><strong>实验条件</strong>：实验是离线视频上的训练/评测，不是机器人闭环或实车测试。人工单帧由四名标注者生成；主注释模拟与模块消融对单帧设置报告五次运行的均值和标准差，敏感性实验各运行三次并为每个视频从四人标注中随机取一帧。ActivityNet1.2 则仅用真值时间段随机采样单帧，属于模拟而非人工标注。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2003.13141/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Learning a Weakly-Supervised Video Actor-Action Segmentation Model with a Wise Selection</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2002.11616/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Zooming Slow-Mo: Fast and Accurate One-Stage Space-Time Video Super-Resolution</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

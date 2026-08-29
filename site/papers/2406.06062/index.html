@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ProcessPainter: Learn Painting Process from Sequence Data - 视频领域每日论文卡</title>
+    <meta name="description" content="这篇论文解决的不是“把一张图逐步去噪出来”，而是生成可被人理解的绘画过程：从空白或粗略色块出发，按画家的构图与细化顺序逐帧走向成画。作者指出，笔触渲染通常只优化与目标图的像素差，扩散模型的去噪轨迹也不是画家从抽象到具体的创作轨迹，因此二者都难以直接成为真实的教学过程。 它覆盖三种具体使用方式：给文字生成一段绘画过程；把现成作品放在序列末帧位置，反推出从空白到该作品的关键帧；把半成品放在较早的指定帧，再依据文字继续完成。后两种方式都由 Artwork Replication Network 把参考图绑定到任意时间位置，位置越靠前，可补全的幅度越大。 论文真正检验的问题是：在真实画家过程数据稀缺时，能否先用合成笔触序列学到通用的时序绘画先验，再用少量画家序列的空间/时间 LoRA 学到个人风格与作画策略，并通过任意帧条件和噪声替换兼顾过程自然度与参考图重建一致性。作者分别用重建误差、视觉消融和人类偏好研究回答这一问题。 研究背景：绘画是一条从抽象到具体、从宏观构图到局部细节的逐步实例化过程；这种过程既能形成可观察的“怎么画”教程，也能服务艺术教育、创作分析和半成品辅导。论文因此把绘画关键帧视为一种特殊视频，而不是把扩散去噪中间态当作作画步骤。 核心痛点：传统 stroke-based rendering 多以缩小当前画布与目标图的差异为目标，能排笔触，却没有从真实画家的过程关键帧中学习不同题材、画种与个人策略；普通文本到图像扩散的迭代去噪在 VAE 解码后只是模糊中间图，也不符合人类作画顺序。真实网络绘画视频又常被手部遮挡、视角变化和缩放污染，难以直接作为稳定时序训练数据。 任务定义：输入与输出分成三类：Text2Painting 从文字直接输出从粗到细的绘画序列；Image2Painting 将任意参考作品约束为序列的最终帧，输出从空白到该作品的过程关键帧；Semi2Complete 将半成品约束在序列中前部，并结合文字输出其后续完成过程。 研究目标：目标是建立一个可插拔的时序扩散框架：通用 Painting Model 先从可规模化合成的绘画序列获得跨帧先验，Painting LoRA 再用少量真人过程分离学习最终视觉风格与作画时序策略，Artwork Replication Network 则把任意参考帧的约束传播到整个序列，从而同时提供无参考生成与可控复制/续画。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2406.06062">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2406.06062.webp" alt="ProcessPainter: Learn Painting Process from Sequence Data" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">这篇论文解决的不是“把一张图逐步去噪出来”，而是生成可被人理解的绘画过程：从空白或粗略色块出发，按画家的构图与细化顺序逐帧走向成画。作者指出，笔触渲染通常只优化与目标图的像素差，扩散模型的去噪轨迹也不是画家从抽象到具体的创作轨迹，因此二者都难以直接成为真实的教学过程。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">ProcessPainter: Learn Painting Process from Sequence Data</h1>
+            <div class="detail-meta">2024-06-10 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2406.06062" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2406.06062" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2406.06062</span></div>
+            <p class="detail-summary">这篇论文解决的不是“把一张图逐步去噪出来”，而是生成可被人理解的绘画过程：从空白或粗略色块出发，按画家的构图与细化顺序逐帧走向成画。作者指出，笔触渲染通常只优化与目标图的像素差，扩散模型的去噪轨迹也不是画家从抽象到具体的创作轨迹，因此二者都难以直接成为真实的教学过程。 它覆盖三种具体使用方式：给文字生成一段绘画过程；把现成作品放在序列末帧位置，反推出从空白到该作品的关键帧；把半成品放在较早的指定帧，再依据文字继续完成。后两种方式都由 Artwork Replication Network 把参考图绑定到任意时间位置，位置越靠前，可补全的幅度越大。 论文真正检验的问题是：在真实画家过程数据稀缺时，能否先用合成笔触序列学到通用的时序绘画先验，再用少量画家序列的空间/时间 LoRA 学到个人风格与作画策略，并通过任意帧条件和噪声替换兼顾过程自然度与参考图重建一致性。作者分别用重建误差、视觉消融和人类偏好研究回答这一问题。 研究背景：绘画是一条从抽象到具体、从宏观构图到局部细节的逐步实例化过程；这种过程既能形成可观察的“怎么画”教程，也能服务艺术教育、创作分析和半成品辅导。论文因此把绘画关键帧视为一种特殊视频，而不是把扩散去噪中间态当作作画步骤。 核心痛点：传统 stroke-based rendering 多以缩小当前画布与目标图的差异为目标，能排笔触，却没有从真实画家的过程关键帧中学习不同题材、画种与个人策略；普通文本到图像扩散的迭代去噪在 VAE 解码后只是模糊中间图，也不符合人类作画顺序。真实网络绘画视频又常被手部遮挡、视角变化和缩放污染，难以直接作为稳定时序训练数据。 任务定义：输入与输出分成三类：Text2Painting 从文字直接输出从粗到细的绘画序列；Image2Painting 将任意参考作品约束为序列的最终帧，输出从空白到该作品的过程关键帧；Semi2Complete 将半成品约束在序列中前部，并结合文字输出其后续完成过程。 研究目标：目标是建立一个可插拔的时序扩散框架：通用 Painting Model 先从可规模化合成的绘画序列获得跨帧先验，Painting LoRA 再用少量真人过程分离学习最终视觉风格与作画时序策略，Artwork Replication Network 则把任意参考帧的约束传播到整个序列，从而同时提供无参考生成与可控复制/续画。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">21 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：新加坡国立大学 · National University of Singapore</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2406.06062/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">这篇论文解决的不是“把一张图逐步去噪出来”，而是生成可被人理解的绘画过程：从空白或粗略色块出发，按画家的构图与细化顺序逐帧走向成画。作者指出，笔触渲染通常只优化与目标图的像素差，扩散模型的去噪轨迹也不是画家从抽象到具体的创作轨迹，因此二者都难以直接成为真实的教学过程。</p>
+  <ul class="reading-intro-points"><li>这篇论文解决的不是“把一张图逐步去噪出来”，而是生成可被人理解的绘画过程：从空白或粗略色块出发，按画家的构图与细化顺序逐帧走向成画。作者指出，笔触渲染通常只优化与目标图的像素差，扩散模型的去噪轨迹也不是画家从抽象到具体的创作轨迹，因此二者都难以直接成为真实的教学过程。</li><li>它覆盖三种具体使用方式：给文字生成一段绘画过程；把现成作品放在序列末帧位置，反推出从空白到该作品的关键帧；把半成品放在较早的指定帧，再依据文字继续完成。后两种方式都由 Artwork Replication Network 把参考图绑定到任意时间位置，位置越靠前，可补全的幅度越大。</li><li>论文真正检验的问题是：在真实画家过程数据稀缺时，能否先用合成笔触序列学到通用的时序绘画先验，再用少量画家序列的空间/时间 LoRA 学到个人风格与作画策略，并通过任意帧条件和噪声替换兼顾过程自然度与参考图重建一致性。作者分别用重建误差、视觉消融和人类偏好研究回答这一问题。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：新加坡国立大学（National University of Singapore）</li><li><strong>机构</strong>：浙江大学（ZheJiang University）</li><li><strong>机构</strong>：Tiamat（上海）</li><li><strong>机构</strong>：上海交通大学（Shanghai Jiao Tong University）</li><li><strong>实验室 / 团队</strong>：Show Lab（论文首页明确署名；目录中的 nus-show-lab 据此收录）</li><li><strong>作者与归属</strong>：Yiren Song—Show Lab, National University of Singapore；Hai Ci—Show Lab, National University of Singapore；Mike Zheng Shou—Show Lab, National University of Singapore</li><li><strong>作者与归属</strong>：Shijie Huang—National University of Singapore；Chen Yao—National University of Singapore</li><li><strong>作者与归属</strong>：Xiaojun Ye—ZheJiang University；Jiaming Liu—Tiamat；Yuxuan Zhang—Shanghai Jiao Tong University</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>这篇论文解决的不是“把一张图逐步去噪出来”，而是生成可被人理解的绘画过程：从空白或粗略色块出发，按画家的构图与细化顺序逐帧走向成画。作者指出，笔触渲染通常只优化与目标图的像素差，扩散模型的去噪轨迹也不是画家从抽象到具体的创作轨迹，因此二者都难以直接成为真实的教学过程。</li><li>它覆盖三种具体使用方式：给文字生成一段绘画过程；把现成作品放在序列末帧位置，反推出从空白到该作品的关键帧；把半成品放在较早的指定帧，再依据文字继续完成。后两种方式都由 Artwork Replication Network 把参考图绑定到任意时间位置，位置越靠前，可补全的幅度越大。</li><li>论文真正检验的问题是：在真实画家过程数据稀缺时，能否先用合成笔触序列学到通用的时序绘画先验，再用少量画家序列的空间/时间 LoRA 学到个人风格与作画策略，并通过任意帧条件和噪声替换兼顾过程自然度与参考图重建一致性。作者分别用重建误差、视觉消融和人类偏好研究回答这一问题。</li><li><strong>研究背景</strong>：绘画是一条从抽象到具体、从宏观构图到局部细节的逐步实例化过程；这种过程既能形成可观察的“怎么画”教程，也能服务艺术教育、创作分析和半成品辅导。论文因此把绘画关键帧视为一种特殊视频，而不是把扩散去噪中间态当作作画步骤。</li><li><strong>核心痛点</strong>：传统 stroke-based rendering 多以缩小当前画布与目标图的差异为目标，能排笔触，却没有从真实画家的过程关键帧中学习不同题材、画种与个人策略；普通文本到图像扩散的迭代去噪在 VAE 解码后只是模糊中间图，也不符合人类作画顺序。真实网络绘画视频又常被手部遮挡、视角变化和缩放污染，难以直接作为稳定时序训练数据。</li><li><strong>任务定义</strong>：输入与输出分成三类：Text2Painting 从文字直接输出从粗到细的绘画序列；Image2Painting 将任意参考作品约束为序列的最终帧，输出从空白到该作品的过程关键帧；Semi2Complete 将半成品约束在序列中前部，并结合文字输出其后续完成过程。</li><li><strong>研究目标</strong>：目标是建立一个可插拔的时序扩散框架：通用 Painting Model 先从可规模化合成的绘画序列获得跨帧先验，Painting LoRA 再用少量真人过程分离学习最终视觉风格与作画时序策略，Artwork Replication Network 则把任意参考帧的约束传播到整个序列，从而同时提供无参考生成与可控复制/续画。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>首次把文本到绘画过程明确建模为视频生成：输出不是扩散去噪可视化，而是从抽象轮廓、色块到最终细节的时间有序绘画关键帧。</li><li>提出“合成序列预训练 + 画家少样本 Painting LoRA”路线，并把 LoRA 拆成最终帧训练的 Spatial-Attention LoRA 与完整序列训练的 Temporal-Attention LoRA，以分别吸收成画风格和过程策略。</li><li>提出可接收任意帧参考图的 Artwork Replication Network：把作品指定为末帧即可重建其绘画过程，把半成品指定为前部帧即可续画，并通过 DDIM inversion 与指定帧噪声替换增强参考一致性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：Painting Model 负责文字条件下的通用绘画过程先验；插入 UNet 各扩散层后的 Temporal-Attention 负责让当前帧利用其他帧信息；Painting LoRA 以低秩增量适配单个画家的静态风格与时序策略；Artwork Replication Network 是带时间注意力的 ControlNet 变体，把指定参考帧的信息逐层加到冻结的去噪 UNet 上。</li><li><strong>输入与表示</strong>：主干接收文字提示和带噪潜变量序列。每个空间位置把特征沿时间轴重排为长度 f 的序列 z={z1,…,zf}，其中每帧向量维度为 (b×h×w)×c，再做跨帧自注意力。参考图先由 VAE encoder 编为潜变量 li；系统初始化标准高斯噪声，并在目标时间位置 τ 用 li 替换对应噪声，从而明确哪一帧必须匹配参考图。训练与推理默认序列含 8 帧、分辨率为 512×512。</li><li><strong>模型结构</strong>：整体由冻结的预训练 Stable Diffusion（VAE 与 UNet）、追加到 UNet 各层的 AnimateDiff Temporal-Attention、可挂载的 Spatial/Temporal Painting LoRA，以及并联的 Artwork Replication Network 构成。后者在每个 Spatial-Attention 后也加入 Temporal-Attention，其第 n 层特征以加法方式注入去噪 UNet，因此可以在纯文字生成时完全不启用，也可切换不同 Painting Model/LoRA 控制作画策略。</li><li><strong>数据流</strong>：训练分三段：先用合成绘画序列预训练时间模块；冻结 Painting Model 后训练 Artwork Replication Network，让随机抽取的参考帧约束同一序列；最后针对每位画家，先仅用末帧训练 Spatial-Attention LoRA，冻结它后再用完整序列训练 Temporal-Attention LoRA。推理时，纯文字任务只走 Painting Model；参考图任务先做 DDIM inversion 得到参考图初始噪声、替换指定 τ 帧的噪声，再由参考网络逐层向主 UNet 注入条件并迭代生成整段序列。</li><li><strong>关键技术</strong>：合成数据先从 DiffusionDB 按审美分筛图，再分别用 Learn-to-Paint、Stylized Neural Painting、Paint Transformer 生成笔触序列，并用 Segment Anything 与 Depth Anything 按深度从近到远把分区加入空画布，补充“逐对象绘制”的策略；对 SBR 后期变化很小的问题采用非均匀帧采样。真实画家数据则在 caption 中加入触发词 sks，并为每位画家单独训练 LoRA；LoRA 优化器使用 Prodigy。</li><li><strong>公式与超参数</strong>：时间注意力为 Softmax(QK^T/√c)V，Q=WQz、K=WKz、V=WVz，因而每个当前帧可聚合其他帧；LoRA 将冻结权重改写为 W&#x27;=W+AB^T，A∈R^(m×r)、B∈R^(n×r)，只在注意力层训练秩 r 的残差；参考网络按 Ŝu_n=Su_n+λARN_n 注入，其中 λ 控制参考影响强度。实验学习率为 2×10^-5、batch size 为 1；预训练与正式训练各 50,000 steps；DDIM sampling 和 inversion 推理各运行 50 steps。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：合成部分从 DiffusionDB 依审美分选 10,000 张静态图，经三种 SBR 方法转换为序列；方法正文最终表述为 30,000 条合成绘画序列。</li><li><strong>数据集</strong>：另用 Segment Anything 与 Depth Anything 生成按前景到背景逐分区显现的合成过程。</li><li><strong>数据集</strong>：真人部分共收集 95 条绘画序列，来自三位画家，覆盖厚涂肖像、风景速写和线稿上色；每位画家训练独立 Painting LoRA。</li><li><strong>规模与划分</strong>：每条训练序列固定 8 帧、512×512。实验设置写明预训练实际使用 30,000 条视频序列训练 50,000 steps，随后 Artwork Replication Network 再训练 50,000 steps；参考帧每次抽取 0–3 帧，首帧与末帧各以三分之一概率采样，中间帧按中心峰值正态分布采样。论文没有给出独立训练/验证/测试划分。需注意数据构建小节和实验设置小节均写 30,000，而总览图注写“40,000 synthetic data points”，文内存在口径不一致。</li><li><strong>模型</strong>：基础生成器是冻结 VAE/UNet 的预训练 Stable Diffusion，时间模块取自 AnimateDiff；个性化使用 attention-only LoRA，参考控制采用带 Temporal-Attention 的 ControlNet 变体。合成数据还调用 Learn-to-Paint、Stylized Neural Painting、Paint Transformer、Segment Anything 与 Depth Anything；LoRA 训练采用 Prodigy 优化器。论文未给出 Stable Diffusion 的具体版本或参数规模。</li><li><strong>硬件</strong>：预训练和 LoRA 训练均在 NVIDIA A100 GPU 上完成。正文用单数表述一块 A100，但没有报告显存容量、CPU、节点、总训练时长或正式训练 Artwork Replication Network 是否使用不同硬件，因此不能据此外推完整算力配置。</li><li><strong>代码</strong>：论文明确给出代码仓库 <a href="https://github.com/nicolaus-huang/ProcessPainter；目录元数据中的" target="_blank" rel="noopener noreferrer">https://github.com/nicolaus-huang/ProcessPainter；目录元数据中的</a> project_url 与 code_url 均指向该地址。</li><li><strong>训练平台</strong>：这是数字图像/视频生成实验：输入为文字、参考作品或半成品，输出为绘画过程帧/GIF；全文方法、实验与限制部分均未使用机器人、实车或物理仿真平台，也没有报告专用绘画软件运行平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Image-to-Painting-Process 最终帧重建：比较输出序列末帧与参考图的一致性；论文未命名测试集，也未给出评测图像数量或划分。</li><li><strong>评估基准</strong>：人类偏好研究：受试者观看 ProcessPainter 与各基线的成对绘画过程 GIF，分别选择更像人类作画者与主观更偏好的结果。</li><li><strong>评估指标</strong>：Mean MSE、Mean LPIPS、Mean L1 衡量末帧与参考图的差异，三者均为越低越好。</li><li><strong>评估指标</strong>：Anthropomorphic (%) 与 Preference (%) 分别统计更像人类绘画过程和更受偏好的选择比例，均为越高越好。</li><li><strong>对比方法</strong>：重建表与可视化对比四个 stroke-based rendering 基线：LearnToPaint、Paint Transformer、Intelli-Paint、Stylized Neural Painting；量化结果来自各方法官方代码库的推荐参数。</li><li><strong>对比方法</strong>：论文声称文本到绘画过程与逐步续画没有现成同任务方法，因此没有为这两项功能设置直接量化基线；正式数值比较集中在 Image-to-Painting-Process。</li><li><strong>关键结果</strong>：ProcessPainter 在末帧重建上取得 Mean MSE 0.014820、Mean LPIPS 0.024517、Mean L1 0.082165，三项均为表中最低。</li><li><strong>关键结果</strong>：最接近的 LearnToPaint 对应为 0.016181、0.033240、0.087082；其余 Paint Transformer、Intelli-Paint、Stylized Neural Painting 在三项误差上也均高于 ProcessPainter。</li><li><strong>关键结果</strong>：在人类感知比较中，ProcessPainter 相对 LearnToPaint 的 Anthropomorphic/Preference 为 78.2/68.2，相对 Paint Transformer 为 80.4/65.9；表头单位均为百分比。</li><li><strong>关键结果</strong>：相对 Intelli-Paint 的 Anthropomorphic/Preference 为 84.5/78.4，相对 Stylized Neural Painting 为 78.6/71.6；表头单位均为百分比，四组配对中两个比例都超过半数。</li><li><strong>消融实验</strong>：图示做了定性组件消融：完整模型同时使用 Artwork Replication Network 与 DDIM inversion/noise replacement 时，末帧最贴近参考图；去掉噪声替换时只剩有限一致性，去掉参考网络而只保留噪声替换时一致性很差。论文未给这组消融提供数值表。</li><li><strong>实验条件</strong>：末帧重建只评参考图与 Image2Painting 输出的最后一帧，三项误差均按官方代码库推荐参数获得。用户研究包含 44 名参与者，每人观看 28 组成对序列；每段以总时长 5 秒的 GIF 呈现，并分别回答“更像人类画法”和“更喜欢哪一个”。这不是盲测协议的完整报告，论文未说明受试者背景、随机化方式或显著性检验。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-next" href="../../papers/2012.02181/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

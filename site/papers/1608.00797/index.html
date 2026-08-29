@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CUHK &amp; ETHZ &amp; SIAT Submission to ActivityNet Challenge 2016 - 视频领域每日论文卡</title>
+    <meta name="description" content="未经时间裁剪的长视频常含大量与目标动作无关的片段；论文要解决的是，不先人工剪出动作区间，也能从整段视频完成动作类别预测。 具体面向 ActivityNet 的竞赛式离线视频分类：系统读取视频的外观、运动和伴随音频，为每段视频输出类别分数，低采样推理也兼顾工业部署。 论文真正检验的是，在时序分段网络骨架上加入更深的视觉网络、视频级聚合、声学支路和模型融合，能否在不引入额外标注数据的前提下持续提高验证集与测试集表现。 研究背景：双流 CNN、C3D 与 TDD 等深度方法已推进动作识别，但此前研究主要分析从长视频中预先截出的短片；这种数据准备依赖人工找到真正包含动作的区间。 核心痛点：未裁剪视频更贴近实际需求，却可能有显著乃至占主导的内容与目标动作无关；无关片段会稀释动作证据，而预先人工裁剪又十分费力。 任务定义：输入是带伴随音频的未裁剪视频；视觉侧从整段视频采样多个片段，对外观与运动分别产生片段级类别分数，声学侧从音频产生补充分数，聚合后输出视频级动作类别预测。 研究目标：以能建模长程结构的时序分段网络为骨架，检验更深视觉骨干、改进的片段聚合、声学补充与多模型融合能否在仅使用官方训练数据（CNN 初始化除外）的条件下提高识别表现。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1608.00797">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1608.00797.webp" alt="CUHK &amp; ETHZ &amp; SIAT Submission to ActivityNet Challenge 2016" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">未经时间裁剪的长视频常含大量与目标动作无关的片段；论文要解决的是，不先人工剪出动作区间，也能从整段视频完成动作类别预测。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">CUHK &amp; ETHZ &amp; SIAT Submission to ActivityNet Challenge 2016</h1>
+            <div class="detail-meta">2016-08-02 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1608.00797" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1608.00797" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1608.00797</span></div>
+            <p class="detail-summary">未经时间裁剪的长视频常含大量与目标动作无关的片段；论文要解决的是，不先人工剪出动作区间，也能从整段视频完成动作类别预测。 具体面向 ActivityNet 的竞赛式离线视频分类：系统读取视频的外观、运动和伴随音频，为每段视频输出类别分数，低采样推理也兼顾工业部署。 论文真正检验的是，在时序分段网络骨架上加入更深的视觉网络、视频级聚合、声学支路和模型融合，能否在不引入额外标注数据的前提下持续提高验证集与测试集表现。 研究背景：双流 CNN、C3D 与 TDD 等深度方法已推进动作识别，但此前研究主要分析从长视频中预先截出的短片；这种数据准备依赖人工找到真正包含动作的区间。 核心痛点：未裁剪视频更贴近实际需求，却可能有显著乃至占主导的内容与目标动作无关；无关片段会稀释动作证据，而预先人工裁剪又十分费力。 任务定义：输入是带伴随音频的未裁剪视频；视觉侧从整段视频采样多个片段，对外观与运动分别产生片段级类别分数，声学侧从音频产生补充分数，聚合后输出视频级动作类别预测。 研究目标：以能建模长程结构的时序分段网络为骨架，检验更深视觉骨干、改进的片段聚合、声学补充与多模型融合能否在仅使用官方训练数据（CNN 初始化除外）的条件下提高识别表现。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">14 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：香港中文大学 · The Chinese University of Hong Kong</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1608.00797/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">未经时间裁剪的长视频常含大量与目标动作无关的片段；论文要解决的是，不先人工剪出动作区间，也能从整段视频完成动作类别预测。</p>
+  <ul class="reading-intro-points"><li>未经时间裁剪的长视频常含大量与目标动作无关的片段；论文要解决的是，不先人工剪出动作区间，也能从整段视频完成动作类别预测。</li><li>具体面向 ActivityNet 的竞赛式离线视频分类：系统读取视频的外观、运动和伴随音频，为每段视频输出类别分数，低采样推理也兼顾工业部署。</li><li>论文真正检验的是，在时序分段网络骨架上加入更深的视觉网络、视频级聚合、声学支路和模型融合，能否在不引入额外标注数据的前提下持续提高验证集与测试集表现。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：香港中文大学（The Chinese University of Hong Kong）</li><li><strong>机构</strong>：苏黎世联邦理工学院（ETH Zurich）</li><li><strong>机构</strong>：中国科学院深圳先进技术研究院（Shenzhen Institutes of Advanced Technology, CAS）</li><li><strong>实验室 / 团队</strong>：香港中文大学 Multimedia Laboratory</li><li><strong>实验室 / 团队</strong>：ETH Zurich Computer Vision Lab</li><li><strong>作者与归属</strong>：Yuanjun Xiong、Hang Song、Wei Li、Dahua Lin、Xiaoou Tang—香港中文大学 Multimedia Laboratory</li><li><strong>作者与归属</strong>：Limin Wang、Luc Van Gool—ETH Zurich Computer Vision Lab</li><li><strong>作者与归属</strong>：Zhe Wang、Bowen Zhang、Yu Qiao—中国科学院深圳先进技术研究院</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>未经时间裁剪的长视频常含大量与目标动作无关的片段；论文要解决的是，不先人工剪出动作区间，也能从整段视频完成动作类别预测。</li><li>具体面向 ActivityNet 的竞赛式离线视频分类：系统读取视频的外观、运动和伴随音频，为每段视频输出类别分数，低采样推理也兼顾工业部署。</li><li>论文真正检验的是，在时序分段网络骨架上加入更深的视觉网络、视频级聚合、声学支路和模型融合，能否在不引入额外标注数据的前提下持续提高验证集与测试集表现。</li><li><strong>研究背景</strong>：双流 CNN、C3D 与 TDD 等深度方法已推进动作识别，但此前研究主要分析从长视频中预先截出的短片；这种数据准备依赖人工找到真正包含动作的区间。</li><li><strong>核心痛点</strong>：未裁剪视频更贴近实际需求，却可能有显著乃至占主导的内容与目标动作无关；无关片段会稀释动作证据，而预先人工裁剪又十分费力。</li><li><strong>任务定义</strong>：输入是带伴随音频的未裁剪视频；视觉侧从整段视频采样多个片段，对外观与运动分别产生片段级类别分数，声学侧从音频产生补充分数，聚合后输出视频级动作类别预测。</li><li><strong>研究目标</strong>：以能建模长程结构的时序分段网络为骨架，检验更深视觉骨干、改进的片段聚合、声学补充与多模型融合能否在仅使用官方训练数据（CNN 初始化除外）的条件下提高识别表现。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>把时序分段网络的未裁剪视频分类管线扩展到 ResNet、Inception V3 等更深骨干，并为片段分数引入 top-k 与注意力加权池化。</li><li>构建互补声学系统：一支提取 MFCC 后用 Fisher Vector 聚合并训练 SVM，另一支将灰度时频图与多时间尺度谱图送入 Audio CNN。</li><li>将外观、运动、IDT、TDD 与多种声学模型的分数融合成视觉—音频集成系统，同时保留单个外观与运动 CNN 的轻量测试配置。</li><li>在仅以 ILSVRC12 权重初始化、其余不加额外数据或标注的条件下完成竞赛方案；最终系统以 1 FPS 推理，约查看输入视频 4% 的帧。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：视觉分析是主分支：外观网络识别静态视觉线索，运动网络补充动态线索；声学分析并行提取音频提示，最后由分数融合与模型集成形成整段视频预测。</li><li><strong>输入与表示</strong>：视觉输入被表示为从同一未裁剪视频采出的多个 snippet，并分别进入外观与运动建模；音频一方面表示为 MFCC 经 Fisher Vector 聚合的描述子，另一方面表示为灰度时频图及不同窗长的堆叠谱图。</li><li><strong>模型结构</strong>：片段预测器是时序分段网络的外观/运动双流实例，视觉骨干采用 BN-Inception、Inception V3 与 ResNet 的多模型组合；声学侧由 MFCC+FV+SVM 和可从时序网络方式初始化的 Audio CNN 两路组成。</li><li><strong>数据流</strong>：训练时从一段视频采多个片段，基础时序分段网络平均各片段预测，并进一步尝试高级聚合；测试时按 1 FPS 产生片段分数，再以 top-k 或注意力加权池化得到视频分数；音频并行进入两类声学模型，最终与视觉及 IDT/TDD 分数融合。</li><li><strong>关键技术</strong>：视觉训练沿用 temporal pre-training、scale jittering 与更强 dropout，并加入多片段联合训练、top-k pooling 和 attention-weighted pooling；音频侧使用灰度时频图与变化窗长的多尺度谱图增强互补性。</li><li><strong>公式与超参数</strong>：正文没有列出独立公式，也未给出 top-k 的 k 值、注意力权重计算式、snippet 数或谱图窗长；明确报告的视频级推理采样率是 1 FPS，基础多片段训练以平均片段预测形成监督。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：ActivityNet v1.3 是唯一任务数据集；官方训练集用于训练，验证集用于方法分析，测试集由竞赛服务器返回评分。</li><li><strong>规模与划分</strong>：训练集含一万零二十四个视频、15410 个活动实例和 200 类；验证集含 4926 个视频与 7654 个实例；测试集含 5044 个无活动实例标注的视频。测试提交模型用训练集与验证集并集训练。</li><li><strong>模型</strong>：视觉侧比较并集成 BN-Inception、Inception V3、ResNet 与时序分段网络的外观/运动分支，另融合 IDT、TDD 和声学模型；CNN 仅以 ILSVRC12 预训练权重初始化，正文未报告模型参数量。</li><li><strong>硬件</strong>：方法、实验和致谢均未报告 GPU/CPU 型号、数量、训练时长或推理硬件；致谢只列 SenseTime 与 ERC 的资助项目，不能据此推断执行设备。</li><li><strong>代码</strong>：论文首页脚注明确称代码与训练好的模型可从 <a href="https://github.com/yjxiong/anet2016-cuhk" target="_blank" rel="noopener noreferrer">https://github.com/yjxiong/anet2016-cuhk</a> 获取。</li><li><strong>训练平台</strong>：任务是离线视频分类，不涉及仿真器、机器人或实车平台；测试成绩根据 ActivityNet Challenge 测试服务器的反馈报告，正文未说明训练软件框架。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：ActivityNet v1.3 官方验证集，用于网络、训练策略、组件与融合分析</li><li><strong>评估基准</strong>：ActivityNet Challenge 测试集，无活动实例标注并由竞赛测试服务器评分</li><li><strong>评估指标</strong>：按类别计算的 mean average precision（mAP，越高越好）</li><li><strong>评估指标</strong>：Top-3 prediction accuracy（越高越好）</li><li><strong>对比方法</strong>：视觉骨干比较 BN-Inception、Inception V3 与 ResNet，并区分 spatial/temporal streams</li><li><strong>对比方法</strong>：训练与聚合策略比较 basic、basic+a、basic+ab 和外观模型 Ensemble</li><li><strong>对比方法</strong>：组件比较 Appearance CNN、Motion CNN、Combined CNN、Visual All，以及 MFCC 与多种 Audio CNN</li><li><strong>关键结果</strong>：外观模型从 basic 的 82.9% mAP、91.0% Top-3，经 basic+a 到 83.3%、91.5%，再经 basic+ab 到 84.2%、92.1%；外观 Ensemble 为 85.9%、92.9%（均越高越好）。</li><li><strong>关键结果</strong>：验证集上 Appearance CNN 为 85.9%/92.9%，Motion CNN 为 68.3%/80.2%，Combined CNN 为 89.7%/95.0%，再融入 IDT/TDD 的 Visual All 为 90.4%/95.2%（mAP/Top-3）。</li><li><strong>关键结果</strong>：验证集 Visual 为 90.4% mAP、95.2% Top-3，加入音频后为 90.9%、95.6%；音频带来小幅增益，但其单独 Audio Ensemble 仅为 15.2%、29.1%。</li><li><strong>关键结果</strong>：测试集 Visual CNN (Single) 为 91.2% mAP、95.6% Top-3，Final Ensemble 为 93.2%、96.4%；摘要将最终 mAP 报为更精确的 93.23%，并称竞赛第一。</li><li><strong>消融实验</strong>：骨干结构对照中，在 basic+a 下 spatial Inception V3 与 ResNet 均为 83.3% mAP，Top-3 分别为 91.5% 与 91.6%；temporal Inception V3 为 64.3% 与 77.9%。</li><li><strong>消融实验</strong>：训练与聚合对照显示 basic→basic+a→basic+ab 的 mAP 为 82.9%→83.3%→84.2%，Top-3 为 91.0%→91.5%→92.1%，多 snippet 联合训练和高级聚合均带来增益。</li><li><strong>消融实验</strong>：声学对照中，MFCC(FV+SVM) 为 14.2% mAP，原始 Audio CNN 为 8.0%，灰度输入为 9.3%，灰度加多尺度为 10.3%，Audio Ensemble 为 15.2%（越高越好）。</li><li><strong>实验条件</strong>：验证分析使用官方训练集训练并在验证集报告；测试模型用训练集与验证集并集训练，测试服务器仅用一次机会评估轻量 Visual CNN (Single)。除 ILSVRC12 初始化外不使用额外数据或标注；视频级预测按 1 FPS 采样，论文指出这约为输入帧的 4%。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1608.00859/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Temporal Segment Networks: Towards Good Practices for Deep Action Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1605.07289/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">EventNet Version 1.1 Technical Report</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

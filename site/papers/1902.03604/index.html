@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MOTS: Multi-Object Tracking and Segmentation - 视频领域每日论文卡</title>
+    <meta name="description" content="论文把传统多目标跟踪从二维框层面推进到像素级的多目标跟踪与分割：系统必须同时发现对象、给出实例掩码，并在视频帧间维持身份。 具体使用场景是车载街景中的车辆与行人，以及拥挤街景中的行人；遮挡和对象交错时，像素掩码比相互重叠的框更精确地描述可见区域。 论文真正检验的是：带时间一致身份的掩码标注能否让分割与跟踪端到端联合训练，并比仅用单图实例分割或仅用框轨迹训练得到更好的像素级跟踪。 研究背景：多目标跟踪长期以框为输出，但论文指出近期框级跟踪评测趋于饱和；与此同时，检测和实例分割已经取得进展，因此下一步应把检测、分割和跟踪作为相互关联的问题，在像素层面统一处理。 核心痛点：框在部分遮挡或对象交错时会包含大量来自其他实例的像素，重叠框还需要启发式匹配才能与真值对应；单图实例分割数据通常没有跨帧身份，而视频目标分割又多假设少量对象已在首帧给出，不能覆盖对象不断进入、离开和拥挤交互的 MOTS 场景。 任务定义：给定视频，真值和预测均是非空像素掩码集合，每个掩码绑定一个时间帧与轨迹身份，且同一侧的实例掩码不得重叠；预测掩码与真值掩码的 IoU 大于 0.5 时才建立对应，由此定义 TP、FP、FN 和身份切换。 研究目标：目标不是给既有框轨迹事后补掩码，而是建立可训练、可评测的 MOTS 任务：提供时间一致标注，设计同时反映分割、检测与身份保持的指标，并用一个联合网络验证这些标注是否真正改善像素级多目标跟踪。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1902.03604">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1902.03604.webp" alt="MOTS: Multi-Object Tracking and Segmentation" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文把传统多目标跟踪从二维框层面推进到像素级的多目标跟踪与分割：系统必须同时发现对象、给出实例掩码，并在视频帧间维持身份。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">MOTS: Multi-Object Tracking and Segmentation</h1>
+            <div class="detail-meta">2019-02-10 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1902.03604" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1902.03604" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1902.03604</span></div>
+            <p class="detail-summary">论文把传统多目标跟踪从二维框层面推进到像素级的多目标跟踪与分割：系统必须同时发现对象、给出实例掩码，并在视频帧间维持身份。 具体使用场景是车载街景中的车辆与行人，以及拥挤街景中的行人；遮挡和对象交错时，像素掩码比相互重叠的框更精确地描述可见区域。 论文真正检验的是：带时间一致身份的掩码标注能否让分割与跟踪端到端联合训练，并比仅用单图实例分割或仅用框轨迹训练得到更好的像素级跟踪。 研究背景：多目标跟踪长期以框为输出，但论文指出近期框级跟踪评测趋于饱和；与此同时，检测和实例分割已经取得进展，因此下一步应把检测、分割和跟踪作为相互关联的问题，在像素层面统一处理。 核心痛点：框在部分遮挡或对象交错时会包含大量来自其他实例的像素，重叠框还需要启发式匹配才能与真值对应；单图实例分割数据通常没有跨帧身份，而视频目标分割又多假设少量对象已在首帧给出，不能覆盖对象不断进入、离开和拥挤交互的 MOTS 场景。 任务定义：给定视频，真值和预测均是非空像素掩码集合，每个掩码绑定一个时间帧与轨迹身份，且同一侧的实例掩码不得重叠；预测掩码与真值掩码的 IoU 大于 0.5 时才建立对应，由此定义 TP、FP、FN 和身份切换。 研究目标：目标不是给既有框轨迹事后补掩码，而是建立可训练、可评测的 MOTS 任务：提供时间一致标注，设计同时反映分割、检测与身份保持的指标，并用一个联合网络验证这些标注是否真正改善像素级多目标跟踪。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">17 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：RWTH Aachen University（论文署名单位）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1902.03604/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文把传统多目标跟踪从二维框层面推进到像素级的多目标跟踪与分割：系统必须同时发现对象、给出实例掩码，并在视频帧间维持身份。</p>
+  <ul class="reading-intro-points"><li>论文把传统多目标跟踪从二维框层面推进到像素级的多目标跟踪与分割：系统必须同时发现对象、给出实例掩码，并在视频帧间维持身份。</li><li>具体使用场景是车载街景中的车辆与行人，以及拥挤街景中的行人；遮挡和对象交错时，像素掩码比相互重叠的框更精确地描述可见区域。</li><li>论文真正检验的是：带时间一致身份的掩码标注能否让分割与跟踪端到端联合训练，并比仅用单图实例分割或仅用框轨迹训练得到更好的像素级跟踪。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：RWTH Aachen University（论文署名单位）</li><li><strong>机构</strong>：MPI for Intelligent Systems 与 University of Tübingen（论文合并列出的署名单位）</li><li><strong>实验室 / 团队</strong>：论文首页未单列实验室名称；RWTH 作者邮箱使用 vision.rwth-aachen.de 域名。</li><li><strong>作者与归属</strong>：Paul Voigtlaender、Michael Krause、Aljoša Ošep、Jonathon Luiten、Berin Balachandar Gnana Sekar、Bastian Leibe—RWTH Aachen University。</li><li><strong>作者与归属</strong>：Andreas Geiger—MPI for Intelligent Systems 与 University of Tübingen。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文把传统多目标跟踪从二维框层面推进到像素级的多目标跟踪与分割：系统必须同时发现对象、给出实例掩码，并在视频帧间维持身份。</li><li>具体使用场景是车载街景中的车辆与行人，以及拥挤街景中的行人；遮挡和对象交错时，像素掩码比相互重叠的框更精确地描述可见区域。</li><li>论文真正检验的是：带时间一致身份的掩码标注能否让分割与跟踪端到端联合训练，并比仅用单图实例分割或仅用框轨迹训练得到更好的像素级跟踪。</li><li><strong>研究背景</strong>：多目标跟踪长期以框为输出，但论文指出近期框级跟踪评测趋于饱和；与此同时，检测和实例分割已经取得进展，因此下一步应把检测、分割和跟踪作为相互关联的问题，在像素层面统一处理。</li><li><strong>核心痛点</strong>：框在部分遮挡或对象交错时会包含大量来自其他实例的像素，重叠框还需要启发式匹配才能与真值对应；单图实例分割数据通常没有跨帧身份，而视频目标分割又多假设少量对象已在首帧给出，不能覆盖对象不断进入、离开和拥挤交互的 MOTS 场景。</li><li><strong>任务定义</strong>：给定视频，真值和预测均是非空像素掩码集合，每个掩码绑定一个时间帧与轨迹身份，且同一侧的实例掩码不得重叠；预测掩码与真值掩码的 IoU 大于 0.5 时才建立对应，由此定义 TP、FP、FN 和身份切换。</li><li><strong>研究目标</strong>：目标不是给既有框轨迹事后补掩码，而是建立可训练、可评测的 MOTS 任务：提供时间一致标注，设计同时反映分割、检测与身份保持的指标，并用一个联合网络验证这些标注是否真正改善像素级多目标跟踪。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>在 KITTI 与 MOTChallenge 的既有框轨迹上新增时间一致的实例掩码，形成面向车辆与行人的 KITTI MOTS 和面向拥挤行人的 MOTSChallenge。</li><li>提出 soft Multi-Object Tracking and Segmentation Accuracy（sMOTSA），把匹配掩码的 IoU、误检和身份切换纳入同一评价量。</li><li>提出 TrackR-CNN：在 Mask R-CNN 上加入时间特征增强和身份关联头，以单个卷积网络联合完成检测、实例分割与跨帧关联。</li><li>通过端到端实验表明，时间一致的掩码轨迹使分割与跟踪能够联合训练，并优于只训练单图实例分割或只训练框级跟踪再事后生成掩码。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：TrackR-CNN 以 Mask R-CNN 负责候选区域、分类、框回归和掩码生成；时间模块增强主干特征；关联头为每个候选生成身份嵌入；最终在线关联器选择检测并把它们连接为轨迹。</li><li><strong>输入与表示</strong>：输入是一段相邻视频帧。共享主干逐帧产生图像特征，时间模块把它们变成带上下文的特征；RPN 产生 region proposals，每个 proposal 同时得到类别置信度、实例掩码和身份关联向量，后者以欧氏距离表达同一对象是否接近。</li><li><strong>模型结构</strong>：主干采用 ResNet-101 的 Mask R-CNN；在主干与 RPN 之间插入两层 depthwise-separable 3D 卷积，每层核为 3 × 3 × 3、ReLU、1024 个特征图；proposal 另经全连接关联头输出 128 维身份向量。</li><li><strong>数据流</strong>：训练时，相邻帧先经共享特征提取与时间增强，再由 RPN 分流到框回归、分类、掩码和关联嵌入，各头分别接受图像实例分割真值与视频轨迹真值监督。推理时保留高置信检测，用关联向量距离和 Hungarian matching 接续最近轨迹；未分配检测新建轨迹，重叠掩码逐像素让高置信实例优先。</li><li><strong>关键技术</strong>：关联头采用 batch-hard triplet loss，使同一身份嵌入靠近、不同身份远离；另以 PWC-Net 光流前向扭曲旧掩码并计算 mask IoU 作为替代关联线索。匹配受距离、轨迹最大空缺和检测置信度阈值约束，输出再强制实例掩码互不重叠。</li><li><strong>公式与超参数</strong>：关联距离为 d(v,w)=||v−w||，关联头使用 batch-hard triplet loss；掩码传播分数为 IoU(W(mask_d),mask_e)。训练采用 Adam，40 epochs、学习率 5 · 10−7、单视频连续 8 帧 mini-batch，关联 margin α=0.2；关联向量为 128 维，各类别阈值经 1000 次随机搜索，测试约 2 帧/秒，3D 卷积因向前看 2 帧而属近在线。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：KITTI MOTS：由 KITTI tracking 训练序列扩展而来，标注车辆与行人的像素轨迹。</li><li><strong>数据集</strong>：MOTSChallenge：由 MOTChallenge 2017 训练集中的拥挤行人序列扩展而来。</li><li><strong>数据集</strong>：COCO 与 Mapillary：用于 Mask R-CNN 和标注 refinement network 的预训练。</li><li><strong>规模与划分</strong>：两套新标注合计 65,213 个掩码、977 个对象和 10,870 帧。KITTI MOTS 的 train/val 分别为 12/9 段、5,027/2,981 帧；行人轨迹为 99/68 条、掩码为 8,073/3,347 个，车辆轨迹为 431/151 条、掩码为 18,831/8,068 个。MOTSChallenge 为 4 段、2,862 帧、228 条行人轨迹和 26,894 个掩码。KITTI 验证序列是 2、6、7、8、10、13、14、16、18，其余训练序列用于 train。</li><li><strong>模型</strong>：检测/分割基线是 COCO、Mapillary 预训练后在目标集微调的 ResNet-101 Mask R-CNN；标注使用 DeepLabv3+ refinement network 并逐对象微调；相邻帧光流由 PWC-Net 计算。正文实验设置与补充材料未报告模型总参数量。</li><li><strong>硬件</strong>：训练 mini-batch 的连续 8 帧是 Titan X（Pascal）显存可容纳的上限；作者另说明实验计算资源由 RWTH Aachen University 的 rwth0373 项目提供，但未报告 GPU 数量和推理硬件型号。</li><li><strong>代码</strong>：论文明确宣布标注、代码和模型已在 <a href="https://www.vision.rwth-aachen.de/page/mots" target="_blank" rel="noopener noreferrer">https://www.vision.rwth-aachen.de/page/mots</a> 提供。</li><li><strong>训练平台</strong>：实验对象是已录制的车载 KITTI 街景和多视角 MOTChallenge 行人视频；论文未使用仿真器、机器人或实车在线部署平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：KITTI MOTS validation split：分别评测车辆与行人的像素级多目标跟踪。</li><li><strong>评估基准</strong>：MOTSChallenge：在四段拥挤行人视频上采用留一法，每段由其余三段训练和调参的模型评测。</li><li><strong>评估指标</strong>：sMOTSA = (soft TP − |FP| − |IDS|)/|M|；soft TP 是所有匹配掩码 IoU 之和，无量纲且越高越好，同时惩罚误检和身份切换。</li><li><strong>评估指标</strong>：MOTSA = (|TP| − |FP| − |IDS|)/|M|；匹配要求 mask IoU &gt; 0.5，无量纲且越高越好，反映检测与身份保持。</li><li><strong>评估指标</strong>：MOTSP = soft TP/|TP|；它是匹配真阳性的平均掩码 IoU，无量纲且越高越好，主要反映分割精度。</li><li><strong>对比方法</strong>：KITTI MOTS 对比 Mask R-CNN + maskprop、框级 TrackR-CNN 后接 mask generation、CAMOT、CIWT、BeyondPixels，以及原始或紧致真值框后接 mask generation。</li><li><strong>对比方法</strong>：MOTSChallenge 对比 MHT-DAM、FWT、MOTDT、jCC 的公开 MOT17 结果后接域内微调的 Mask R-CNN；另列紧致真值框与真值轨迹身份加域内 Mask R-CNN mask generation 的 oracle-box 对照。</li><li><strong>关键结果</strong>：KITTI MOTS 上，TrackR-CNN 相比 Mask R-CNN + maskprop：车辆/行人 sMOTSA 为 76.2/46.8 对 75.1/45.0，MOTSA 为 87.8/65.1 对 86.6/63.5，MOTSP 为 87.2/75.7 对 87.1/75.6；三项均为越高越好。</li><li><strong>关键结果</strong>：对行人，联合掩码训练的 TrackR-CNN 得到 sMOTSA 46.8、MOTSA 65.1，而只用原始 KITTI 框训练再生成掩码为 41.2、57.9，显示时间一致掩码训练的收益。</li><li><strong>关键结果</strong>：MOTSChallenge 留一评测中，TrackR-CNN 的 sMOTSA/MOTSA/MOTSP 为 52.7/66.9/80.2，高于 FWT + MG 的 49.3/64.0/79.7；三项均越高越好。</li><li><strong>关键结果</strong>：KITTI 车辆上，使用不同检测器的 BeyondPixels + MG 在 sMOTSA/MOTSA 上为 76.9/89.7，高于 TrackR-CNN 的 76.2/87.8；但 TrackR-CNN 的 MOTSP 为 87.2，高于其 86.5，说明论文并未在所有口径都领先。</li><li><strong>消融实验</strong>：时间模块消融中，行人从无额外时间层的 sMOTSA/MOTSA 44.8/63.2 提升到两层 3D 卷积的 46.8/65.1；车辆 sMOTSA 为 76.4 对 76.2，基本相当。</li><li><strong>消融实验</strong>：关联机制消融的行人 sMOTSA：关联头 46.8，mask IoU 46.1，去掉关联损失后用 mask IoU 为 44.9，仅用框中心为 43.3；越高越好。</li><li><strong>消融实验</strong>：关联损失消融的行人 sMOTSA/MOTSA：batch-hard triplet 为 46.8/65.1，batch-all triplet 为 45.3/63.8，contrastive 为 43.2/61.5，支持选择 batch-hard。</li><li><strong>消融实验</strong>：补充真值框实验显示，原始 amodal 框直接填充时行人 sMOTSA 为 −66.1，而紧致真值框加 Mask R-CNN mask generation 为 50.0，说明完美框轨迹仍不能替代像素掩码。</li><li><strong>实验条件</strong>：KITTI 结果使用固定 train/validation 划分；MOTSChallenge 使用留一法，并且外部方法采用 SDP 公开检测而 TrackR-CNN 生成自己的检测。卷积 LSTM 版本在线运行，3D 卷积版本因时间前视而近在线；所有分数均在已录制视频上按掩码互不重叠的轨迹输出离线计分，不是机器人或实车控制闭环。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1904.10117/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Learning Actor Relation Graphs for Group Activity Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1901.03460/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">DMC-Net: Generating Discriminative Motion Cues for Fast Compressed Video Action Recognition</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

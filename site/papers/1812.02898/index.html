@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TDAN: Temporally Deformable Alignment Network for Video Super-Resolution - 视频领域每日论文卡</title>
+    <meta name="description" content="论文解决多帧视频超分辨率中的时间对齐：摄像机或物体运动使低分辨率参考帧与邻近支持帧错位；传统“估计光流—图像级变形”链路一旦流或变形不准，就会在对齐帧产生并向高分辨率重建传播伪影。TDAN 改在特征层预测可变形采样偏移，直接对齐而不显式计算光流。 实际用法是给定一段连续低分辨率视频，以目标时刻为参考帧、以前后邻帧为支持帧，输出该时刻的高分辨率帧；论文面向视频监控和高清电视，并在合成退化的 Vid4 与无真值、退化未知的 bldg、CV Book 真实序列上验证。 论文真正检验的是：可变形卷积学到的偏移能否取代显式光流，稳定利用支持帧信息；这种对齐是否优于仅用参考帧或直接拼接未对齐多帧；对齐损失和可变形层数是否是增益来源，并能否在参数量接近其他轻量 VSR 模型时保持竞争力。 研究背景：视频超分辨率要从目标时刻的低分辨率参考帧和邻近低分辨率支持帧恢复对应高分辨率帧；支持帧提供额外时序细节，因此该技术适用于视频监控、高清电视等需要更清晰视频的场景。 核心痛点：摄像机或物体运动会使参考帧与支持帧错位。既有方法通常先估计光流、再做图像级 warping；性能高度依赖光流精度，而流估计或变形误差会在结构边缘产生伪影，并继续污染最终重建。 任务定义：记目标时刻的低分辨率参考帧为 I_t^LR∈R^{H×W×C}，对应输出为 I_t^HR∈R^{sH×sW×C}，s 为放大因子；输入由参考帧、此前 N 帧和此后 N 帧支持帧组成，任务是在目标时刻只预测一帧高分辨率结果。 研究目标：研究目标是把传统光流估计与运动补偿的两阶段对齐改成一个可学习的一阶段特征级过程：由参考/支持特征联合产生采样偏移、重建显式对齐帧，再让端到端重建网络利用这些帧提高超分辨率质量。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1812.02898">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1812.02898.webp" alt="TDAN: Temporally Deformable Alignment Network for Video Super-Resolution" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文解决多帧视频超分辨率中的时间对齐：摄像机或物体运动使低分辨率参考帧与邻近支持帧错位；传统“估计光流—图像级变形”链路一旦流或变形不准，就会在对齐帧产生并向高分辨率重建传播伪影。TDAN 改在特征层预测可变形采样偏移，直接对齐而不显式计算光流。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">TDAN: Temporally Deformable Alignment Network for Video Super-Resolution</h1>
+            <div class="detail-meta">2018-12-07 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1812.02898" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1812.02898" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1812.02898</span></div>
+            <p class="detail-summary">论文解决多帧视频超分辨率中的时间对齐：摄像机或物体运动使低分辨率参考帧与邻近支持帧错位；传统“估计光流—图像级变形”链路一旦流或变形不准，就会在对齐帧产生并向高分辨率重建传播伪影。TDAN 改在特征层预测可变形采样偏移，直接对齐而不显式计算光流。 实际用法是给定一段连续低分辨率视频，以目标时刻为参考帧、以前后邻帧为支持帧，输出该时刻的高分辨率帧；论文面向视频监控和高清电视，并在合成退化的 Vid4 与无真值、退化未知的 bldg、CV Book 真实序列上验证。 论文真正检验的是：可变形卷积学到的偏移能否取代显式光流，稳定利用支持帧信息；这种对齐是否优于仅用参考帧或直接拼接未对齐多帧；对齐损失和可变形层数是否是增益来源，并能否在参数量接近其他轻量 VSR 模型时保持竞争力。 研究背景：视频超分辨率要从目标时刻的低分辨率参考帧和邻近低分辨率支持帧恢复对应高分辨率帧；支持帧提供额外时序细节，因此该技术适用于视频监控、高清电视等需要更清晰视频的场景。 核心痛点：摄像机或物体运动会使参考帧与支持帧错位。既有方法通常先估计光流、再做图像级 warping；性能高度依赖光流精度，而流估计或变形误差会在结构边缘产生伪影，并继续污染最终重建。 任务定义：记目标时刻的低分辨率参考帧为 I_t^LR∈R^{H×W×C}，对应输出为 I_t^HR∈R^{sH×sW×C}，s 为放大因子；输入由参考帧、此前 N 帧和此后 N 帧支持帧组成，任务是在目标时刻只预测一帧高分辨率结果。 研究目标：研究目标是把传统光流估计与运动补偿的两阶段对齐改成一个可学习的一阶段特征级过程：由参考/支持特征联合产生采样偏移、重建显式对齐帧，再让端到端重建网络利用这些帧提高超分辨率质量。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">17 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Rochester（Department of Computer Science）。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1812.02898/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文解决多帧视频超分辨率中的时间对齐：摄像机或物体运动使低分辨率参考帧与邻近支持帧错位；传统“估计光流—图像级变形”链路一旦流或变形不准，就会在对齐帧产生并向高分辨率重建传播伪影。TDAN 改在特征层预测可变形采样偏移，直接对齐而不显式计算光流。</p>
+  <ul class="reading-intro-points"><li>论文解决多帧视频超分辨率中的时间对齐：摄像机或物体运动使低分辨率参考帧与邻近支持帧错位；传统“估计光流—图像级变形”链路一旦流或变形不准，就会在对齐帧产生并向高分辨率重建传播伪影。TDAN 改在特征层预测可变形采样偏移，直接对齐而不显式计算光流。</li><li>实际用法是给定一段连续低分辨率视频，以目标时刻为参考帧、以前后邻帧为支持帧，输出该时刻的高分辨率帧；论文面向视频监控和高清电视，并在合成退化的 Vid4 与无真值、退化未知的 bldg、CV Book 真实序列上验证。</li><li>论文真正检验的是：可变形卷积学到的偏移能否取代显式光流，稳定利用支持帧信息；这种对齐是否优于仅用参考帧或直接拼接未对齐多帧；对齐损失和可变形层数是否是增益来源，并能否在参数量接近其他轻量 VSR 模型时保持竞争力。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Rochester（Department of Computer Science）。</li><li><strong>机构</strong>：Northeastern University（Department of Electrical and Computer Engineering；College of Computer and Information Science）。</li><li><strong>实验室 / 团队</strong>：论文首页未署名具体实验室；元数据中的 rochester-video 仅是目录团队标签，依据见 membership_evidence，不作为论文自报机构。</li><li><strong>作者与归属</strong>：Yapeng Tian、Chenliang Xu — Department of Computer Science, University of Rochester（首页上标一）。</li><li><strong>作者与归属</strong>：Yulun Zhang — Department of Electrical and Computer Engineering, Northeastern University（首页上标二）。</li><li><strong>作者与归属</strong>：Yun Fu — Department of Electrical and Computer Engineering 与 College of Computer and Information Science, Northeastern University（首页上标二、三）。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文解决多帧视频超分辨率中的时间对齐：摄像机或物体运动使低分辨率参考帧与邻近支持帧错位；传统“估计光流—图像级变形”链路一旦流或变形不准，就会在对齐帧产生并向高分辨率重建传播伪影。TDAN 改在特征层预测可变形采样偏移，直接对齐而不显式计算光流。</li><li>实际用法是给定一段连续低分辨率视频，以目标时刻为参考帧、以前后邻帧为支持帧，输出该时刻的高分辨率帧；论文面向视频监控和高清电视，并在合成退化的 Vid4 与无真值、退化未知的 bldg、CV Book 真实序列上验证。</li><li>论文真正检验的是：可变形卷积学到的偏移能否取代显式光流，稳定利用支持帧信息；这种对齐是否优于仅用参考帧或直接拼接未对齐多帧；对齐损失和可变形层数是否是增益来源，并能否在参数量接近其他轻量 VSR 模型时保持竞争力。</li><li><strong>研究背景</strong>：视频超分辨率要从目标时刻的低分辨率参考帧和邻近低分辨率支持帧恢复对应高分辨率帧；支持帧提供额外时序细节，因此该技术适用于视频监控、高清电视等需要更清晰视频的场景。</li><li><strong>核心痛点</strong>：摄像机或物体运动会使参考帧与支持帧错位。既有方法通常先估计光流、再做图像级 warping；性能高度依赖光流精度，而流估计或变形误差会在结构边缘产生伪影，并继续污染最终重建。</li><li><strong>任务定义</strong>：记目标时刻的低分辨率参考帧为 I_t^LR∈R^{H×W×C}，对应输出为 I_t^HR∈R^{sH×sW×C}，s 为放大因子；输入由参考帧、此前 N 帧和此后 N 帧支持帧组成，任务是在目标时刻只预测一帧高分辨率结果。</li><li><strong>研究目标</strong>：研究目标是把传统光流估计与运动补偿的两阶段对齐改成一个可学习的一阶段特征级过程：由参考/支持特征联合产生采样偏移、重建显式对齐帧，再让端到端重建网络利用这些帧提高超分辨率质量。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 TDAN：在特征层从参考帧与每个支持帧联合预测可变形卷积采样偏移，以一阶段对齐替代显式光流估计和图像级 warping。</li><li>围绕 TDAN 构造端到端视频超分辨率框架，将逐支持帧对齐与时序融合、非线性映射和高分辨率重建连成一体。</li><li>把对齐特征恢复成显式低分辨率对齐帧，并以参考帧构造 L_align，使没有真实对齐帧标注的 TDAN 也能自监督学习运动对齐。</li><li>在 Vid4 上对 BI、BD 两种退化及多种 SISR/VSR 基线进行比较，并用真实低清序列、层数消融和失败案例检验方法的有效性与边界。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：框架含两个主子网：TDAN 对每一对“支持帧—参考帧”独立完成时间对齐并输出对齐低分辨率帧；SR 重建网汇集全部对齐支持帧和原参考帧，通过时序融合、非线性映射与上采样生成目标高分辨率帧。</li><li><strong>输入与表示</strong>：共享特征提取器分别把支持帧 I_i^LR 与参考帧 I_t^LR 编码为 F_i^LR、F_t^LR；它由一个卷积层和若干带 ReLU 的残差块组成。参考特征只参与偏移计算，不直接传播到支持帧的对齐特征，因而输出内容仍来自被采样的支持特征。</li><li><strong>模型结构</strong>：TDAN 依次包含特征提取、可变形对齐和对齐帧重建。偏移生成器先拼接 F_i^LR 与 F_t^LR，经三乘三 bottleneck 降通道，再以输出通道数 |R| 的卷积产生 Θ；可变形卷积得到对齐特征，三乘三卷积恢复对齐 RGB 帧。SR 子网先拼接所有对齐帧与参考帧做时序融合，再经堆叠残差块非线性映射、子像素卷积上采样和末端卷积输出。</li><li><strong>数据流</strong>：先将一个参考帧与每个支持帧分别送入共享特征提取器；随后拼接成对特征并预测采样偏移，用偏移在支持特征上执行可变形采样，再重建出该支持帧的对齐低分辨率版本。对所有支持帧重复该过程后，把这些对齐帧与未变形的参考帧拼接，卷积融合时序信息，经残差映射与子像素上采样得到目标高分辨率帧；训练时同时反传对齐损失和超分辨率重建损失。</li><li><strong>关键技术</strong>：核心是内容自适应的非规则采样：每个位置可从多个偏移位置聚合与同一结构相关的上下文，分数坐标以双线性插值取值；这比光流对每个像素只指定一个潜在对应位置更有探索范围。参考特征只控制偏移、对齐帧提供可监督中间输出，因而无需额外光流算法或真实对齐标注。</li><li><strong>公式与超参数</strong>：偏移生成写为 Θ=f_θ(F_i^LR,F_t^LR)。在规则三乘三网格 R 上，对齐特征为 F_i^{LR′}(p0)=Σ_{p_n∈R}w(p_n)F_i^LR(p0+p_n+Δp_n)，分数位置用双线性插值。训练损失为 L_align=(1/(2N))Σ_{i=t−N,i≠t}^{t+N}‖I_i^{LR′}−I_t^LR‖_1，L_sr=‖I_t^{HR′}−I_t^HR‖_1，总损失 L=L_align+L_sr。四倍放大使用两个子像素卷积模块，主实验采用 D4。优化器为 Adam，初始学习率 10−4，每 100 个 epoch 减半；批大小 64，每个样本取连续 5 帧的 48×48 LR RGB patch。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Vimeo Super-Resolution：训练数据含 64612 个样本，每个样本有七个连续帧，帧分辨率为 448×256。</li><li><strong>数据集</strong>：Temple 序列：取 31 帧作为验证集。</li><li><strong>数据集</strong>：Vid4：测试基准含 city、walk、calendar、foliage 四个视频序列。</li><li><strong>数据集</strong>：bldg 与 CV Book：两段真实低分辨率序列，没有 HR 真值且退化方式未知，用于定性测试。</li><li><strong>规模与划分</strong>：论文明确的角色划分是：64612 个 Vimeo Super-Resolution 样本用于训练，Temple 的 31 帧用于验证，Vid4 的四个序列用于测试；正文实验设置及其后的限制讨论未再报告随机划分比例或独立测试样本数。</li><li><strong>模型</strong>：主结果使用 D4 版本，TDAN 参数量为 1.97 M；正文只说明特征提取采用改自 EDSR 的残差结构，没有报告预训练权重来源，也没有给出两处残差块数量符号的具体取值。</li><li><strong>硬件</strong>：论文报告在单次每 100 个 epoch 的口径下，用 NVIDIA 1080TI GPU 训练约需 1.7 天；实验设置未报告 GPU 数量、CPU、内存或推理硬件。</li><li><strong>代码</strong>：论文承诺将发布源代码与预训练模型，并给出 YouTube 视频演示；该版本正文没有给出代码仓库地址，因此元数据 code_url 保持为空。</li><li><strong>训练平台</strong>：网络用 PyTorch 实现；实验平台是 Vimeo、Temple、Vid4 等视频数据与 bldg、CV Book 真实序列，正文没有使用或报告仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Vid4 的四倍放大 BI（Matlab bicubic）配置，序列为 city、walk、calendar、foliage。</li><li><strong>评估基准</strong>：Vid4 的四倍放大 BD 配置：先以 Gaussian kernel 模糊高分辨率帧，再按步长下采样。</li><li><strong>评估基准</strong>：bldg 与 CV Book 两段真实视频：无高分辨率真值、退化未知，只做视觉比较。</li><li><strong>评估指标</strong>：PSNR（dB，越高越好），用于有真值的 Vid4 定量比较。</li><li><strong>评估指标</strong>：SSIM（越高越好），与 PSNR 一起衡量 Vid4 重建质量。</li><li><strong>评估指标</strong>：真实视频因没有 HR 真值，以边缘锐度和可见细节作定性判断，不报告 PSNR/SSIM。</li><li><strong>对比方法</strong>：BI 比较覆盖 Bicubic、VSRnet、ESPCN、VESCPN、Liu et al.、TOFlow、DBPN、RDN、RCAN，兼含视频与单图超分辨率基线。</li><li><strong>对比方法</strong>：BD 比较覆盖 Bicubic、SPMC、FSRVSR、DUF；输入上下文并不相同，DUF 用七帧、FRVSR 用十帧、TDAN 用五帧。</li><li><strong>关键结果</strong>：在与 TOFlow 使用同一训练数据的 BI 口径中，TDAN 的 Vid4 平均 PSNR/SSIM 为 26.23 dB/0.779，TOFlow 为 25.92 dB/0.765，两个指标均越高越好。</li><li><strong>关键结果</strong>：在更广的 BI 对比中，TDAN 的 Vid4 平均结果为 26.24 dB、0.780；次高的 Liu et al. 为 25.52 dB、0.748，TDAN 在两项指标上均为表中最高。</li><li><strong>关键结果</strong>：在 BD 配置中，TDAN 的平均 PSNR 为 26.58 dB，高于 DUF 的 26.21 dB；但 SSIM 为 0.801，低于 DUF 的 0.814，说明该设置下并非所有指标都领先。</li><li><strong>关键结果</strong>：真实 bldg/CV Book 样例中，作者观察到 TDAN 分别给出更锐利边缘与更多细节；但 city 失败案例里 RCAN 恢复了建筑结构，而 TOFlow 与 TDAN 均失败。</li><li><strong>消融实验</strong>：SISR 只输入参考帧，MFSR 直接拼接未对齐多帧；验证曲线显示 MFSR 优于 SISR，D2、D3、D4、D5 均优于 MFSR，且可变形层更多时总体更好，论文为控制模型大小选择 D4。</li><li><strong>消融实验</strong>：初始设计直接把对齐特征和参考特征送入 SR 网、既不显式重建对齐帧也不使用 L_align，性能反而低于 MFSR；作者据此认为 L_align 对该端到端网络很重要。</li><li><strong>实验条件</strong>：所有实验统一做四倍放大。与 TOFlow 的专门比较使用相同训练集并舍弃每段首尾各三帧；其余 Vid4 比较舍弃首尾各两帧且忽略四个空间边界像素。BI 与 BD 分别训练独立 TDAN；BI 用 bicubic，BD 用 Gaussian 模糊后按步长抽样。真实序列没有 HR 真值且退化未知。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1812.05637/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Dynamic Graph Modules for Modeling Object-Object Interactions in Activity Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1812.02872/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">An Attempt towards Interpretable Audio-Visual Video Captioning</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

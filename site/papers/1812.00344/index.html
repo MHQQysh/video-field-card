@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How to Make a BLT Sandwich? Learning to Reason towards Understanding Web Instructional Videos - 视频领域每日论文卡</title>
+    <meta name="description" content="问题：把平均数分钟、按步骤展开的网页教学视频变成可推理的问答对象；模型不仅要识别片段内可见事实，还要回答计数、先后、时长比较、属性变化等不能靠单帧直接观察完成的问题。 场景：面向烹饪教学视频，用户可能追问为什么加入某种食材、两个步骤之间发生了什么，或某动作发生了几次；系统读取视频、问题与候选答案，在长过程上给出答案。 研究问题：真实过程边界把长视频切成步骤后，序列路径能否保留时间顺序、图路径能否建模跨步骤关系，二者通过 RGCN 的 swap 交换信息是否优于单一路径；人工描述或自动转写又会怎样改变准确率。 研究背景：教学视频兼具长时长与分步骤结构：现有视频方法多针对几秒短片，而教学过程受步骤顺序约束；论文把 QA 作为检验对象、动作、事件及其空间、时间和相关等高阶关系推理的代理任务。 核心痛点：直接把短视频方法移到长视频上会失效；普通 RNN 顺序处理难以表示跨长时间跨度的复杂关系，纯 GCN 又丢失原视频的时间依赖；自动生成 QA 还存在多样性低且无法生成复杂推理题的问题。 任务定义：多项选择给定视频特征 v、问题特征 q 和候选答案特征 a_j，用三元评分 MLP f(v,q,a_j) 在 M=5 个候选中取最高分；K-Space 则把训练集中的不同答案映射成 K 类，由 MLP g_j(v,q) 预测类别。 研究目标：在 YouQuek 上检验教学视频的高阶时序推理：比较序列、图及融合结构能否同时利用步骤顺序与全局关系，并测量真实时间边界、问题注意力、人工描述和自动转写分别带来的增益或退化。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1812.00344">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1812.00344.webp" alt="How to Make a BLT Sandwich? Learning to Reason towards Understanding Web Instructional Videos" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">问题：把平均数分钟、按步骤展开的网页教学视频变成可推理的问答对象；模型不仅要识别片段内可见事实，还要回答计数、先后、时长比较、属性变化等不能靠单帧直接观察完成的问题。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">How to Make a BLT Sandwich? Learning to Reason towards Understanding Web Instructional Videos</h1>
+            <div class="detail-meta">2018-12-02 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1812.00344" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1812.00344" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1812.00344</span></div>
+            <p class="detail-summary">问题：把平均数分钟、按步骤展开的网页教学视频变成可推理的问答对象；模型不仅要识别片段内可见事实，还要回答计数、先后、时长比较、属性变化等不能靠单帧直接观察完成的问题。 场景：面向烹饪教学视频，用户可能追问为什么加入某种食材、两个步骤之间发生了什么，或某动作发生了几次；系统读取视频、问题与候选答案，在长过程上给出答案。 研究问题：真实过程边界把长视频切成步骤后，序列路径能否保留时间顺序、图路径能否建模跨步骤关系，二者通过 RGCN 的 swap 交换信息是否优于单一路径；人工描述或自动转写又会怎样改变准确率。 研究背景：教学视频兼具长时长与分步骤结构：现有视频方法多针对几秒短片，而教学过程受步骤顺序约束；论文把 QA 作为检验对象、动作、事件及其空间、时间和相关等高阶关系推理的代理任务。 核心痛点：直接把短视频方法移到长视频上会失效；普通 RNN 顺序处理难以表示跨长时间跨度的复杂关系，纯 GCN 又丢失原视频的时间依赖；自动生成 QA 还存在多样性低且无法生成复杂推理题的问题。 任务定义：多项选择给定视频特征 v、问题特征 q 和候选答案特征 a_j，用三元评分 MLP f(v,q,a_j) 在 M=5 个候选中取最高分；K-Space 则把训练集中的不同答案映射成 K 类，由 MLP g_j(v,q) 预测类别。 研究目标：在 YouQuek 上检验教学视频的高阶时序推理：比较序列、图及融合结构能否同时利用步骤顺序与全局关系，并测量真实时间边界、问题注意力、人工描述和自动转写分别带来的增益或退化。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">15 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Rochester（罗切斯特大学）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1812.00344/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">问题：把平均数分钟、按步骤展开的网页教学视频变成可推理的问答对象；模型不仅要识别片段内可见事实，还要回答计数、先后、时长比较、属性变化等不能靠单帧直接观察完成的问题。</p>
+  <ul class="reading-intro-points"><li>问题：把平均数分钟、按步骤展开的网页教学视频变成可推理的问答对象；模型不仅要识别片段内可见事实，还要回答计数、先后、时长比较、属性变化等不能靠单帧直接观察完成的问题。</li><li>场景：面向烹饪教学视频，用户可能追问为什么加入某种食材、两个步骤之间发生了什么，或某动作发生了几次；系统读取视频、问题与候选答案，在长过程上给出答案。</li><li>研究问题：真实过程边界把长视频切成步骤后，序列路径能否保留时间顺序、图路径能否建模跨步骤关系，二者通过 RGCN 的 swap 交换信息是否优于单一路径；人工描述或自动转写又会怎样改变准确率。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Rochester（罗切斯特大学）</li><li><strong>实验室 / 团队</strong>：论文首页仅统一署名 University of Rochester，未列具体实验室；目录中的 rochester-video 是团队收录标签，不是论文署名。</li><li><strong>作者与归属</strong>：Shaojie Wang、Wentian Zhao、Ziyi Kou、Chenliang Xu — University of Rochester；首页未使用上标区分作者单位。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>问题：把平均数分钟、按步骤展开的网页教学视频变成可推理的问答对象；模型不仅要识别片段内可见事实，还要回答计数、先后、时长比较、属性变化等不能靠单帧直接观察完成的问题。</li><li>场景：面向烹饪教学视频，用户可能追问为什么加入某种食材、两个步骤之间发生了什么，或某动作发生了几次；系统读取视频、问题与候选答案，在长过程上给出答案。</li><li>研究问题：真实过程边界把长视频切成步骤后，序列路径能否保留时间顺序、图路径能否建模跨步骤关系，二者通过 RGCN 的 swap 交换信息是否优于单一路径；人工描述或自动转写又会怎样改变准确率。</li><li><strong>研究背景</strong>：教学视频兼具长时长与分步骤结构：现有视频方法多针对几秒短片，而教学过程受步骤顺序约束；论文把 QA 作为检验对象、动作、事件及其空间、时间和相关等高阶关系推理的代理任务。</li><li><strong>核心痛点</strong>：直接把短视频方法移到长视频上会失效；普通 RNN 顺序处理难以表示跨长时间跨度的复杂关系，纯 GCN 又丢失原视频的时间依赖；自动生成 QA 还存在多样性低且无法生成复杂推理题的问题。</li><li><strong>任务定义</strong>：多项选择给定视频特征 v、问题特征 q 和候选答案特征 a_j，用三元评分 MLP f(v,q,a_j) 在 M=5 个候选中取最高分；K-Space 则把训练集中的不同答案映射成 K 类，由 MLP g_j(v,q) 预测类别。</li><li><strong>研究目标</strong>：在 YouQuek 上检验教学视频的高阶时序推理：比较序列、图及融合结构能否同时利用步骤顺序与全局关系，并测量真实时间边界、问题注意力、人工描述和自动转写分别带来的增益或退化。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>构建 YouQuek：首个面向教学视频的推理型 QA 数据集，基于 YouCook2 由人工收集 15,355 对问答，并以六类可重叠标签覆盖 Count、Time、Order、Taste、Complex 与 Property。</li><li>建立 SEQ-SA、GCN-SA 与 RGCN/RGCN-SA 模型族；其中 RGCN 让 RNN 与 GCN 两条路径交替计算并经 swap 交换隐藏状态与图节点，从而同时保留时间顺序与跨步骤关系。</li><li>设计多模态与人类对照实验：把视觉、真实过程边界、人工步骤描述和 YouTube 自动转写分别或联合输入，并用常识猜测、静音视频、带音频三阶段人类测验量化机器与人的差距。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：预处理先把长视频按 procedure 边界切成步骤并形成段特征；SEQ-SA 负责顺序聚合，GCN-SA 负责全连接图上的跨步骤关系，RGCN 用双路径 swap 融合二者；最终视频表示 v 与问题、答案以及可选叙事表示 m 进入答案预测器。</li><li><strong>输入与表示</strong>：使用 YouCook2 的真实时间边界把视频分成 N 个 procedure；每段抽帧后用 ResNet 提特征、再由 RNN 编成 Xi∈R^d。问题 q 与候选答案 a 是各自 RNN 的最终隐状态；描述或转写用词级低层 RNN 与视频级高层 RNN 得到 m。</li><li><strong>模型结构</strong>：SEQ-SA 以 q 对各 Xi 做点积 softmax 注意力后送入 RNN；GCN-SA 在 N 个步骤节点的全连接图上堆叠三层图卷积，并在末层加入与所有节点相连的问题节点后平均池化；RGCN 配置 N 个 RNN 时间步和 N 个 GCN 层，层间共享 W 并交替更新。</li><li><strong>数据流</strong>：流程为：边界分段→段内帧经 ResNet/RNN 得到 Xi→在时刻 t 将 Xt 与图节点 S^t_(t−1) 拼接送入 RNN 得到 h_t→用 h_t 替换 S^t_t→整层 GCN 更新并进入下一时刻→取最终 h_N 为 v；若有描述或转写，再把 m 与 v、q 融合预测答案。</li><li><strong>关键技术</strong>：关键点包括：用真实步骤边界隔离分段误差；问题条件注意力筛选步骤；GCN 边权取节点点积相似度；swap 把 RNN 新隐状态写回对应图节点；转写按时间边界对齐，而人工描述天然对应各 procedure。</li><li><strong>公式与超参数</strong>：多选为 j*=argmax_{j=1,…,M} f(v,q,a_j)，M=5；K-Space 为 A*=argmax_{j=1,…,K} g_j(v,q)。SEQ-SA 用 a_i=exp(q^T Xi)/Σexp(q^T Xi)，再令 X&#x27;_i=a_iXi。GCN 更新为 Z=ReLU(GSW)，G_ij=S_i^T S_j。RGCN 更新为 h_t=RNN([X_t,S^t_(t−1)],h_(t−1))，交换后 Z_(t+1)=ReLU(GZ_tW)，最终 h_N=v。实现中每视频取 500 帧形成 512-d 视觉向量，词嵌入 300-d，单向 LSTM 为 512 隐单元，Adam 学习率 0.0001。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：YouQuek：基于 YouCook2 的推理型教学视频问答数据集，含 15,355 对人工收集的 QA，题目可带多个标签。</li><li><strong>数据集</strong>：YouCook2：提供源教学视频、每个 procedure 的真实时间边界与人工描述，并沿用其原始训练/测试视频划分。</li><li><strong>规模与划分</strong>：视频平均长 5.27 min；全体 15,355 对 QA 中有 7,200 对 Complex，平均每对 QA 带 1.478 个标签、每个答案 2.289 个词、每视频 7.678 对 QA。按 YouCook2 划分后训练集为 10,179 对 QA，其余作为测试集。</li><li><strong>模型</strong>：视觉骨干仅写作 ResNet，论文未给具体变体或总参数规模；所有含 RNN 的模型采用 512 隐单元的单向 LSTM，问题词嵌入为训练中优化的 300-d 向量。</li><li><strong>硬件</strong>：论文的 Implementation details 报告了 PyTorch、ResNet、LSTM、Adam 与数据划分，但全文未报告训练或推理硬件、GPU 型号、数量及运行时。</li><li><strong>代码</strong>：代码基于 PyTorch；作者只承诺 YouQuek 与全部方法代码在论文接收后发布，PDF 未给出仓库地址或许可证。</li><li><strong>训练平台</strong>：数据与标注平台为 YouCook2/YouTube 教学视频、YouTube 自动语音识别转写和 Amazon Mechanical Turk 人工 QA 收集；实验是离线视频问答，论文未使用仿真器、机器人或实车。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：YouQuek 测试集：按 Count、Order、Taste、Time、Complex、Property 六类标签及 All 汇总评估模型结构。</li><li><strong>评估基准</strong>：YouQuek 多模态设置：比较 Visual、CC（自动转写）、Description、V+CC 与 V+D。</li><li><strong>评估指标</strong>：Multiple Choice accuracy（MC，越高越好）：每题在 M=5 个候选答案中选择评分最高者。</li><li><strong>评估指标</strong>：K-Space accuracy（KS，越高越好）：把训练集中的 K 个不同答案视作 K 类进行分类。</li><li><strong>对比方法</strong>：无步骤边界基线为 Bare QA、Naive RNN 与 MAC；主要模型为 SEQ、GCN、RGCN 及各自带问题注意力的 SA 版本。</li><li><strong>对比方法</strong>：多模态比较视觉 V、转写 CC、人工描述 D 及其组合；人类对照由十名标注员依次做常识猜测、静音观看和开启音频。</li><li><strong>关键结果</strong>：仅视觉时，RGCN-SA 的 All MC accuracy 为 0.403，优于 RGCN 的 0.392、SEQ-SA 的 0.373、GCN-SA 的 0.365 以及 MAC 的 0.348；正文把 0.403 写作 40.3%，称其比 MAC 高 5.5%。</li><li><strong>关键结果</strong>：融合视觉与人工描述时，RGCN-SA 达到 MC 0.416、KS 0.203，高于仅视觉的 0.403/0.182；这是表中两项指标的最高组合结果，准确率越高越好。</li><li><strong>关键结果</strong>：人类只凭常识猜测的 All accuracy 为 0.528，已经高于仅视觉 RGCN-SA 的 0.403；观看静音视频后为 97.0%，加入音频后为 97.7%。</li><li><strong>消融实验</strong>：问题注意力的结构消融：SEQ 0.352→SEQ-SA 0.373，GCN 0.346→GCN-SA 0.365，RGCN 0.392→RGCN-SA 0.403；作者报告增益范围为 1.1%–2.1%，准确率越高越好。</li><li><strong>消融实验</strong>：模态消融：对 RGCN-SA，Visual 为 MC/KS 0.403/0.182，V+CC 为 0.393/0.180，而 V+D 为 0.416/0.203；人工描述提升，两种含转写的数值均未超过 V+D。</li><li><strong>消融实验</strong>：步骤表示消融：Bare QA、Naive RNN、MAC 的 All 分别为 0.348、0.347、0.348，而引入真实 procedure 边界并融合顺序与关系的 RGCN 为 0.392。</li><li><strong>实验条件</strong>：模型按 YouCook2 原始训练/测试视频划分：10,179 对 QA 用于训练，其余测试；SEQ、GCN、RGCN 及其 SA 版本采用 YouCook2 提供的真实 procedure 边界，而 Bare QA、Naive RNN、MAC 是不使用 temporal boundaries 或 descriptions 的基线；视觉特征从每个视频的 500 帧提取。实验同时评估 MC 与 KS，但架构结果正文只列 MC，其余 KS 被作者指向 supplementary material；多模态表则同时给出 MC 与 KS。人类测试由十名标注员按常识、静音视频、带音频三阶段完成。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1812.02872/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">An Attempt towards Interpretable Audio-Visual Video Captioning</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1811.01549/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">StNet: Local and Global Spatial-Temporal Modeling for Action Recognition</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

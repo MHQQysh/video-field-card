@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Deep Flow-Guided Video Inpainting - 视频领域每日论文卡</title>
+    <meta name="description" content="问题：给定带缺失区域的视频，既要补出空间上合理的内容，又要避免逐帧修复造成的时间抖动；论文把直接生成 RGB 像素改写成先补全跨帧光流、再沿光流传播已知像素的视频修复问题。 场景：方法面向两类实际操作——依据前景掩码移除不需要的对象，以及修补固定或任意缺失区域；后者对应水印去除和视频恢复，并在 DAVIS 与 YouTube-VOS 离线视频上验证。 研究问题：高质量光流补全能否在复杂运动和任意形状缺失区中提供可靠的跨帧对应，使像素传播比逐帧图像修复或补丁优化更兼顾时间一致性、修复质量与运行速度；粗到细堆叠和困难光流样本挖掘是否确实贡献增益。 研究背景：视频修复（video completion）是在给定视频序列中填补缺失区域，使内容同时保持空间与时间连贯；典型用途包括不需要对象移除与老视频或视频内容恢复。 核心痛点：传统补丁优化通常假定缺失区运动平滑且均匀，遇到复杂运动会失败；Huang 等方法修复一段 854×480、90 帧、缺失区域占 18% 的视频约需 3 小时。逐帧图像修复又会产生时间伪影和抖动，而整段视频直接送入 3D CNN 需要很大模型容量与显存。 任务定义：输入是连续视频帧及标记每帧缺失区域的二值掩码；先对帧间光流的孔洞进行补全，再用完成光流把可见区域像素传播或扭曲到未知区域，最终输出空间与时间一致的修复视频。 研究目标：目标是检验“补光流比直接补 RGB 更容易”这一建模是否成立：能否用时空连贯的完成光流处理复杂运动和任意形状孔洞，并在不预设缺失区域或内容运动的情况下兼顾质量与速度。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1905.02884">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1905.02884.webp" alt="Deep Flow-Guided Video Inpainting" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">问题：给定带缺失区域的视频，既要补出空间上合理的内容，又要避免逐帧修复造成的时间抖动；论文把直接生成 RGB 像素改写成先补全跨帧光流、再沿光流传播已知像素的视频修复问题。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Deep Flow-Guided Video Inpainting</h1>
+            <div class="detail-meta">2019-05-08 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1905.02884" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1905.02884" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1905.02884</span></div>
+            <p class="detail-summary">问题：给定带缺失区域的视频，既要补出空间上合理的内容，又要避免逐帧修复造成的时间抖动；论文把直接生成 RGB 像素改写成先补全跨帧光流、再沿光流传播已知像素的视频修复问题。 场景：方法面向两类实际操作——依据前景掩码移除不需要的对象，以及修补固定或任意缺失区域；后者对应水印去除和视频恢复，并在 DAVIS 与 YouTube-VOS 离线视频上验证。 研究问题：高质量光流补全能否在复杂运动和任意形状缺失区中提供可靠的跨帧对应，使像素传播比逐帧图像修复或补丁优化更兼顾时间一致性、修复质量与运行速度；粗到细堆叠和困难光流样本挖掘是否确实贡献增益。 研究背景：视频修复（video completion）是在给定视频序列中填补缺失区域，使内容同时保持空间与时间连贯；典型用途包括不需要对象移除与老视频或视频内容恢复。 核心痛点：传统补丁优化通常假定缺失区运动平滑且均匀，遇到复杂运动会失败；Huang 等方法修复一段 854×480、90 帧、缺失区域占 18% 的视频约需 3 小时。逐帧图像修复又会产生时间伪影和抖动，而整段视频直接送入 3D CNN 需要很大模型容量与显存。 任务定义：输入是连续视频帧及标记每帧缺失区域的二值掩码；先对帧间光流的孔洞进行补全，再用完成光流把可见区域像素传播或扭曲到未知区域，最终输出空间与时间一致的修复视频。 研究目标：目标是检验“补光流比直接补 RGB 更容易”这一建模是否成立：能否用时空连贯的完成光流处理复杂运动和任意形状孔洞，并在不预设缺失区域或内容运动的情况下兼顾质量与速度。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：CUHK-SenseTime Joint Lab（The Chinese University of Hong Kong）与 Nanyang T…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1905.02884/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">问题：给定带缺失区域的视频，既要补出空间上合理的内容，又要避免逐帧修复造成的时间抖动；论文把直接生成 RGB 像素改写成先补全跨帧光流、再沿光流传播已知像素的视频修复问题。</p>
+  <ul class="reading-intro-points"><li>问题：给定带缺失区域的视频，既要补出空间上合理的内容，又要避免逐帧修复造成的时间抖动；论文把直接生成 RGB 像素改写成先补全跨帧光流、再沿光流传播已知像素的视频修复问题。</li><li>场景：方法面向两类实际操作——依据前景掩码移除不需要的对象，以及修补固定或任意缺失区域；后者对应水印去除和视频恢复，并在 DAVIS 与 YouTube-VOS 离线视频上验证。</li><li>研究问题：高质量光流补全能否在复杂运动和任意形状缺失区中提供可靠的跨帧对应，使像素传播比逐帧图像修复或补丁优化更兼顾时间一致性、修复质量与运行速度；粗到细堆叠和困难光流样本挖掘是否确实贡献增益。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：CUHK-SenseTime Joint Lab（The Chinese University of Hong Kong）与 Nanyang Technological University</li><li><strong>实验室 / 团队</strong>：论文首页明确署名的实验室为 CUHK-SenseTime Joint Lab；目录元数据中的 ntu-s-lab 是收录标签，不作为论文自署名单位。</li><li><strong>作者与归属</strong>：Rui Xu、Xiaoxiao Li、Bolei Zhou—CUHK-SenseTime Joint Lab, The Chinese University of Hong Kong。</li><li><strong>作者与归属</strong>：Chen Change Loy—Nanyang Technological University。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>问题：给定带缺失区域的视频，既要补出空间上合理的内容，又要避免逐帧修复造成的时间抖动；论文把直接生成 RGB 像素改写成先补全跨帧光流、再沿光流传播已知像素的视频修复问题。</li><li>场景：方法面向两类实际操作——依据前景掩码移除不需要的对象，以及修补固定或任意缺失区域；后者对应水印去除和视频恢复，并在 DAVIS 与 YouTube-VOS 离线视频上验证。</li><li>研究问题：高质量光流补全能否在复杂运动和任意形状缺失区中提供可靠的跨帧对应，使像素传播比逐帧图像修复或补丁优化更兼顾时间一致性、修复质量与运行速度；粗到细堆叠和困难光流样本挖掘是否确实贡献增益。</li><li><strong>研究背景</strong>：视频修复（video completion）是在给定视频序列中填补缺失区域，使内容同时保持空间与时间连贯；典型用途包括不需要对象移除与老视频或视频内容恢复。</li><li><strong>核心痛点</strong>：传统补丁优化通常假定缺失区运动平滑且均匀，遇到复杂运动会失败；Huang 等方法修复一段 854×480、90 帧、缺失区域占 18% 的视频约需 3 小时。逐帧图像修复又会产生时间伪影和抖动，而整段视频直接送入 3D CNN 需要很大模型容量与显存。</li><li><strong>任务定义</strong>：输入是连续视频帧及标记每帧缺失区域的二值掩码；先对帧间光流的孔洞进行补全，再用完成光流把可见区域像素传播或扭曲到未知区域，最终输出空间与时间一致的修复视频。</li><li><strong>研究目标</strong>：目标是检验“补光流比直接补 RGB 更容易”这一建模是否成立：能否用时空连贯的完成光流处理复杂运动和任意形状孔洞，并在不预设缺失区域或内容运动的情况下兼顾质量与速度。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出深度光流引导的视频修复范式：不直接为每帧生成 RGB，而把任务改写为完成光流后跨帧传播已知像素。</li><li>设计由三个 DFC-S 子网堆叠的 DFC-Net，以粗到细尺度联合细化前向与后向光流，并用相邻帧批次为单帧预测提供时间上下文。</li><li>提出困难光流样本挖掘（HFEM），按损失筛出边界和动态区等困难像素并提高其权重，缓解平滑区域主导训练导致的边界模糊。</li><li>构成完整的两级填充流程：先经前后向一致性检查做双向像素传播；对整段视频均不可见的剩余孔洞，再以图像修复结果迭代传播。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：DFC-Net 负责合成缺失区的时空连贯光流；流有效性检查与双向传播负责用已知像素覆盖大多数孔洞；Deepfill 图像修复仅处理全视频中找不到对应像素的“不可见”区域，并把补出的像素继续传播。</li><li><strong>输入与表示</strong>：第一阶段以 FlowNet 2.0 提取的帧间光流为起点，先从边界向内平滑插值孔洞；以中心流为预测目标，取前后各 5 个时间位置形成 11 张光流及 11 张二值掩码，x/y 光流分量与掩码沿通道拼接后共 33 个输入通道。</li><li><strong>模型结构</strong>：每个 DFC-S 以 ResNet-50 为骨干，调整首层输入通道；从 conv4_x 到 conv5_x 减小步幅并改用空洞卷积，再接交替卷积、ReLU、上采样模块输出无末端激活的光流。三个阶段输入相对原分辨率依次为 1/2、2/3、1，后两阶段联合细化双向光流。</li><li><strong>数据流</strong>：数据流为：FlowNet 2.0 初始光流与掩码→第一级半分辨率粗补全→第二、三级逐级放大并细化前后向光流→以阈值 5 做前后向回环一致性检查并筛除不可靠流→沿有效流双向传播，双向都可达时按距离反比线性融合→调用图像修复填补仍不可达的区域并循环传播，直到没有未填区域。论文报告，缺失区域占 12% 时平均约 1% 为不可见像素，约 1.1 轮可填完。</li><li><strong>关键技术</strong>：粗到细堆叠用较小孔洞和尺度先获得稳定初值，再提升分辨率补细节；连续光流与掩码批次为单帧预测提供时间上下文。HFEM 将逐像素损失降序排列，取前 p% 作为困难样本并乘权重 λ；实验固定 p=50%，使网络更关注运动边界。</li><li><strong>公式与超参数</strong>：基础子网损失为 L_i=||M⊙(f^i−f̂)||/||M||，即只在掩码 M 内平均预测光流 f^i 与真值 f̂ 的绝对误差；HFEM 在此基础上加 λ·||M^h⊙(f^i−f̂)||/||M^h||，其中 M^h 标出困难像素，联合微调时线性组合各子网损失。传播有效性还定义 xᵢ₊₁=xᵢ+f³前向(xᵢ)，并要求 ‖(xᵢ₊₁+f³反向(xᵢ₊₁))−xᵢ‖₂&lt;ε，即回环位移的二范数小于阈值；论文取 ε=5。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：DAVIS：同时用于前景对象移除和固定区域修复，像素级前景掩码使其可用于对象移除评测。</li><li><strong>数据集</strong>：YouTube-VOS：用于训练与验证固定区域修复模型；因无密集对象掩码，不用于前景对象移除评测。</li><li><strong>规模与划分</strong>：DAVIS 共 150 段高质量视频，其中 90 段带逐帧像素级前景标注并保留作测试，剩余 60 段无标注视频用于训练；YouTube-VOS 共 4,453 段，划分为 3,471/474/508 段训练、验证、测试。</li><li><strong>模型</strong>：光流由 FlowNet 2.0 提取；DFC-S 主干为 ResNet-50，论文未报告参数量；不可见区域调用 Deepfill；消融中的单阶段 DFC-Single 改用更深的 ResNet-101 以控制容量。</li><li><strong>硬件</strong>：论文实验章节与运行时间脚注均未报告训练或推理所用 CPU/GPU 型号、数量和内存；运行时间比较只说明采用 DAVIS 的“CAMEL”视频，并按 Huang 等方法的口径或相似环境测量。</li><li><strong>代码</strong>：论文首页明确给出项目页 <a href="https://nbei.github.io/video-inpainting.html；从正文实验设置到参考文献尾部未声明代码仓库、权重链接或发布状态" target="_blank" rel="noopener noreferrer">https://nbei.github.io/video-inpainting.html；从正文实验设置到参考文献尾部未声明代码仓库、权重链接或发布状态</a>。</li><li><strong>训练平台</strong>：实验使用 DAVIS 与 YouTube-VOS 的离线视频和光流/卷积网络软件流程；全文未使用或报告仿真器、机器人、实车或其他物理采集平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：固定区域修复：每帧中心遮挡 H/4×W/4 的方形区域，在 YouTube-VOS 和 DAVIS 上进行定量评测与用户研究。</li><li><strong>评估基准</strong>：前景对象移除：以掩码勾勒待移除物体；由于被移除区域没有真值，测试只做用户研究。</li><li><strong>评估指标</strong>：PSNR 衡量重建失真、SSIM 衡量结构相似度，结果表中两者均为越高越好。</li><li><strong>评估指标</strong>：完成光流用端点误差 EPE 评估，数值越低越好，并分平滑区、困难区和整体统计。</li><li><strong>评估指标</strong>：用户研究要求参与者把三种修复结果排序，以被排在第一位的占比越高为越好。</li><li><strong>对比方法</strong>：主结果对比逐帧 Deepfill、Newson 等传统视频修复方法与 Huang 等动态视频完成方法。</li><li><strong>对比方法</strong>：范式对照使用 Deepfill+Multi-Frame 与堆叠三次的 Deepfill+Multi-Pass，区分多帧或堆叠本身与光流引导的贡献。</li><li><strong>对比方法</strong>：组件消融比较无 HFEM、不同困难样本比例、单阶段或无多尺度 DFC-Net、无像素传播，以及 Huang 等方法使用或不使用 FlowNet2 的初始光流。</li><li><strong>关键结果</strong>：固定区域主结果：Ours 在 YouTube-VOS 上达到 PSNR 27.49、SSIM 0.41，在 DAVIS 上达到 28.26、0.48；对应 Huang 等方法分别为 26.48/0.39 与 27.39/0.44，PSNR 与 SSIM 均更高。</li><li><strong>关键结果</strong>：运行时间在 DAVIS“CAMEL”视频口径下：Ours 为 8.5 分钟，Huang 等约 180 分钟、Newson 等约 270 分钟；Ours 比这两种视频方法快，但逐帧 Deepfill 为 0.3 分钟且修复质量明显低。</li><li><strong>关键结果</strong>：用户研究使用 30 名参与者、每人随机观看 DAVIS 测试集 15 段视频，以 5 FPS 播放；图示中 Ours 在前景移除和固定区域修复两种设置下最常被排为第一。</li><li><strong>消融实验</strong>：HFEM：无 HFEM 时困难区与整体 EPE 为 1.17/1.03、PSNR/SSIM 为 24.43/0.36；p=50% 时变为 1.04/0.99、26.15/0.37（EPE 降、质量升），论文最终固定 p=50%。</li><li><strong>消融实验</strong>：粗到细堆叠：Region-Fill、Stage-1、Stage-2 到 Stage-3 的 EPE 依次为 1.07、0.99、0.94、0.93，PSNR 为 23.85、26.15、27.10、27.50，SSIM 为 0.35、0.37、0.38、0.41；全程同尺度的 DFC-Net（w/o MS）只有 0.95/27.02/0.40，支持多尺度堆叠。</li><li><strong>消融实验</strong>：像素传播：去掉该步骤时 PSNR/SSIM 为 19.43/0.24，加入后为 27.50/0.41，说明先传播显著缩小后续图像修复负担。</li><li><strong>消融实验</strong>：初始光流：Huang 等方法换用 FlowNet2 后 EPE/PSNR/SSIM 为 1.02/27.73/0.45，Ours 为 0.93/28.26/0.48；改进不能仅归因于初始流。</li><li><strong>实验条件</strong>：主结果均为离线固定区域修复：YouTube-VOS 模型在其训练集训练，DAVIS 因数据不足，从 YouTube-VOS 预训练后用 DAVIS 训练集微调，并在各自测试集报告。消融默认在 YouTube-VOS 训练集训练、验证集评估；前景移除只做用户研究。运行时间使用 DAVIS 的“CAMEL”视频。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1905.03820/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Hierarchical Cross-Modal Talking Face Generationwith Dynamic Pixel-Wise Loss</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1905.02781/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Robust Dense Mapping for Large-Scale Dynamic Environments</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

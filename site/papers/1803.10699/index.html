@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Weakly-Supervised Action Segmentation with Iterative Soft Boundary Assignment - 视频领域每日论文卡</title>
+    <meta name="description" content="论文要在只有动作转录（知道动作类别及先后顺序、没有时间边界）的条件下，对长、未裁剪视频做逐帧动作分割，并把转录中的动作单元对齐到训练视频的时间位置。 它面向离线的人类活动视频理解，例如厨房烹饪流程和好莱坞电影片段；训练时使用较便宜的顺序标签，测试时需要给未见视频的每一帧判定动作类别。 论文真正检验的是：不用 RNN/HMM 的昂贵序列搜索，能否以可并行的时间卷积网络配合迭代软边界更新，在抑制迭代过拟合的同时兼顾分割、对齐、速度和可扩展性。 研究背景：长视频动作理解需要为每帧定位并分类动作；全监督方法依赖密集的帧级标注，而精确动作边界既费时又会因人工判断不一致而不可靠。动作转录只保留动作单元及其发生顺序，不标时间边界，因而更容易获取。 核心痛点：既有弱监督路线常用 RNN 编码视频，再由 ECTC 或 HMM 遍历候选动作序列寻找最大似然对齐，网络和序列模型两端计算都昂贵；有方法还要把视频切成小块训练，并持续迭代到收敛，缺少对过拟合的监控。 任务定义：训练输入是视频及其动作转录：只知道标签集合与顺序，不知道各动作的起止时刻。弱监督对齐要在训练视频中定位每个转录动作单元；弱监督分割则要对未见测试视频输出逐帧动作标签。 研究目标：目标是构造一个无循环、无马尔可夫过程且易并行的可扩展框架，让粗转录逐轮变成更细的伪监督，同时用弱监督条件下可获得的视频级动作存在性信号选择停止点，并在分割、对齐与效率上检验有效性。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1803.10699">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1803.10699.webp" alt="Weakly-Supervised Action Segmentation with Iterative Soft Boundary Assignment" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文要在只有动作转录（知道动作类别及先后顺序、没有时间边界）的条件下，对长、未裁剪视频做逐帧动作分割，并把转录中的动作单元对齐到训练视频的时间位置。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Weakly-Supervised Action Segmentation with Iterative Soft Boundary Assignment</h1>
+            <div class="detail-meta">2018-03-28 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1803.10699" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1803.10699" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1803.10699</span></div>
+            <p class="detail-summary">论文要在只有动作转录（知道动作类别及先后顺序、没有时间边界）的条件下，对长、未裁剪视频做逐帧动作分割，并把转录中的动作单元对齐到训练视频的时间位置。 它面向离线的人类活动视频理解，例如厨房烹饪流程和好莱坞电影片段；训练时使用较便宜的顺序标签，测试时需要给未见视频的每一帧判定动作类别。 论文真正检验的是：不用 RNN/HMM 的昂贵序列搜索，能否以可并行的时间卷积网络配合迭代软边界更新，在抑制迭代过拟合的同时兼顾分割、对齐、速度和可扩展性。 研究背景：长视频动作理解需要为每帧定位并分类动作；全监督方法依赖密集的帧级标注，而精确动作边界既费时又会因人工判断不一致而不可靠。动作转录只保留动作单元及其发生顺序，不标时间边界，因而更容易获取。 核心痛点：既有弱监督路线常用 RNN 编码视频，再由 ECTC 或 HMM 遍历候选动作序列寻找最大似然对齐，网络和序列模型两端计算都昂贵；有方法还要把视频切成小块训练，并持续迭代到收敛，缺少对过拟合的监控。 任务定义：训练输入是视频及其动作转录：只知道标签集合与顺序，不知道各动作的起止时刻。弱监督对齐要在训练视频中定位每个转录动作单元；弱监督分割则要对未见测试视频输出逐帧动作标签。 研究目标：目标是构造一个无循环、无马尔可夫过程且易并行的可扩展框架，让粗转录逐轮变成更细的伪监督，同时用弱监督条件下可获得的视频级动作存在性信号选择停止点，并在分割、对齐与效率上检验有效性。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Massachusetts Institute of Technology · MIT</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1803.10699/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文要在只有动作转录（知道动作类别及先后顺序、没有时间边界）的条件下，对长、未裁剪视频做逐帧动作分割，并把转录中的动作单元对齐到训练视频的时间位置。</p>
+  <ul class="reading-intro-points"><li>论文要在只有动作转录（知道动作类别及先后顺序、没有时间边界）的条件下，对长、未裁剪视频做逐帧动作分割，并把转录中的动作单元对齐到训练视频的时间位置。</li><li>它面向离线的人类活动视频理解，例如厨房烹饪流程和好莱坞电影片段；训练时使用较便宜的顺序标签，测试时需要给未见视频的每一帧判定动作类别。</li><li>论文真正检验的是：不用 RNN/HMM 的昂贵序列搜索，能否以可并行的时间卷积网络配合迭代软边界更新，在抑制迭代过拟合的同时兼顾分割、对齐、速度和可扩展性。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Massachusetts Institute of Technology（MIT）</li><li><strong>机构</strong>：University of Rochester</li><li><strong>实验室 / 团队</strong>：论文首页及作者脚注只给出机构级归属，未署名具体实验室。</li><li><strong>作者与归属</strong>：Li Ding—首页列为 Massachusetts Institute of Technology；脚注说明该工作是在其任职 University of Rochester 时完成。</li><li><strong>作者与归属</strong>：Chenliang Xu—University of Rochester。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文要在只有动作转录（知道动作类别及先后顺序、没有时间边界）的条件下，对长、未裁剪视频做逐帧动作分割，并把转录中的动作单元对齐到训练视频的时间位置。</li><li>它面向离线的人类活动视频理解，例如厨房烹饪流程和好莱坞电影片段；训练时使用较便宜的顺序标签，测试时需要给未见视频的每一帧判定动作类别。</li><li>论文真正检验的是：不用 RNN/HMM 的昂贵序列搜索，能否以可并行的时间卷积网络配合迭代软边界更新，在抑制迭代过拟合的同时兼顾分割、对齐、速度和可扩展性。</li><li><strong>研究背景</strong>：长视频动作理解需要为每帧定位并分类动作；全监督方法依赖密集的帧级标注，而精确动作边界既费时又会因人工判断不一致而不可靠。动作转录只保留动作单元及其发生顺序，不标时间边界，因而更容易获取。</li><li><strong>核心痛点</strong>：既有弱监督路线常用 RNN 编码视频，再由 ECTC 或 HMM 遍历候选动作序列寻找最大似然对齐，网络和序列模型两端计算都昂贵；有方法还要把视频切成小块训练，并持续迭代到收敛，缺少对过拟合的监控。</li><li><strong>任务定义</strong>：训练输入是视频及其动作转录：只知道标签集合与顺序，不知道各动作的起止时刻。弱监督对齐要在训练视频中定位每个转录动作单元；弱监督分割则要对未见测试视频输出逐帧动作标签。</li><li><strong>研究目标</strong>：目标是构造一个无循环、无马尔可夫过程且易并行的可扩展框架，让粗转录逐轮变成更细的伪监督，同时用弱监督条件下可获得的视频级动作存在性信号选择停止点，并在分割、对齐与效率上检验有效性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 ISBA：从动作转录生成软边界目标，按当前模型在相邻动作边界处的概率迭代插入标签，并以视频级识别损失决定停止；该训练策略不依赖特定分割网络。</li><li>提出 TCFPN：在 ED-TCN 编码器—解码器上加入横向连接和逐层预测，使高层语义与低层稠密时间特征融合，并以各解码层输出的平均得到逐帧预测。</li><li>把 TCFPN 与 ISBA 组合后统一考察全监督分割、弱监督分割和弱监督对齐，在 Breakfast 与 Hollywood Extended 上同时报告四类指标、软边界消融、停止准则轨迹及训练速度。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：TCFPN 是逐帧时间分割器，负责把视频特征变成各动作类别的帧级概率；ISBA 是弱监督训练控制器，负责由转录造软目标、用模型推断修订转录并开启下一轮；视频级识别损失只用于监控与选取停止迭代，不参与反向传播。</li><li><strong>输入与表示</strong>：网络输入是每帧提取的视频特征，实验实际使用 iDT 与 Fisher Vector（经 PCA、GMM 处理）；弱监督标签是长度为 n′ 的有序动作转录，而非边界。长度为 n 的视频先把每个转录动作均匀映射到约 n/n′ 帧，再把相邻动作边界表示为两类概率的线性插值分布。</li><li><strong>模型结构</strong>：TCFPN 保留编码器—解码器结构，两侧各有 K 层且实验固定 K=3。编码器逐层执行 1D 时间卷积、批归一化、ReLU 和时间最大池化；解码器将上一层上采样结果与对应编码层经 1×1 卷积降维后的特征逐元素相加，再用时间卷积抑制上采样混叠。每个解码层接逐帧全连接与 softmax，最终平均各层类别概率。</li><li><strong>数据流</strong>：先把转录均匀展开到视频长度并生成软边界目标，用它训练 TCFPN；随后在训练视频上推断概率。对每个相邻且不同的动作边界，比较两类在边界帧的概率，必要时插入其中一类以延长相应动作单元；新转录再生成新目标并进入下一轮。达到停止准则后，所选模型用于训练集对齐与测试集逐帧分割。</li><li><strong>关键技术</strong>：软边界用线性插值让边界附近同时具有相邻两类概率，减弱不可靠边界帧的监督。转录修订仅在概率差超过 ρ∈(0,1) 时触发；为增强鲁棒性再设 θ∈(0,0.5] 的伯努利随机性，使高概率动作被插入的概率为 1−θ，同时始终保留原动作顺序。</li><li><strong>公式与超参数</strong>：边界位置为 t=(n/n′)·i，插入判据是 |P_Ai(t)−P_A(i+1)(t)|&gt;ρ。停止信号先对帧级 P∈R^(n×k) 按时间做全局最大池化得到 P′∈R^(1×k)，再由转录得到的动作出现向量 Y 计算 L_video=Σ_i[Y_i log(P′_i)+(1−Y_i)log(1−P′_i)]；印刷公式未写通常二元交叉熵的前导负号，而正文仍称其为 loss 并取最小值。该 loss 连续三轮不下降即停止并回取最小值所在轮，网络深度 K=3。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Breakfast：超过 1.7k 段厨房烹饪视频，总时长 66.7h；48 类动作，平均每段 4.9 个动作实例。</li><li><strong>数据集</strong>：Hollywood Extended：937 段不同好莱坞电影中的视频；16 类动作，平均每段 2.5 个动作实例。</li><li><strong>规模与划分</strong>：实验部分给出了两个数据集的总规模，但正文和参考文献尾部均未报告精确训练、验证、测试数量或划分比例；停止准则的轨迹图只说明示例来自 Breakfast 的 first split，不能据此还原完整划分协议。</li><li><strong>模型</strong>：输入特征沿用既有工作的 improved dense trajectories（iDT）与 Fisher Vector，并使用 PCA、GMM；ED-TCN 是结构基线，TCFPN 是本文分割器。方法和实现细节均未报告网络参数量、预训练骨干、优化器或学习率。</li><li><strong>硬件</strong>：实现细节和实验分析均未报告训练或推理的 GPU/CPU 型号、数量、内存配置；致谢只说明 NVIDIA 捐赠了 GPU，不能据此推断实际实验硬件。</li><li><strong>代码</strong>：论文没有给出仓库或代码 URL；实现细节只承诺论文被接收后发布实现及全部参数，因此稿件当时的代码状态是计划发布而非已提供。</li><li><strong>训练平台</strong>：实验平台是离线的 Breakfast 与 Hollywood Extended 视频数据及预计算视觉特征；全文没有仿真器、机器人、实车或在线闭环平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Breakfast：用于全监督动作分割、弱监督动作分割和弱监督动作对齐，并另做速度、软边界与停止准则分析。</li><li><strong>评估基准</strong>：Hollywood Extended：用于同样三类主任务；未在该数据集上单列软边界或停止准则消融。</li><li><strong>评估指标</strong>：Acc. 是逐帧准确率，统计正确分类的帧占比，越高越好，但容易被大量背景帧主导。</li><li><strong>评估指标</strong>：Acc.−b.g. 排除背景帧后计算逐帧准确率，越高越好，更集中反映真实动作帧。</li><li><strong>评估指标</strong>：IoU=|I∩I*|/|I∪I*|，其中 I 是预测区间、I* 是真值区间；越高越好，要求时间分割边界准确。</li><li><strong>评估指标</strong>：IoD=|I∩I*|/|I|，越高越好；它只要求预测落在真值内，因此论文指出它更偏检测而非完整分割。</li><li><strong>对比方法</strong>：全监督表比较 HTK（含 GMM size 64 的版本）、GRU 与作者复现的 ED-TCN；弱监督表比较 OCDC、HTK、ECTC、GRU reest.，并用 ED-TCN+ISBA 隔离分割网络带来的差异。</li><li><strong>对比方法</strong>：效率分析还对照 OCDC 的整体训练时间和 HTK 的分割预测时间；论文未报告硬件，因而这些时长只能按原文口径并列，不能视为严格同机吞吐比较。</li><li><strong>关键结果</strong>：全监督 Breakfast 上，TCFPN 的 Acc./Acc.−b.g./IoU/IoD 为 52.0/52.6/36.7/54.9；其中 Acc. 低于 GRU 的 60.6，不能概括为每一列都优于所有基线。</li><li><strong>关键结果</strong>：全监督 Hollywood Extended 上，TCFPN 的 Acc./Acc.−b.g./IoU/IoD 为 54.8/33.1/20.4/28.8，四项在该表所列方法中均最高。</li><li><strong>关键结果</strong>：弱监督分割的 Breakfast 结果为 38.4/38.4/24.2/40.6，依次对应 Acc./Acc.−b.g./IoU/IoD；同表 GRU reest. 的 Acc. 为 33.3。</li><li><strong>关键结果</strong>：弱监督分割的 Hollywood Extended 结果为 28.7/34.5/12.6/18.3；HTK 的 Acc. 为 33.0、IoU 为 8.6，因此本文并非 Acc. 最优，但 IoU 更高。</li><li><strong>关键结果</strong>：弱监督对齐主表中，Breakfast 的 TCFPN+ISBA 为 53.5/51.7/35.3/52.3；Hollywood Extended 为 57.4/36.1/22.3/39.6，均按 Acc./Acc.−b.g./IoU/IoD 排列。</li><li><strong>关键结果</strong>：Hollywood Extended 对齐中，TCFPN+ISBA 的 Acc. 57.4 与 Acc.−b.g. 36.1 为表中最高，但 IoU 22.3 低于 HTK 的 29.1，IoD 39.6 也低于 HTK 的 46.9。</li><li><strong>消融实验</strong>：Breakfast 弱监督分割加入软边界时为 38.4/38.4/24.2/40.6，去掉软边界为 37.8/38.1/24.1/41.8：前三项提高，但 IoD 反而下降，符合原文所说的多数而非全部指标改善。</li><li><strong>消融实验</strong>：Breakfast 对齐的软边界消融中，完整方法为 56.7/55.9/38.7/54.0，去掉软边界为 55.7/55.8/38.1/53.0，四项均提高。</li><li><strong>消融实验</strong>：Breakfast 上 TCFPN+ISBA 每轮训练连同训练集推断和预测约 4 分钟，全程平均约半小时；原文对照 OCDC 约 2 小时训练、HTK 仅分割预测就需 23.7 分钟。</li><li><strong>消融实验</strong>：停止准则示例在第 7 轮取得最小 loss，第 10 轮因连续三轮不下降而停止；使用既有准则得到 21 轮、38.7 Acc.，本文准则为 10 轮、39.8 Acc.。</li><li><strong>实验条件</strong>：这是离线视频评测：两套数据均使用作者从既有工作取得的 iDT/FV（PCA、GMM）特征，帧下采样到约 1 fps；全监督实验使用帧级真值，弱监督训练只用转录。动作对齐口径有内部冲突：表标题写 training set，正文却写 testing set 并对 testing scripts 细化 10 轮；而主结果表与消融表的同名 Breakfast 对齐数值也不同，正文未解释，本卡不自行合并。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1807.08333/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">AutoLoc: Weakly-supervised Temporal Action Localization</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1803.10404/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Lip Movements Generation at a Glance</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Action Recognition with Trajectory-Pooled Deep-Convolutional Descriptors - 视频领域每日论文卡</title>
+    <meta name="description" content="论文要解决的不是再训练一个视频分类器，而是改造视频表示：让卷积网络自动学到的高语义、高判别响应，像 improved trajectories 那样沿真实运动轨迹采样和汇聚，从而同时弥补手工描述子判别力不足与普通深度特征忽略时间连续性的缺陷。 它面向电影、网络视频和电视节目等来源复杂的现实动作片段，可用于视频监控、人机交互与视频内容分析；典型困难是背景杂乱、视角改变以及同一动作在速度和风格上的巨大类内变化。 论文真正检验的是：把 improved trajectories 与双流卷积特征结合，再加入时空归一化、通道归一化和轨迹约束池化后，所得 TDD 能否在 HMDB51、UCF101 上同时超过手工 iDT 与双流 ConvNets，并与 iDT 保持互补而继续增益。 研究背景：现实动作识别依赖能抵抗背景、视角和运动变化的视频表示。改进轨迹通过运动显著点、跨帧对齐与沿轨迹汇聚获得稳健性；双流 ConvNets 则分别学习外观与光流运动语义，二者各有优势。 核心痛点：手工 HOG/HOF/MBH 未针对动作标签端到端优化，语义和判别能力有限；已有深度方法又需要大量标注视频，而且常把时间维当作普通特征通道，忽略动作的时间连续性，因此在当时仍未稳定超过改进轨迹。 任务定义：输入是一段视频 V；系统抽取轨迹集合 T(V) 与空间流、时间流的多层卷积特征图 C(V)，在每条轨迹周围的时空体上形成局部 TDD，再用 Fisher vector 汇成整段视频的全局向量，最后由线性 SVM 输出动作类别。 研究目标：目标是在标注规模较小的动作数据集上，把 improved trajectories 的运动位置、时间对齐能力和双流 ConvNets 的判别性表征统一起来，并验证轨迹约束采样/池化本身是否比直接使用双流网络输出更有效。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1505.04868">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1505.04868.webp" alt="Action Recognition with Trajectory-Pooled Deep-Convolutional Descriptors" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文要解决的不是再训练一个视频分类器，而是改造视频表示：让卷积网络自动学到的高语义、高判别响应，像 improved trajectories 那样沿真实运动轨迹采样和汇聚，从而同时弥补手工描述子判别力不足与普通深度特征忽略时间连续性的缺陷。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Action Recognition with Trajectory-Pooled Deep-Convolutional Descriptors</h1>
+            <div class="detail-meta">2015-05-19 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1505.04868" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1505.04868" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1505.04868</span></div>
+            <p class="detail-summary">论文要解决的不是再训练一个视频分类器，而是改造视频表示：让卷积网络自动学到的高语义、高判别响应，像 improved trajectories 那样沿真实运动轨迹采样和汇聚，从而同时弥补手工描述子判别力不足与普通深度特征忽略时间连续性的缺陷。 它面向电影、网络视频和电视节目等来源复杂的现实动作片段，可用于视频监控、人机交互与视频内容分析；典型困难是背景杂乱、视角改变以及同一动作在速度和风格上的巨大类内变化。 论文真正检验的是：把 improved trajectories 与双流卷积特征结合，再加入时空归一化、通道归一化和轨迹约束池化后，所得 TDD 能否在 HMDB51、UCF101 上同时超过手工 iDT 与双流 ConvNets，并与 iDT 保持互补而继续增益。 研究背景：现实动作识别依赖能抵抗背景、视角和运动变化的视频表示。改进轨迹通过运动显著点、跨帧对齐与沿轨迹汇聚获得稳健性；双流 ConvNets 则分别学习外观与光流运动语义，二者各有优势。 核心痛点：手工 HOG/HOF/MBH 未针对动作标签端到端优化，语义和判别能力有限；已有深度方法又需要大量标注视频，而且常把时间维当作普通特征通道，忽略动作的时间连续性，因此在当时仍未稳定超过改进轨迹。 任务定义：输入是一段视频 V；系统抽取轨迹集合 T(V) 与空间流、时间流的多层卷积特征图 C(V)，在每条轨迹周围的时空体上形成局部 TDD，再用 Fisher vector 汇成整段视频的全局向量，最后由线性 SVM 输出动作类别。 研究目标：目标是在标注规模较小的动作数据集上，把 improved trajectories 的运动位置、时间对齐能力和双流 ConvNets 的判别性表征统一起来，并验证轨迹约束采样/池化本身是否比直接使用双流网络输出更有效。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Department of Information Engineering, The Chinese University of Hong Ko…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1505.04868/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文要解决的不是再训练一个视频分类器，而是改造视频表示：让卷积网络自动学到的高语义、高判别响应，像 improved trajectories 那样沿真实运动轨迹采样和汇聚，从而同时弥补手工描述子判别力不足与普通深度特征忽略时间连续性的缺陷。</p>
+  <ul class="reading-intro-points"><li>论文要解决的不是再训练一个视频分类器，而是改造视频表示：让卷积网络自动学到的高语义、高判别响应，像 improved trajectories 那样沿真实运动轨迹采样和汇聚，从而同时弥补手工描述子判别力不足与普通深度特征忽略时间连续性的缺陷。</li><li>它面向电影、网络视频和电视节目等来源复杂的现实动作片段，可用于视频监控、人机交互与视频内容分析；典型困难是背景杂乱、视角改变以及同一动作在速度和风格上的巨大类内变化。</li><li>论文真正检验的是：把 improved trajectories 与双流卷积特征结合，再加入时空归一化、通道归一化和轨迹约束池化后，所得 TDD 能否在 HMDB51、UCF101 上同时超过手工 iDT 与双流 ConvNets，并与 iDT 保持互补而继续增益。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Department of Information Engineering, The Chinese University of Hong Kong</li><li><strong>机构</strong>：Shenzhen Institutes of Advanced Technology, CAS, China</li><li><strong>实验室 / 团队</strong>：Shenzhen key lab of Comp. Vis. &amp; Pat. Rec.</li><li><strong>作者与归属</strong>：Limin Wang—The Chinese University of Hong Kong 与 Shenzhen Institutes of Advanced Technology, CAS</li><li><strong>作者与归属</strong>：Yu Qiao—Shenzhen Institutes of Advanced Technology, CAS</li><li><strong>作者与归属</strong>：Xiaoou Tang—The Chinese University of Hong Kong 与 Shenzhen Institutes of Advanced Technology, CAS</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文要解决的不是再训练一个视频分类器，而是改造视频表示：让卷积网络自动学到的高语义、高判别响应，像 improved trajectories 那样沿真实运动轨迹采样和汇聚，从而同时弥补手工描述子判别力不足与普通深度特征忽略时间连续性的缺陷。</li><li>它面向电影、网络视频和电视节目等来源复杂的现实动作片段，可用于视频监控、人机交互与视频内容分析；典型困难是背景杂乱、视角改变以及同一动作在速度和风格上的巨大类内变化。</li><li>论文真正检验的是：把 improved trajectories 与双流卷积特征结合，再加入时空归一化、通道归一化和轨迹约束池化后，所得 TDD 能否在 HMDB51、UCF101 上同时超过手工 iDT 与双流 ConvNets，并与 iDT 保持互补而继续增益。</li><li><strong>研究背景</strong>：现实动作识别依赖能抵抗背景、视角和运动变化的视频表示。改进轨迹通过运动显著点、跨帧对齐与沿轨迹汇聚获得稳健性；双流 ConvNets 则分别学习外观与光流运动语义，二者各有优势。</li><li><strong>核心痛点</strong>：手工 HOG/HOF/MBH 未针对动作标签端到端优化，语义和判别能力有限；已有深度方法又需要大量标注视频，而且常把时间维当作普通特征通道，忽略动作的时间连续性，因此在当时仍未稳定超过改进轨迹。</li><li><strong>任务定义</strong>：输入是一段视频 V；系统抽取轨迹集合 T(V) 与空间流、时间流的多层卷积特征图 C(V)，在每条轨迹周围的时空体上形成局部 TDD，再用 Fisher vector 汇成整段视频的全局向量，最后由线性 SVM 输出动作类别。</li><li><strong>研究目标</strong>：目标是在标注规模较小的动作数据集上，把 improved trajectories 的运动位置、时间对齐能力和双流 ConvNets 的判别性表征统一起来，并验证轨迹约束采样/池化本身是否比直接使用双流网络输出更有效。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 trajectory-pooled deep-convolutional descriptor（TDD），用轨迹对齐的局部描述子把 improved trajectories 与双流 ConvNets 合成一套视频表示，而不是简单做分类分数后融合。</li><li>为卷积特征图分别设计时空归一化与通道归一化：前者让每个通道在整段视频上的响应尺度一致，后者让每个时空位置跨通道的响应尺度一致，并可融合两种表示。</li><li>把原视频中的轨迹坐标按各卷积层的特征图比例映射到空间流和时间流特征图，在轨迹经过的时空位置上逐点求和，使深度响应显式遵循动作运动路径。</li><li>提出高效多尺度扩展：光流计算与点跟踪只做单尺度，再由帧金字塔和光流金字塔产生多尺度卷积图，避免在每个尺度重复轨迹跟踪。</li><li>系统比较 PCA 维度、归一化方式和不同卷积层，并证明 TDD 与 iDT 的 Fisher vectors 早期融合仍能提升 HMDB51 与 UCF101 准确率，显示二者的信息互补。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：改进轨迹模块负责发现运动显著点并给出跨帧路径；双流 ConvNets 把 RGB 帧和堆叠光流转成外观/运动特征图；归一化抑制神经元响应爆发；轨迹池化把路径上的局部响应变成 TDD；Fisher vector 与线性 SVM 再完成视频级编码和分类。</li><li><strong>输入与表示</strong>：空间流输入单帧 RGB，时间流输入连续光流堆叠体；训练后截去目标卷积层之后的网络，逐帧或逐光流体得到 H×W×L×N 特征张量。轨迹在原图坐标中保存为跨帧点序列，并通过该层 map-size ratio 映射到特征图坐标。</li><li><strong>模型结构</strong>：骨干沿用 Clarifai 风格的双流 ConvNet：空间网与时间网除输入层外采用相同结构，包含交替的 conv、pool、LRN、全连接与 softmax 层；相较原网络缩减 conv4 滤波器和 full7 维度，并在抽取某层特征时删除其后的层。</li><li><strong>数据流</strong>：先在原尺度视频上计算光流、跟踪 improved trajectories；并行构造 RGB/光流金字塔，经空间网与时间网生成多尺度卷积特征图；随后对每张图做时空或通道归一化，按轨迹坐标逐点取响应并求和得到局部 TDD；最后经 PCA、GMM-Fisher 编码和线性 SVM 得到视频动作类别。</li><li><strong>关键技术</strong>：卷积或池化前按核大小做零填充，使输入输出空间范围便于对齐轨迹；时空归一化按单通道在整段视频上的最大值缩放，通道归一化按单像素跨通道最大值缩放；多尺度阶段只改变轨迹坐标到特征图的比例，不重复跟踪。</li><li><strong>公式与超参数</strong>：轨迹由稠密光流的中值滤波更新，最长 P=15 帧；时空归一化为 C_st(x,y,z,n)=C/max_{x,y,z}C，通道归一化为 C_ch(x,y,z,n)=C/max_n C，TDD 对轨迹各点映射后的特征响应求和。多尺度取 1/2、1/√2、1、√2、2；编码时 PCA 取 D=64，GMM 取 K=256，Fisher 向量维度为 2KD，线性 SVM 取 C=100。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：HMDB51：51 类、六千七百六十六个视频片段，每类至少 100 个；每个官方 split 每类 70 个训练、30 个测试，报告三个 split 的平均准确率。</li><li><strong>数据集</strong>：UCF101：101 类、一万三千三百二十个视频片段，每类至少 100 个并分成 25 组；采用 THUMOS13 的三个训练/测试 split。</li><li><strong>规模与划分</strong>：双流 ConvNets 初始训练使用 UCF101 split1；因为 UCF101 大于 HMDB51，所学网络被作为通用特征提取器迁移到 HMDB51。最终数据集结果都遵循各自三个官方训练/测试 split，并取平均准确率。</li><li><strong>模型</strong>：空间网使用公开预训练模型初始化后在 UCF101 微调，时间网从头训练；两者采用相同的 Clarifai 风格双流结构，目标层输出作为通用卷积特征图。论文给出了学习率衰减、mini-batch、动量、dropout 和停止迭代设置，但未报告可复现的随机种子。</li><li><strong>硬件</strong>：致谢明确记录 NVIDIA Corporation 捐赠了一块 Tesla K40 GPU；但正文实验设置、实现细节和致谢均未说明该卡是否实际承担训练或推理，也未报告实际 GPU 数量、CPU/内存配置、训练时长或推理吞吐。</li><li><strong>代码</strong>：论文首页脚注声明 TDD 代码和训练好的双流 ConvNet 模型发布于 <a href="https://wanglimin.github.io/tdd/index.html；正文没有给出许可证、提交版本或依赖锁定信息" target="_blank" rel="noopener noreferrer">https://wanglimin.github.io/tdd/index.html；正文没有给出许可证、提交版本或依赖锁定信息</a>。</li><li><strong>训练平台</strong>：网络实现与训练使用 Caffe；TV-L1 光流调用 OpenCV 实现；计算成本段说明 ConvNets 由 CUDA 实现。论文未报告操作系统、CUDA/CuDNN 版本、Caffe 提交号或具体运行命令。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：HMDB51 官方三划分：每类在每个 split 中有 70 个训练片段和 30 个测试片段。</li><li><strong>评估基准</strong>：UCF101 按 THUMOS13 challenge 方案采用三个训练/测试 split。</li><li><strong>评估指标</strong>：动作分类 accuracy，越高越好；主结果是三个训练/测试 split 的平均准确率。</li><li><strong>对比方法</strong>：手工局部特征与编码基线包括 HOG、HOF、MBH、HOF+MBH、iDT、STIP+BoVW、DT+BoVW、DT+VLAD、DT+MVSV 和 iDT+HSV。</li><li><strong>对比方法</strong>：深度基线包括 spatial net、temporal net、Two-stream ConvNets 与 Deep Net；同时分别比较各空间/时间卷积层的 TDD 及 TDD+iDT 早期融合。</li><li><strong>关键结果</strong>：仅用 TDD+FV 时，HMDB51 为 63.2%，UCF101 为 90.3%；对应 iDT 为 57.2% 与 84.7%，双流 ConvNets 为 59.4% 与 88.0%。</li><li><strong>关键结果</strong>：TDD 与 iDT 的 Fisher vector 早期融合达到 HMDB51 65.9%、UCF101 91.5%，均为越高越好的平均分类准确率。</li><li><strong>关键结果</strong>：按论文原文的比较口径，融合后的最佳结果相对此前方法在 HMDB51 高 4.8%，在 UCF101 高 3.5%；这里比较的都是准确率绝对差，应按百分点理解。</li><li><strong>消融实验</strong>：PCA 降维在 HMDB51 的 spatial-conv4 TDD 上比较 32 到 256 维；作者报告 D=64 取得较高表现，并据此在后续实验固定为 64，同时仅谨慎指出更高维可能造成性能退化。图中的离散点不支持把 64 写成严格全局最优，也不支持继续增维便单调下降。</li><li><strong>消融实验</strong>：归一化探索显示无归一化最差、时空归一化单独最好，而把时空与通道归一化所得 Fisher vectors 融合还能继续提高表现。</li><li><strong>消融实验</strong>：层级消融中空间 conv4/conv5 分别为 48.5%/47.2%，时间 conv3/conv4 分别为 54.5%/51.2%；后续分别组合这两对层。</li><li><strong>实验条件</strong>：双流网络在 UCF101 split1 上训练；测试其分类输出时每个视频取 25 帧、每帧 10 个 crop，并对 crop 与帧取平均。TDD 主实验统一使用 D=64、K=256 的 Fisher vector 和 C=100 的线性 SVM；论文没有报告置信区间、标准差、显著性检验或多随机种子结果。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1507.02159/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Towards Good Practices for Very Deep Two-Stream ConvNets</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1407.6251/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">FollowMe: Efficient Online Min-Cost Flow Tracking with Bounded Memory and Computation</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

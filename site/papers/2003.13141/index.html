@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Learning a Weakly-Supervised Video Actor-Action Segmentation Model with a Wise Selection - 视频领域每日论文卡</title>
+    <meta name="description" content="解决仅有视频级 actor 与 action 标签、没有像素级真值时，怎样为视频中的目标生成可靠的逐像素 actor-action 分割监督，并避免伪标注噪声在迭代训练中被放大。 适用于 A2D 上的弱监督视频 actor-action 分割、YouTube-Object 上的弱监督视频目标分割，以及 AVA 交互类子集上的弱监督时空动作定位；训练只依赖视频级或帧级类别标签。 论文真正检验的是：学习式挑选高质量 PA、用无参考的区域完整性准则决定模型与停止时机，是否能持续改善伪标注；动作分支的时空 GCAM 是否能补足外观分支并识别动作相关区域。 研究背景：VOS 要分出视频中的前景对象；VAAS 在此基础上还要给目标 actor 分配 action 标签。单帧外观可以提示 actor，却难以区分 running 与 walking，因此任务需要视频的时空建模。 核心痛点：传统 synthesize-refine 路线会从低层线索生成大量质量不一的 PA，在背景杂乱、多类别对象或运动模糊时容易失败；没有真实验证掩码时，基于 PA 的 mIoU 可能鼓励模型拟合伪标注噪声；仅按帧工作的二维 GCAM 又无法捕捉动作的时空动态。 任务定义：输入是带视频级对象标签的 VOS 视频，或带视频级 actor 与 action 标签的 VAAS 视频；输出为每帧的像素级前景掩码，VAAS 中每个目标像素还需对应 actor-action 类别。 研究目标：构建一个不盲信全量 PA 的通用弱监督框架：先得到可用的初始 PA，再学习式筛选可靠样本、迭代训练与更新 PA，并以无需真实掩码的边界完整性信号选择模型和决定停止；对 VAAS 再补入动作引导的时空注意。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2003.13141">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2003.13141.webp" alt="Learning a Weakly-Supervised Video Actor-Action Segmentation Model with a Wise Selection" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">解决仅有视频级 actor 与 action 标签、没有像素级真值时，怎样为视频中的目标生成可靠的逐像素 actor-action 分割监督，并避免伪标注噪声在迭代训练中被放大。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Learning a Weakly-Supervised Video Actor-Action Segmentation Model with a Wise Selection</h1>
+            <div class="detail-meta">2020-03-30 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2003.13141" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2003.13141" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2003.13141</span></div>
+            <p class="detail-summary">解决仅有视频级 actor 与 action 标签、没有像素级真值时，怎样为视频中的目标生成可靠的逐像素 actor-action 分割监督，并避免伪标注噪声在迭代训练中被放大。 适用于 A2D 上的弱监督视频 actor-action 分割、YouTube-Object 上的弱监督视频目标分割，以及 AVA 交互类子集上的弱监督时空动作定位；训练只依赖视频级或帧级类别标签。 论文真正检验的是：学习式挑选高质量 PA、用无参考的区域完整性准则决定模型与停止时机，是否能持续改善伪标注；动作分支的时空 GCAM 是否能补足外观分支并识别动作相关区域。 研究背景：VOS 要分出视频中的前景对象；VAAS 在此基础上还要给目标 actor 分配 action 标签。单帧外观可以提示 actor，却难以区分 running 与 walking，因此任务需要视频的时空建模。 核心痛点：传统 synthesize-refine 路线会从低层线索生成大量质量不一的 PA，在背景杂乱、多类别对象或运动模糊时容易失败；没有真实验证掩码时，基于 PA 的 mIoU 可能鼓励模型拟合伪标注噪声；仅按帧工作的二维 GCAM 又无法捕捉动作的时空动态。 任务定义：输入是带视频级对象标签的 VOS 视频，或带视频级 actor 与 action 标签的 VAAS 视频；输出为每帧的像素级前景掩码，VAAS 中每个目标像素还需对应 actor-action 类别。 研究目标：构建一个不盲信全量 PA 的通用弱监督框架：先得到可用的初始 PA，再学习式筛选可靠样本、迭代训练与更新 PA，并以无需真实掩码的边界完整性信号选择模型和决定停止；对 VAAS 再补入动作引导的时空注意。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">19 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Rochester</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2003.13141/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">解决仅有视频级 actor 与 action 标签、没有像素级真值时，怎样为视频中的目标生成可靠的逐像素 actor-action 分割监督，并避免伪标注噪声在迭代训练中被放大。</p>
+  <ul class="reading-intro-points"><li>解决仅有视频级 actor 与 action 标签、没有像素级真值时，怎样为视频中的目标生成可靠的逐像素 actor-action 分割监督，并避免伪标注噪声在迭代训练中被放大。</li><li>适用于 A2D 上的弱监督视频 actor-action 分割、YouTube-Object 上的弱监督视频目标分割，以及 AVA 交互类子集上的弱监督时空动作定位；训练只依赖视频级或帧级类别标签。</li><li>论文真正检验的是：学习式挑选高质量 PA、用无参考的区域完整性准则决定模型与停止时机，是否能持续改善伪标注；动作分支的时空 GCAM 是否能补足外观分支并识别动作相关区域。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Rochester</li><li><strong>实验室 / 团队</strong>：论文首页仅署名 University of Rochester 计算机科学系，未列出具体实验室名称。</li><li><strong>作者与归属</strong>：Jie Chen、Zhiheng Li、Jiebo Luo、Chenliang Xu — Department of Computer Science, University of Rochester。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>解决仅有视频级 actor 与 action 标签、没有像素级真值时，怎样为视频中的目标生成可靠的逐像素 actor-action 分割监督，并避免伪标注噪声在迭代训练中被放大。</li><li>适用于 A2D 上的弱监督视频 actor-action 分割、YouTube-Object 上的弱监督视频目标分割，以及 AVA 交互类子集上的弱监督时空动作定位；训练只依赖视频级或帧级类别标签。</li><li>论文真正检验的是：学习式挑选高质量 PA、用无参考的区域完整性准则决定模型与停止时机，是否能持续改善伪标注；动作分支的时空 GCAM 是否能补足外观分支并识别动作相关区域。</li><li><strong>研究背景</strong>：VOS 要分出视频中的前景对象；VAAS 在此基础上还要给目标 actor 分配 action 标签。单帧外观可以提示 actor，却难以区分 running 与 walking，因此任务需要视频的时空建模。</li><li><strong>核心痛点</strong>：传统 synthesize-refine 路线会从低层线索生成大量质量不一的 PA，在背景杂乱、多类别对象或运动模糊时容易失败；没有真实验证掩码时，基于 PA 的 mIoU 可能鼓励模型拟合伪标注噪声；仅按帧工作的二维 GCAM 又无法捕捉动作的时空动态。</li><li><strong>任务定义</strong>：输入是带视频级对象标签的 VOS 视频，或带视频级 actor 与 action 标签的 VAAS 视频；输出为每帧的像素级前景掩码，VAAS 中每个目标像素还需对应 actor-action 类别。</li><li><strong>研究目标</strong>：构建一个不盲信全量 PA 的通用弱监督框架：先得到可用的初始 PA，再学习式筛选可靠样本、迭代训练与更新 PA，并以无需真实掩码的边界完整性信号选择模型和决定停止；对 VAAS 再补入动作引导的时空注意。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出两阶段 WS²，把初始 PA 生成与 select-train-predict 式 PA 演化串联，并以区域完整性准则约束每轮模型选择和终止。</li><li>为 VAAS 增加三维卷积 GCAM 动作分支，用视频时空特征定位动作判别区域，再与 actor 外观掩码合并生成带动作标签的初始 PA。</li><li>在 A2D 与 YouTube-Object 上给出完整的弱监督分割实验：方法优于论文比较的其他视频级弱监督方法，并量化了其与完全监督 VAAS 方法的差距。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：WS²把弱监督 VOS/VAAS 分成“初始 PA 生成”和“迭代 PA 演化”两阶段：前者为完整训练集产生像素级伪监督，后者用 select-train-predict 周期反复改善 PA；适配 VAAS 时在第一阶段增加动作标签分支。</li><li><strong>输入与表示</strong>：VOS 端接收带视频级对象标签的采样帧；VAAS 仅接收视频级 actor 与 action 标签，其中 2D-Conv GCAM 对采样帧使用继承的视频级 actor 标签，3D-Conv GCAM 对视频片段使用视频级 action 标签。两路分别输出 actor 外观注意图与带时间维的 action 注意图，二值化后取并集，表示目标 actor 及其动作的初始区域。</li><li><strong>模型结构</strong>：第一阶段由 actor 分类器与二维卷积 GCAM、action 分类器与三维卷积 GCAM、Otsu 二值化和 SLIC 超像素细化组成。第二阶段的选择器包含 cut-and-paste patch 二分类器与对象分类器，任一测试通过即可选中 PA；被选 PA 用来监督 DeepLab-v2 分割网络。</li><li><strong>数据流</strong>：先由分类 GCAM 产生注意图，经 Otsu 得到 M_init，再以 SLIC 边界细化为 PA.v0。随后从每个视频取前景 patch 与同尺寸背景 patch，按 PA 剪下前景并粘贴到背景；二分类器或对象分类器通过的 PA 进入训练子集。分割网络在该子集上训练后预测完整训练集，生成下一版 PA，并重复选择、训练、预测直到 RIC 收敛；测试时再用邻帧多数投票统一同一 actor 的 action 标签。</li><li><strong>关键技术</strong>：PA 选择同时采用严格准则与宽松准则：前者要求完整对象及清晰边界，后者只要求掩码暴露足够的类别判别区域；SLIC 提供低层边界约束，RIC 将对 PA 的重合度与细化前后掩码的一致性结合，三维卷积 GCAM 则以时空梯度注意补足二维外观注意。</li><li><strong>公式与超参数</strong>：初始掩码为 M_init=Otsu(S)，SLIC 细化后得到 M_refine；RII=mIoU(M_init,M_refine)，RIC=mIoU_PA+α·RII，α=0.5。对动作类 c，特征图 A_m 的权重 ω_m^c 是 y^c 对 A_m 的时空梯度经 Z 归一化后的求和，动作注意图为 S_action^c=ReLU(Σ_m ω_m^c A_m)。SLIC 阈值 α=0.5、β=0.4；分割训练随机裁剪 224×224 像素，基础学习率 7×10−4、power 0.9、minibatch 12 帧、momentum 0.9。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：A2D：逐像素掩码带 actor-action 标签，用于弱监督 VAAS；数据包含不受控视频质量、动作歧义及多 actor/action 等挑战。</li><li><strong>数据集</strong>：YouTube-Object：用于弱监督 VOS，按论文沿用的公共设置划分训练视频与带像素真值的测试视频。</li><li><strong>数据集</strong>：AVA 的交互类子集：用于仅凭帧级标签的弱监督时空动作定位，训练时不使用其 performer bounding boxes。</li><li><strong>规模与划分</strong>：A2D 共 3782 个视频、7 类 actor、9 类 action；其 3036 个既有训练视频中 2748 个用于分割训练，其余用于验证。初始化分类器微调另从 A2D 的 train &amp; validation set 筛出 2794 个 single-actor 视频训练 ResNet-50、2639 个 single-action 视频训练 I3D；这两个筛选子集不同于前述分割划分。YouTube-Object 共 5507 个 video shots、10 类对象；126 个每隔 10 帧带像素标注的 video shots 用于测试，其余用于训练。AVA 挑选 10 个交互类组成 AVA-10。</li><li><strong>模型</strong>：actor 分类与外观注意采用 ImageNet 预训练的 ResNet-50，微调后在 single-actor test set 的分类准确率为 87.74%；action 分类与动作注意采用 Kinetics-400 预训练的 I3D，在 single-action test set 的分类准确率为 76.60%。像素分割采用 DeepLab-v2；PA 严格准则的 cut-and-paste 判别器是 five-layer Conv-LeakyRelu network，宽松准则复用 actor 分类器。论文未报告这些模型的参数规模。</li><li><strong>硬件</strong>：论文的实验设置与全文均未报告训练或推理所用 GPU、CPU 型号、数量或耗时。</li><li><strong>代码</strong>：论文正文、脚注、结论及参考文献尾部均未给出代码仓库地址，也未声明代码发布状态。</li><li><strong>训练平台</strong>：实验均在离线视频数据集上完成，未涉及仿真器、机器人或实车平台；AVA 子集仅作为弱监督时空动作定位数据。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：A2D 测试集上的弱监督视频 actor-action 分割。</li><li><strong>评估基准</strong>：YouTube-Object 测试集上的视频级弱监督 VOS。</li><li><strong>评估基准</strong>：AVA 交互类子集上的弱监督时空动作定位。</li><li><strong>评估指标</strong>：mIoU：对所有类别求平均交并比，是主要分割指标，数值越高越好。</li><li><strong>评估指标</strong>：mIoU_GT 用真实像素标注评估 PA 或模型，mIoU_PA 用伪标注评估候选模型；两者均越高越好，但后者可能被 PA 噪声误导。</li><li><strong>评估指标</strong>：cls acc 是逐类别平均像素准确率，glo acc 是全局像素准确率；两项均越高越好。</li><li><strong>对比方法</strong>：A2D 的完全监督对比包括 GPM+TSP、TSMT+GBH、TSMT+SM、DST-FCN、Gavrilyuk 等方法和 Ji 等方法。</li><li><strong>对比方法</strong>：A2D 的视频级弱监督对比为 Yan 等人的 robust multi-task ranking 方法。</li><li><strong>对比方法</strong>：YouTube-Object 上与表中八个既有视频级弱监督方法比较。</li><li><strong>关键结果</strong>：A2D 上最终 WS² 使用 subset+RIC 时，验证/测试 actor-action mIoU_GT 为 29.32/26.74；论文将测试表现概括为最佳完全监督方法的约 72%（越高越好）。</li><li><strong>关键结果</strong>：与 Yan 等弱监督方法相比，WS² model.v3 的 actor-action/actor/action cls acc 为 43.06/49.16/35.12，glo acc 为 87.10/91.30/87.44；Yan 等方法报告 actor-action cls acc 41.7，glo acc 81.7/83.1/83.8（越高越好）。</li><li><strong>关键结果</strong>：YouTube-Object 上 WS² 的 mIoU 为 64.7，高于表中此前最高的 63.1（越高越好）。</li><li><strong>关键结果</strong>：只选择高质量 PA 相对全量 PA 基线在 A2D 测试集提高 4.46% mIoU，对应相对提升 22%。</li><li><strong>关键结果</strong>：AVA 交互类子集只给出定性结果：论文依据补充材料注意图称，3D-Conv GCAM 能定位人与之交互的对象，如吸烟者的雪茄或递/服务动作人的手；正文未报告该实验的量化数值。</li><li><strong>消融实验</strong>：A2D 的第二阶段消融中，Baseline（full+mIoU_PA）验证/测试 mIoU_GT 为 24.62/20.38，Model-S（subset+mIoU_PA）为 27.65/24.84，WS²（subset+RIC）为 29.32/26.74；数值越高越好。</li><li><strong>消融实验</strong>：PA.v0 中，init-full 用 56120 帧，actor-action/actor/action mIoU_GT 为 23.31/31.97/29.26；init-select 用 8243 帧，为 25.67/33.62/31.14；数值越高越好。</li><li><strong>消融实验</strong>：PA.v1 中，mIoU_PA-full 用 56120 帧，actor-action/actor/action mIoU_GT 为 28.58/38.21/35.67；RIC-full 同用 56120 帧，为 29.27/38.92/36.86；RIC-select 用 14669 帧，为 32.99/41.47/39.33；数值越高越好。</li><li><strong>消融实验</strong>：PA.v2 中，mIoU_PA-full 用 56120 帧，actor-action/actor/action mIoU_GT 为 31.72/41.54/39.06；RIC-full 同用 56120 帧，为 32.36/42.34/39.94；RIC-select 用 12455 帧，为 33.35/42.27/41.16；数值越高越好。</li><li><strong>消融实验</strong>：PA.v3 中，mIoU_PA-full 用 56120 帧，actor-action/actor/action mIoU_GT 为 33.05/42.84/41.07；RIC-full 同用 56120 帧，为 33.64/43.99/42.22；RIC-select 用 18330 帧，为 34.76/43.60/42.31；数值越高越好。</li><li><strong>消融实验</strong>：与 full set 相比，selected subset 少用 65%-75% 的训练帧；这是正文报告的训练效率结论，不是另一个精度指标。</li><li><strong>实验条件</strong>：分割实验只使用视频级类别标签。A2D 比较中，最佳完全监督对比 Ji et al. 是使用 optical flow 的 two-stream method，而 WS² 只输入 RGB 帧；不能据此推及全部完全监督基线。AVA 子集定位只用帧级监督且不使用 bounding boxes。分割测试逐帧输出整尺寸图，再以邻帧投票统一同一 actor 的 action 标签。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2003.14401/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">TransMoMo: Invariance-Driven Unsupervised Video Motion Retargeting</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2003.06845/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">SF-Net: Single-Frame Supervision for Temporal Action Localization</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

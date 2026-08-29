@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Actor-Action Video Classification CSC 249/449 Spring 2020 Challenge Report - 视频领域每日论文卡</title>
+    <meta name="description" content="它解决的是 A2D 关键帧中“谁在做什么”的联合识别：同一帧可能同时出现多个 actor–action 对，因此输出不是单标签，而是对 43 个有效配对分别作多标签判断。 具体使用场景是离线处理 A2D 视频抽取的关键帧：给定一个图像帧，返回其中所有合法 actor–action 标签；部分提交还读取相邻帧或整段视频来补充动作的时间线索。 报告真正检验的是：异构课程提交在共同的 Precision、Recall、F1 协议下能达到怎样的横向表现，以及各子报告内部的模块与各自基线对比呈现什么增益或失败模式。 研究背景：A2D 将以人为中心的动作识别扩展到多种 actor；报告首页说明数据含 3782 个视频，并以带 actor–action 类别的分割掩码标注不同主体所执行的动作。 核心痛点：一帧可同时出现多个主体，普通单标签分类器无法表达多个合法配对；动作本身又具有时间性，而挑战主要对关键帧作图像级判断。逐类检测还不能依赖挑战中未提供的真值框或分割掩码。 任务定义：输入是 A2D 视频的目标关键帧，必要时可附加视频中的相邻帧；输出是对 43 个合法 actor–action 类别分别给出的置信度或多热标签，并允许同一帧命中多个类别。 研究目标：该文不是提出一个唯一网络，而是汇编课程挑战提交，在统一任务和评测指标下比较逐类检测、注意力、时空卷积、迁移学习、候选框、多尺度融合、边缘分解与类别重加权等路线，并总结各自的有效设计和失败模式。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2008.00141">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2008.00141.webp" alt="Actor-Action Video Classification CSC 249/449 Spring 2020 Challenge Report" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">它解决的是 A2D 关键帧中“谁在做什么”的联合识别：同一帧可能同时出现多个 actor–action 对，因此输出不是单标签，而是对 43 个有效配对分别作多标签判断。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Actor-Action Video Classification CSC 249/449 Spring 2020 Challenge Report</h1>
+            <div class="detail-meta">2020-08-01 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2008.00141" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2008.00141" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2008.00141</span></div>
+            <p class="detail-summary">它解决的是 A2D 关键帧中“谁在做什么”的联合识别：同一帧可能同时出现多个 actor–action 对，因此输出不是单标签，而是对 43 个有效配对分别作多标签判断。 具体使用场景是离线处理 A2D 视频抽取的关键帧：给定一个图像帧，返回其中所有合法 actor–action 标签；部分提交还读取相邻帧或整段视频来补充动作的时间线索。 报告真正检验的是：异构课程提交在共同的 Precision、Recall、F1 协议下能达到怎样的横向表现，以及各子报告内部的模块与各自基线对比呈现什么增益或失败模式。 研究背景：A2D 将以人为中心的动作识别扩展到多种 actor；报告首页说明数据含 3782 个视频，并以带 actor–action 类别的分割掩码标注不同主体所执行的动作。 核心痛点：一帧可同时出现多个主体，普通单标签分类器无法表达多个合法配对；动作本身又具有时间性，而挑战主要对关键帧作图像级判断。逐类检测还不能依赖挑战中未提供的真值框或分割掩码。 任务定义：输入是 A2D 视频的目标关键帧，必要时可附加视频中的相邻帧；输出是对 43 个合法 actor–action 类别分别给出的置信度或多热标签，并允许同一帧命中多个类别。 研究目标：该文不是提出一个唯一网络，而是汇编课程挑战提交，在统一任务和评测指标下比较逐类检测、注意力、时空卷积、迁移学习、候选框、多尺度融合、边缘分解与类别重加权等路线，并总结各自的有效设计和失败模式。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Rochester</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2008.00141/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">它解决的是 A2D 关键帧中“谁在做什么”的联合识别：同一帧可能同时出现多个 actor–action 对，因此输出不是单标签，而是对 43 个有效配对分别作多标签判断。</p>
+  <ul class="reading-intro-points"><li>它解决的是 A2D 关键帧中“谁在做什么”的联合识别：同一帧可能同时出现多个 actor–action 对，因此输出不是单标签，而是对 43 个有效配对分别作多标签判断。</li><li>具体使用场景是离线处理 A2D 视频抽取的关键帧：给定一个图像帧，返回其中所有合法 actor–action 标签；部分提交还读取相邻帧或整段视频来补充动作的时间线索。</li><li>报告真正检验的是：异构课程提交在共同的 Precision、Recall、F1 协议下能达到怎样的横向表现，以及各子报告内部的模块与各自基线对比呈现什么增益或失败模式。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Rochester</li><li><strong>机构</strong>：Brain and Cognitive Sciences, University of Rochester</li><li><strong>机构</strong>：Department of Biomedical Engineering, University of Rochester</li><li><strong>机构</strong>：Hajim School of Engineering and Applied Sciences, University of Rochester</li><li><strong>实验室 / 团队</strong>：论文首页未署名具体实验室，统一机构署名仅为 University of Rochester。</li><li><strong>作者与归属</strong>：首页作者名单—University of Rochester（报告统一署名）。</li><li><strong>作者与归属</strong>：Bin Yang、Zhexin Xu、Ruitao Lin—Brain and Cognitive Sciences, University of Rochester。</li><li><strong>作者与归属</strong>：Alan Finkelstein—Department of Biomedical Engineering, University of Rochester。</li><li><strong>作者与归属</strong>：Ethan Fahnestock、Bryce Ikeda、Ian Lawson—Hajim School of Engineering and Applied Sciences, University of Rochester。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>它解决的是 A2D 关键帧中“谁在做什么”的联合识别：同一帧可能同时出现多个 actor–action 对，因此输出不是单标签，而是对 43 个有效配对分别作多标签判断。</li><li>具体使用场景是离线处理 A2D 视频抽取的关键帧：给定一个图像帧，返回其中所有合法 actor–action 标签；部分提交还读取相邻帧或整段视频来补充动作的时间线索。</li><li>报告真正检验的是：异构课程提交在共同的 Precision、Recall、F1 协议下能达到怎样的横向表现，以及各子报告内部的模块与各自基线对比呈现什么增益或失败模式。</li><li><strong>研究背景</strong>：A2D 将以人为中心的动作识别扩展到多种 actor；报告首页说明数据含 3782 个视频，并以带 actor–action 类别的分割掩码标注不同主体所执行的动作。</li><li><strong>核心痛点</strong>：一帧可同时出现多个主体，普通单标签分类器无法表达多个合法配对；动作本身又具有时间性，而挑战主要对关键帧作图像级判断。逐类检测还不能依赖挑战中未提供的真值框或分割掩码。</li><li><strong>任务定义</strong>：输入是 A2D 视频的目标关键帧，必要时可附加视频中的相邻帧；输出是对 43 个合法 actor–action 类别分别给出的置信度或多热标签，并允许同一帧命中多个类别。</li><li><strong>研究目标</strong>：该文不是提出一个唯一网络，而是汇编课程挑战提交，在统一任务和评测指标下比较逐类检测、注意力、时空卷积、迁移学习、候选框、多尺度融合、边缘分解与类别重加权等路线，并总结各自的有效设计和失败模式。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>把同一届 actor–action 分类挑战的全部提交、统一任务说明和总榜单汇编在一份报告中，使不同小组的设计能在共同协议下直接对照。</li><li>最高分提交让所有逐类检测器共享 CNN 特征，引入空间注意力与多帧时空卷积分支，再把三个模型按 F1 权重结合投票和概率平均。</li><li>报告系统呈现了联合预测与 actor/action 边缘预测、光流、词嵌入、候选框、多尺度特征、迁移学习和类别加权等多条互补路线，而非只给单一最佳模型。</li><li>各子报告保留了可复核的负结果与设计消融，包括随机裁剪丢失正样本、候选框路径限制批学习、时空模型训练较慢，以及手工多分支模型不如预训练基线。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：代表性的 PCD 系列把共享 ResNet 特征提取器作为公共主干，逐类检测头判断各配对是否存在；APCD 注意力支路筛选空间区域，时空卷积分支读取连续帧，最后的 ensemble 融合各分支预测。其他提交则分别充当对照：候选框先定位主体、多尺度支路保留不同分辨率信息，或先判 actor 再调用对应 action 分类器。</li><li><strong>输入与表示</strong>：静态路径把 RGB 图像和多热标签送入网络。时序 CNN–LSTM 路径读取目标帧及最接近的五个先前帧，不足时前补零，组成六帧张量；其他时序提交也可从目标帧周围取连续帧。</li><li><strong>模型结构</strong>：PCD-ResNet 从 ResNet-152 的平均池化层取得 2048×1 特征，再接 43 个独立检测头。APCD 从 layer3 取 1024×14×14 特征，经 kernel=3、depth=1、stride=1、padding=1 的卷积和 sigmoid 形成注意力图。时空分支以 16 帧输入替换单帧主干，分别执行空间与时间卷积。</li><li><strong>数据流</strong>：关键帧或短 clip 先经主干得到共享特征；静态 PCD 直接把特征送入逐类检测头，APCD 先用注意力图逐元素加权后再送入后层，时空分支在空间和时间上卷积。各分支输出 43 维类别分数，ensemble 再计算加权投票与加权平均并取二者均值作为最终预测。</li><li><strong>关键技术</strong>：核心技术包括把多标签问题改写为共享特征上的独立类检测、用注意力抑制无关区域、逐步增加时序帧数以降低训练成本、从多层 ResNet 特征做自注意力与跨尺度融合、用 PSO 学 actor 阈值，以及在 BCE 中按小批次正负比例设置正类权重。</li><li><strong>公式与超参数</strong>：PCD 使用 L=-Σ_i[y_i log p_i+(1-y_i)log(1-p_i)]，其中 N=43，y_i 与 p_i 分别是真值和预测；其 SGD 设置为 lr=1×10−5、momentum=0.9、weight decay=4×10−5。集成按各模型 F1 归一化权重形成阈值投票 v 与概率平均 m，并取二者均值作为最终预测。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：A2D：3782 个 YouTube 视频；报告首页采用七个 actor 类、八个 action 类，挑战输出覆盖 43 个有效 actor–action 配对。</li><li><strong>数据集</strong>：挑战样本是从视频抽取并带 actor–action 标注的关键帧；同一帧可包含多个主体，因此标签是多热而非互斥单标签。</li><li><strong>规模与划分</strong>：帧级划分为 4750 个 training 图像、1209 个 validation 图像和 1044 个 test 图像，相关子报告说明挑战公开使用训练与验证集。另一子报告给出视频级原始划分为 3036 个训练视频、746 个测试视频，每个视频标注三至五帧。</li><li><strong>模型</strong>：骨干和模块覆盖深层残差网络、分解式时空残差网络、SE-ResNeXt、YOLO 检测器与 LSTM；各子报告未给出统一的参数量或 FLOPs，因此不能据此作同算力比较。</li><li><strong>硬件</strong>：明确报告的环境包括两张本地 2080Ti（各 11GB 显存），以及 Google Cloud Deep Learning VM（双核、13GB RAM、NVIDIA Tesla K80）。其他提交没有统一报告训练或推理硬件。</li><li><strong>代码</strong>：报告未给出覆盖全部提交、可直接复现挑战的统一代码仓库；个别子报告只列出 PyTorch、pyflow 和 PyTorch-YOLOv3 等所用框架或资源名称。</li><li><strong>训练平台</strong>：第二组明确使用 Ubuntu 16.04/18.04、CUDA 10.1、Python 3.7、PyTorch 1.2.0；另一组使用 Google Cloud Deep Learning VM。全文属于离线数据集实验，没有仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：A2D actor–action classification 的 released validation set；报告还在首页总表汇总全部小组的提交结果。</li><li><strong>评估指标</strong>：Precision、Recall 与 F1，三者均越高越好；Precision 反映预测阳性中的正确比例，Recall 反映真实阳性的召回比例，F1 综合二者。</li><li><strong>对比方法</strong>：总榜单横向比较全部参赛组；最佳组还在 PCD-ResNet、APCD-ResNet、时空 PCD 与三路 Ensemble 之间作同一验证集比较。</li><li><strong>对比方法</strong>：独立子报告比较了 ResNet 单帧基线、object proposal 与 multi-scale fusion，也比较联合预测、actor/action 边缘预测、光流、三维卷积和词嵌入变体。</li><li><strong>关键结果</strong>：全报告最佳 Ensemble 在验证集取得 Precision 63.2、Recall 66.8、F1 62.9（表中分数，均越高越好）。</li><li><strong>关键结果</strong>：多尺度融合取得 Precision 0.521、Recall 0.554、F1 0.515，高于同组 ResNet 基线的 F1 0.294 和 object proposal 的 F1 0.253（小数口径，均越高越好）。</li><li><strong>关键结果</strong>：迁移学习组在验证集得到 Precision 48.5%、Recall 61.2%、F1 55.2%；测试集为 Precision 46.72%、Recall 59.47%、F1 49.63%，均越高越好。</li><li><strong>消融实验</strong>：随机裁剪使训练集与验证集的逐类正样本分别减少 26.8% 和 28.1%，对应实验也显示裁剪损害评测表现。</li><li><strong>消融实验</strong>：PCD 组的单模型 F1 分别为 59.4、58.9、61.7，三路 Ensemble 提升到 62.9，说明互补静态、注意力与时序预测有增益。</li><li><strong>消融实验</strong>：迁移学习组比较 epoch、batch size、optimizer 与 learning rate；最佳行使用 50 epochs、batch 16、SGD、lr 0.05，得到 F1 55.2%，之后开始过拟合。</li><li><strong>消融实验</strong>：串联方案把统一阈值 0.15 与 SPSO 逐类阈值比较，actor 检测 F1 从 73.4 提高到 75.0；这是 actor 子任务消融，不是整网分数。</li><li><strong>实验条件</strong>：评测口径是 A2D 离线数据划分：有的子报告只用 still-image classification 部分并监督微调 ImageNet 预训练骨干，另有时序路线读取目标帧邻近的视频帧。通读全文的实验设置和资源说明，未见闭环、仿真器、机器人或实车平台评测。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2008.13196/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Finding Action Tubes with a Sparse-to-Dense Framework</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2007.10558/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Unified Multisensory Perception: Weakly-Supervised Audio-Visual Video Parsing</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

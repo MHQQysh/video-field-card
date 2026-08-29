@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Actionness Estimation Using Hybrid Fully Convolutional Networks - 视频领域每日论文卡</title>
+    <meta name="description" content="要解决的不是动作分类只回答“有没有”，而是对任意尺寸帧的每个位置给出“这里多可能含有通用动作实例”的稠密 actionness。它让检测器避开视频空间中的穷举滑窗，并把定位线索变成可复用的中间表征。 在 Stanford40 静态动作照片中，A-FCN 由 RGB 定位演员；在 UCF Sports 与 JHMDB 视频中，M-FCN 再从相邻两帧光流捕捉身体运动。所得图可按帧采样少量 proposal，送入双流分类器后再跨帧连接成动作管。 论文真正检验的是：外观中的“agent”线索与运动中的“movement”线索，能否在框级弱监督下互补地学成通用 actionness；这种图的收益能否从 actionness mAP 继续传递到 proposal recall 以及 frame-AP 和 video-AP。 研究背景：动作分类回答视频里是否出现某类动作，却不给出动作在哪里；动作检测还需逐帧定位边界框，并把这些框组成时空动作管。Actionness 则把问题前移为与类别无关的逐位置置信度，数值越高表示该位置越可能含有动作实例。 核心痛点：直接滑窗在 W×H×T 视频中面临单帧约 O((WH)^2) 个框和组合爆炸的动作管。既有 proposal 多依赖空间边缘、运动边界和层次化超体素合并，带有启发式设计且易受输入噪声影响；每帧通常仍产生约 0.1K–1K 个候选区域，后续分类成本很高。 任务定义：论文把动作限定为生物主体有意的身体运动，因此同时需要定位主体的静态外观与身体运动。给定原始 RGB 帧和相邻帧光流，模型输出与输入空间对应的稠密 actionness 图，每个位置表示包含通用动作实例的置信度。 研究目标：目标是用全卷积结构直接从帧与光流端到端估计任意尺寸输入的 actionness，以外观/运动互补提高准确率和效率，并检验这些图是否能进一步改善动作 proposal 与动作检测，而不只在中间热图指标上有效。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1604.07279">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1604.07279.webp" alt="Actionness Estimation Using Hybrid Fully Convolutional Networks" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">要解决的不是动作分类只回答“有没有”，而是对任意尺寸帧的每个位置给出“这里多可能含有通用动作实例”的稠密 actionness。它让检测器避开视频空间中的穷举滑窗，并把定位线索变成可复用的中间表征。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Actionness Estimation Using Hybrid Fully Convolutional Networks</h1>
+            <div class="detail-meta">2016-04-25 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1604.07279" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1604.07279" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1604.07279</span></div>
+            <p class="detail-summary">要解决的不是动作分类只回答“有没有”，而是对任意尺寸帧的每个位置给出“这里多可能含有通用动作实例”的稠密 actionness。它让检测器避开视频空间中的穷举滑窗，并把定位线索变成可复用的中间表征。 在 Stanford40 静态动作照片中，A-FCN 由 RGB 定位演员；在 UCF Sports 与 JHMDB 视频中，M-FCN 再从相邻两帧光流捕捉身体运动。所得图可按帧采样少量 proposal，送入双流分类器后再跨帧连接成动作管。 论文真正检验的是：外观中的“agent”线索与运动中的“movement”线索，能否在框级弱监督下互补地学成通用 actionness；这种图的收益能否从 actionness mAP 继续传递到 proposal recall 以及 frame-AP 和 video-AP。 研究背景：动作分类回答视频里是否出现某类动作，却不给出动作在哪里；动作检测还需逐帧定位边界框，并把这些框组成时空动作管。Actionness 则把问题前移为与类别无关的逐位置置信度，数值越高表示该位置越可能含有动作实例。 核心痛点：直接滑窗在 W×H×T 视频中面临单帧约 O((WH)^2) 个框和组合爆炸的动作管。既有 proposal 多依赖空间边缘、运动边界和层次化超体素合并，带有启发式设计且易受输入噪声影响；每帧通常仍产生约 0.1K–1K 个候选区域，后续分类成本很高。 任务定义：论文把动作限定为生物主体有意的身体运动，因此同时需要定位主体的静态外观与身体运动。给定原始 RGB 帧和相邻帧光流，模型输出与输入空间对应的稠密 actionness 图，每个位置表示包含通用动作实例的置信度。 研究目标：目标是用全卷积结构直接从帧与光流端到端估计任意尺寸输入的 actionness，以外观/运动互补提高准确率和效率，并检验这些图是否能进一步改善动作 proposal 与动作检测，而不只在中间热图指标上有效。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">21 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Shenzhen Institutes of Advanced Technology, CAS, China（中国科学院深圳先进技术研究院）。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1604.07279/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">要解决的不是动作分类只回答“有没有”，而是对任意尺寸帧的每个位置给出“这里多可能含有通用动作实例”的稠密 actionness。它让检测器避开视频空间中的穷举滑窗，并把定位线索变成可复用的中间表征。</p>
+  <ul class="reading-intro-points"><li>要解决的不是动作分类只回答“有没有”，而是对任意尺寸帧的每个位置给出“这里多可能含有通用动作实例”的稠密 actionness。它让检测器避开视频空间中的穷举滑窗，并把定位线索变成可复用的中间表征。</li><li>在 Stanford40 静态动作照片中，A-FCN 由 RGB 定位演员；在 UCF Sports 与 JHMDB 视频中，M-FCN 再从相邻两帧光流捕捉身体运动。所得图可按帧采样少量 proposal，送入双流分类器后再跨帧连接成动作管。</li><li>论文真正检验的是：外观中的“agent”线索与运动中的“movement”线索，能否在框级弱监督下互补地学成通用 actionness；这种图的收益能否从 actionness mAP 继续传递到 proposal recall 以及 frame-AP 和 video-AP。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Shenzhen Institutes of Advanced Technology, CAS, China（中国科学院深圳先进技术研究院）。</li><li><strong>机构</strong>：The Chinese University of Hong Kong, Department of Information Engineering（香港中文大学信息工程系）。</li><li><strong>机构</strong>：ETH Zurich（苏黎世联邦理工学院）。</li><li><strong>实验室 / 团队</strong>：Shenzhen Key Lab of Computer Vision and Pattern Recognition；论文首页将其与深圳先进技术研究院共同列为单位。</li><li><strong>实验室 / 团队</strong>：Computer Vision Lab, ETH Zurich；香港中文大学署名到信息工程系，未另列具名实验室。</li><li><strong>作者与归属</strong>：Limin Wang 同时署名深圳先进技术研究院/CAS 与 ETH Zurich。</li><li><strong>作者与归属</strong>：Yu Qiao 署名深圳先进技术研究院/CAS。</li><li><strong>作者与归属</strong>：Xiaoou Tang 同时署名深圳先进技术研究院/CAS 与香港中文大学信息工程系。</li><li><strong>作者与归属</strong>：Luc Van Gool 署名 ETH Zurich Computer Vision Lab。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>要解决的不是动作分类只回答“有没有”，而是对任意尺寸帧的每个位置给出“这里多可能含有通用动作实例”的稠密 actionness。它让检测器避开视频空间中的穷举滑窗，并把定位线索变成可复用的中间表征。</li><li>在 Stanford40 静态动作照片中，A-FCN 由 RGB 定位演员；在 UCF Sports 与 JHMDB 视频中，M-FCN 再从相邻两帧光流捕捉身体运动。所得图可按帧采样少量 proposal，送入双流分类器后再跨帧连接成动作管。</li><li>论文真正检验的是：外观中的“agent”线索与运动中的“movement”线索，能否在框级弱监督下互补地学成通用 actionness；这种图的收益能否从 actionness mAP 继续传递到 proposal recall 以及 frame-AP 和 video-AP。</li><li><strong>研究背景</strong>：动作分类回答视频里是否出现某类动作，却不给出动作在哪里；动作检测还需逐帧定位边界框，并把这些框组成时空动作管。Actionness 则把问题前移为与类别无关的逐位置置信度，数值越高表示该位置越可能含有动作实例。</li><li><strong>核心痛点</strong>：直接滑窗在 W×H×T 视频中面临单帧约 O((WH)^2) 个框和组合爆炸的动作管。既有 proposal 多依赖空间边缘、运动边界和层次化超体素合并，带有启发式设计且易受输入噪声影响；每帧通常仍产生约 0.1K–1K 个候选区域，后续分类成本很高。</li><li><strong>任务定义</strong>：论文把动作限定为生物主体有意的身体运动，因此同时需要定位主体的静态外观与身体运动。给定原始 RGB 帧和相邻帧光流，模型输出与输入空间对应的稠密 actionness 图，每个位置表示包含通用动作实例的置信度。</li><li><strong>研究目标</strong>：目标是用全卷积结构直接从帧与光流端到端估计任意尺寸输入的 actionness，以外观/运动互补提高准确率和效率，并检验这些图是否能进一步改善动作 proposal 与动作检测，而不只在中间热图指标上有效。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 H-FCN 双路稠密估计器：A-FCN 从 RGB 学习主体与场景的静态外观，M-FCN 从光流学习身体运动，两路 actionness 图取平均融合。</li><li>把 ClarifaiNet 改造成可处理任意尺寸输入的像素到像素 FCN，通过卷积化顶层、减小后段池化下采样并输出动作/非动作概率，使网络能够直接训练稠密图。</li><li>以演员边界框转成二值图作为弱监督，并在测试时对帧和光流构建多尺度金字塔；各尺度图对齐平均，再与双流平均结合以处理动作尺度变化。</li><li>设计基于 actionness、积分图与 NMS 的候选框采样，在偏向高 actionness 的同时覆盖不同位置，取代依赖低层分割与超体素层次合并的 proposal 生成。</li><li>把 actionness proposal 接入双流动作分类器和跨帧动作管连接，在 actionness 估计、proposal recall、逐帧检测与整段视频动作管检测上形成完整验证链。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：H-FCN 是中间的类别无关定位器：A-FCN 判断哪里像动作主体，M-FCN 判断哪里呈现身体运动，多尺度与双流聚合生成最终 actionness。下游模块再以该图采样候选框、用双流分类器赋动作类别，并将逐帧检测链接为时空动作管。</li><li><strong>输入与表示</strong>：A-FCN 接收单帧 W×H×3 RGB 体；M-FCN 接收相邻两帧水平/垂直光流堆叠成的 W×H×4 体。训练标签由演员框弱转换而来，框内像素标为动作、框外标为背景；两支输出同空间的二类分数图，最终 actionness 为两图的等权平均。</li><li><strong>模型结构</strong>：两支均以 ClarifaiNet 为骨架：fc6、fc7、fc8 被 conv6、conv7、conv8 替代，顶层卷积核与步幅均为 1×1；第五个卷积层后的池化步幅由 2×2 改成 1×1，以减少稠密预测的下采样；每个位置输出二维动作存在概率并用交叉熵训练。</li><li><strong>数据流</strong>：训练时分别从 ImageNet 与 UCF101 初始化外观/运动支路，再在目标数据集单尺度微调。测试时把 RGB 与光流扩展为尺度 {1/√2, 1, √2, 2} 的金字塔，各尺度经对应 FCN 后还原到同一空间并平均，再平均 A-FCN/M-FCN。proposal 阶段把图缩到 32×32，以积分图快速算任意框的平均 actionness，经 NMS 兼顾高分和空间多样性；分类结果最后按相邻帧框重叠与检测分数寻找最大时间路径。</li><li><strong>关键技术</strong>：弱框监督省去像素级演员掩码，但会把框内背景一并标成动作；全卷积共享局部滤波器，使大图不必逐窗重复计算。检测训练直接裁剪真值框作正样本，并把与真值 IoU 小于 0.25 的 proposal 作负样本，分类头以 |A|+1 个输出显式加入背景类。</li><li><strong>公式与超参数</strong>：FCN 层在位置 (i,j) 以核宽 k、步幅 s 收集局部特征并交给算子 h_{k,s}，算子可为卷积、池化或逐元素激活；稠密损失 ℓ(x,m;θ) 是所有位置损失 ℓ′(x,mij;θ) 之和。A-FCN 训练使用 224×224 输入与 14×14 标签图，mini-batch 100、momentum 0.9；学习率从 10⁻² 开始，在 1K/2K 次迭代后降为 10⁻³/10⁻⁴，3K 停止。M-FCN 的 UCF101 预训练在 fc6/fc7 使用 0.9/0.8 dropout。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Stanford40：9, 532 张静态图像、40 个日常动作类别，每图有演员框；4, 000 张训练、5, 532 张测试，用于 A-FCN actionness 与 proposal 评估。</li><li><strong>数据集</strong>：UCF Sports：150 段广播视频、10 类动作，每帧有演员框；标准划分为 103 段训练、47 段测试，用于视频 actionness。</li><li><strong>数据集</strong>：JHMDB：928 段视频、21 类动作，提供关节和身体掩码；正文把掩码转成框作弱监督，并在三个训练/测试划分上取平均，用于 actionness、proposal 与 detection。</li><li><strong>数据集</strong>：UCF101：13, 320 段视频、101 类动作；仅用于从头预训练 ClarifaiNet 运动模型，再把卷积层迁移到 M-FCN，并非本文目标任务的测试集。</li><li><strong>规模与划分</strong>：Stanford40 使用固定 4, 000/5, 532 图像划分，UCF Sports 使用 103/47 视频划分，JHMDB 对三个官方划分取平均。A-FCN 微调时图像缩为 224×224、监督图为 14×14；M-FCN 的 TV-L1 光流量化为 0–255 的整数范围。UCF Sports 与 JHMDB 视频均为时间上裁剪好的片段。</li><li><strong>模型</strong>：基础架构是 ClarifaiNet：A-FCN 从论文引用的 ImageNet 预训练模型迁移卷积层，M-FCN 先在 UCF101 从头训练动作识别再迁移；proposal 分类使用预训练双流卷积网络并改最后输出层。正文给出逐层结构和训练策略，但没有报告 H-FCN 总参数量。</li><li><strong>硬件</strong>：唯一明确的硬件/速度口径是 Caffe 的 CUDA 实现：Tesla K40 GPU 上处理一张多尺度图像约需 30ms。正文没有给出训练 GPU 型号与数量、CPU、内存或总训练时长；“multi-GPU extension”描述的是公开代码能力，不是实验实际用了多少 GPU。</li><li><strong>代码</strong>：正文脚注给出 <a href="https://github.com/yjxiong/caffe，并称带" target="_blank" rel="noopener noreferrer">https://github.com/yjxiong/caffe，并称带</a> multi-GPU 扩展的训练代码公开；该链接对应作者使用的 Caffe/双流训练代码，论文没有另给完整 H-FCN 项目页。目录元数据的 project_url 与 code_url 因此仍逐字保持为空。</li><li><strong>训练平台</strong>：实现依赖 Caffe/CUDA 运行网络，并用 OpenCV 的 TV-L1 算法计算两帧光流；实验载体是静态图像和已录制视频数据集。全文实验与附录范围内没有机器人、仿真器、实车闭环或在线摄像头部署。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Actionness 估计：Stanford40 静态图像只测 A-FCN；UCF Sports 与 JHMDB 视频比较 A-FCN、M-FCN 和融合 H-FCN。</li><li><strong>评估基准</strong>：Action proposal：在 Stanford40 与 JHMDB 按帧评估由 actionness 图采样的候选框，因为当前实现没有在 proposal 阶段建模跨帧关系。</li><li><strong>评估基准</strong>：Action detection：仅在 JHMDB 上评估逐帧框和链接后的动作管，proposal 由 H-FCN 产生，类别分数来自双流卷积分类器。</li><li><strong>评估指标</strong>：Actionness 使用 mAP（越高越好）：图像划成 16×16 网格，视频划成 16×16×4 时空网格；网格与真值框 IoU 大于 0.5 记正，单样本 AP 为 PR 曲线下面积，再对测试样本平均。</li><li><strong>评估指标</strong>：Proposal 使用 recall（越高越好）：一类曲线固定 IoU 阈值考察候选框数量，另一类固定候选数考察 IoU 阈值；评价按帧进行。</li><li><strong>评估指标</strong>：Detection 使用 frame-AP 与 video-AP（均越高越好）：前者要求类别正确且该帧框 IoU 大于 0.5；后者要求类别正确且整条动作管逐帧 IoU 的均值大于 0.5。</li><li><strong>对比方法</strong>：Actionness 对比 L-CORF、DPM、RankSVM、MBS；proposal 的置信图基线为 L-CORF、DPM、Objectness，正文只对这三种方法说明使用同一 NMS score sampling，差别在于生成置信图的方式。</li><li><strong>对比方法</strong>：Proposal 还分别对照视频方法 STODP 与 random sampling；STODP 是正文随后单独加入的对照，random sampling 出现在 Figure 6 的曲线中。</li><li><strong>对比方法</strong>：Detection 对比 Gkioxari–Malik 的 spatial-CNN、motion-CNN 及融合模型，同时报告本文 s-net、t-net 与 full net。</li><li><strong>关键结果</strong>：Stanford40 actionness mAP：A-FCN 为 79.7%，高于 L-CORF 的 72.5%，但低于 DPM 的 85.6%；因此论文方法并非在每个数据集、每个对手上都第一。</li><li><strong>关键结果</strong>：UCF Sports actionness mAP：A-FCN、M-FCN、H-FCN 分别为 75.0%、77.2%、82.7%，融合优于两条单流。</li><li><strong>关键结果</strong>：JHMDB actionness mAP：A-FCN、M-FCN、H-FCN 分别为 80.7%、80.6%、86.5%，两类线索单独接近，融合最高。</li><li><strong>关键结果</strong>：Proposal 以 IoU 大于 0.5 计时，Stanford40 每图 10 个框、JHMDB 每帧 4 个框即可达到 0.9 recall；当 IoU 提高到 0.7 且每图给 10 个框时，检测率仍为 0.5–0.6。</li><li><strong>关键结果</strong>：JHMDB detection mAP：表头单位为百分比，本文 full net 的 frame-AP 为 39.9，对比模型 full 为 36.2；本文 video-AP 为 56.4，对比模型 full 为 53.3。这些是逐帧与动作管两种不同口径，不把二者差值当作纯粹的链接增益。</li><li><strong>消融实验</strong>：单流/双流对照显示互补性：在 UCF Sports 和 JHMDB 上，H-FCN 均高于 A-FCN 与 M-FCN；proposal 曲线中 A-FCN 又优于 M-FCN，而二者平均后继续提升。</li><li><strong>消融实验</strong>：多尺度对照显示各尺度 actionness 图互补，测试时平均后的组合优于任一单尺度；论文同时给出各尺度计算成本，但图中柱高没有完整表格数值，故不从图上臆测精确 mAP。</li><li><strong>消融实验</strong>：正文可视为消融的只有单流/融合和单尺度/多尺度对照；没有对三项 ClarifaiNet 结构修改、预训练策略或 NMS 采样组件逐项移除，因此这些设计各自的独立收益未被量化。</li><li><strong>实验条件</strong>：Stanford40 与 UCF Sports 使用各自固定划分，JHMDB 报告三个划分平均；测试 actionness 使用多尺度平均。Proposal 逐帧独立生成，动作管再用相邻帧重叠与检测分数寻找最大时间路径。两种 detection AP 都以 0.5 IoU 和类别正确为判定条件；正文没有报告多随机种子、方差、置信区间或显著性检验。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1604.07669/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Real-time Action Recognition with Enhanced Motion Vector CNNs</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1601.02129/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Temporal Action Localization in Untrimmed Videos via Multi-stage CNNs</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

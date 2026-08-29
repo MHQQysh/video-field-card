@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TransMoMo: Invariance-Driven Unsupervised Video Motion Retargeting - 视频领域每日论文卡</title>
+    <meta name="description" content="它解决源人与目标人在体型和视角差异很大、又没有成对监督数据时的视频动作重定向：从源视频提取动作并施加到目标人物，同时绕开显式三维人体姿态估计。 具体场景是源视频到目标人物视频的动作重定向：从源、目标视频抽取二维关节序列，经骨架动作重定向生成新关节序列，再由可用的图像到图像翻译方法渲染目标视频。 论文真正检验的是：把动作、身体结构和视角分成可独立组合的潜变量，并用因素间不变性构造无监督损失，是否能在合成与真实网页动作上同时改善骨架误差、渲染质量和视频运动一致性。 研究背景：动作重定向服务于人物视频内容创作；依赖高质量三维姿态的方法需要复杂昂贵的优化，且在含复杂动作的非受控视频中容易受姿态误差影响；逐图像生成又会忽略视频时间一致性而产生闪烁。 核心痛点：困难集中在三点：源人与目标人的体型、视角差异使像素级直接映射在极端或未见样本上失效；不同人物执行同一动作的对应图像对不可得；人体运动关节化且运动学高度非线性，难以建模和迁移。 任务定义：输入是源与目标人物视频。系统提取两者二维关节序列，组合源动作编码和目标结构编码，解码为三维关节序列，按所需视角投影回二维，再把逐帧标签图交给预训练图像生成器输出目标人物视频。 研究目标：目标是在二维骨架空间建立端到端、可替换前后端的动作重定向核心，不显式估计三维人体姿态；仅依靠未标注网页视频及运动、结构、视角之间的不变性，学习可分解并可重组的表示。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2003.14401">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2003.14401.webp" alt="TransMoMo: Invariance-Driven Unsupervised Video Motion Retargeting" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">它解决源人与目标人在体型和视角差异很大、又没有成对监督数据时的视频动作重定向：从源视频提取动作并施加到目标人物，同时绕开显式三维人体姿态估计。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">TransMoMo: Invariance-Driven Unsupervised Video Motion Retargeting</h1>
+            <div class="detail-meta">2020-03-31 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2003.14401" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2003.14401" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2003.14401</span></div>
+            <p class="detail-summary">它解决源人与目标人在体型和视角差异很大、又没有成对监督数据时的视频动作重定向：从源视频提取动作并施加到目标人物，同时绕开显式三维人体姿态估计。 具体场景是源视频到目标人物视频的动作重定向：从源、目标视频抽取二维关节序列，经骨架动作重定向生成新关节序列，再由可用的图像到图像翻译方法渲染目标视频。 论文真正检验的是：把动作、身体结构和视角分成可独立组合的潜变量，并用因素间不变性构造无监督损失，是否能在合成与真实网页动作上同时改善骨架误差、渲染质量和视频运动一致性。 研究背景：动作重定向服务于人物视频内容创作；依赖高质量三维姿态的方法需要复杂昂贵的优化，且在含复杂动作的非受控视频中容易受姿态误差影响；逐图像生成又会忽略视频时间一致性而产生闪烁。 核心痛点：困难集中在三点：源人与目标人的体型、视角差异使像素级直接映射在极端或未见样本上失效；不同人物执行同一动作的对应图像对不可得；人体运动关节化且运动学高度非线性，难以建模和迁移。 任务定义：输入是源与目标人物视频。系统提取两者二维关节序列，组合源动作编码和目标结构编码，解码为三维关节序列，按所需视角投影回二维，再把逐帧标签图交给预训练图像生成器输出目标人物视频。 研究目标：目标是在二维骨架空间建立端到端、可替换前后端的动作重定向核心，不显式估计三维人体姿态；仅依靠未标注网页视频及运动、结构、视角之间的不变性，学习可分解并可重组的表示。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Robotics Institute, Carnegie Mellon University</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2003.14401/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">它解决源人与目标人在体型和视角差异很大、又没有成对监督数据时的视频动作重定向：从源视频提取动作并施加到目标人物，同时绕开显式三维人体姿态估计。</p>
+  <ul class="reading-intro-points"><li>它解决源人与目标人在体型和视角差异很大、又没有成对监督数据时的视频动作重定向：从源视频提取动作并施加到目标人物，同时绕开显式三维人体姿态估计。</li><li>具体场景是源视频到目标人物视频的动作重定向：从源、目标视频抽取二维关节序列，经骨架动作重定向生成新关节序列，再由可用的图像到图像翻译方法渲染目标视频。</li><li>论文真正检验的是：把动作、身体结构和视角分成可独立组合的潜变量，并用因素间不变性构造无监督损失，是否能在合成与真实网页动作上同时改善骨架误差、渲染质量和视频运动一致性。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Robotics Institute, Carnegie Mellon University</li><li><strong>机构</strong>：Peking University</li><li><strong>机构</strong>：BNRist, Tsinghua University</li><li><strong>机构</strong>：SenseTime Research</li><li><strong>机构</strong>：CUHK</li><li><strong>机构</strong>：Nanyang Technological University</li><li><strong>实验室 / 团队</strong>：论文首页未署名具体实验室，只列作者所属机构；元数据中的 ntu-s-lab 是目录收录标签，而不是论文作者栏中的实验室署名。</li><li><strong>作者与归属</strong>：Zhuoqian Yang—Robotics Institute, Carnegie Mellon University；Wentao Zhu—Peking University；Wayne Wu、Qiang Zhou—BNRist, Tsinghua University。</li><li><strong>作者与归属</strong>：Chen Qian—SenseTime Research；Bolei Zhou—CUHK；Chen Change Loy—Nanyang Technological University。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>它解决源人与目标人在体型和视角差异很大、又没有成对监督数据时的视频动作重定向：从源视频提取动作并施加到目标人物，同时绕开显式三维人体姿态估计。</li><li>具体场景是源视频到目标人物视频的动作重定向：从源、目标视频抽取二维关节序列，经骨架动作重定向生成新关节序列，再由可用的图像到图像翻译方法渲染目标视频。</li><li>论文真正检验的是：把动作、身体结构和视角分成可独立组合的潜变量，并用因素间不变性构造无监督损失，是否能在合成与真实网页动作上同时改善骨架误差、渲染质量和视频运动一致性。</li><li><strong>研究背景</strong>：动作重定向服务于人物视频内容创作；依赖高质量三维姿态的方法需要复杂昂贵的优化，且在含复杂动作的非受控视频中容易受姿态误差影响；逐图像生成又会忽略视频时间一致性而产生闪烁。</li><li><strong>核心痛点</strong>：困难集中在三点：源人与目标人的体型、视角差异使像素级直接映射在极端或未见样本上失效；不同人物执行同一动作的对应图像对不可得；人体运动关节化且运动学高度非线性，难以建模和迁移。</li><li><strong>任务定义</strong>：输入是源与目标人物视频。系统提取两者二维关节序列，组合源动作编码和目标结构编码，解码为三维关节序列，按所需视角投影回二维，再把逐帧标签图交给预训练图像生成器输出目标人物视频。</li><li><strong>研究目标</strong>：目标是在二维骨架空间建立端到端、可替换前后端的动作重定向核心，不显式估计三维人体姿态；仅依靠未标注网页视频及运动、结构、视角之间的不变性，学习可分解并可重组的表示。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出三阶段模块化流水线，将骨架提取、二维骨架动作重定向和骨架到视频渲染解耦，使核心网络能作为轻量、可插拔组件接入不同检测与渲染器。</li><li>设计 Motion Retargeting Network，将关节序列编码为运动、身体结构和视角三类潜变量；跨源与目标重组编码并操纵视角，即可生成目标体型下的新动作与新视角。</li><li>用肢体缩放构造结构扰动、用三维旋转投影构造视角扰动，再以交叉重建、三元组、不变性、重建和对抗损失，在无配对监督下解耦三种因素。</li><li>建立 Solo-Dancer 未标注网页舞蹈数据设置，并在统一 Mixamo 真值骨架、渲染帧与成对视频用户研究上同时评估误差、视觉质量和动作一致性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：流水线前端用现成关键点模型从源、目标视频抽取骨架；核心 Motion Retargeting Network 负责分解、交换并解码动作、结构和视角；后端把投影后的关节序列转换为标签图，再由预训练图像到图像生成器渲染视频。</li><li><strong>输入与表示</strong>：输入 x∈R^(T×2N) 是长度 T、每帧 N 个二维关节的序列。运动编码 m∈R^(M×Cm) 保留时间维；结构和视角编码经时间最大池化得到定长 s̄∈R^Cs、v̄∈R^Cv；解码器生成 X̂∈R^(T×3N) 的三维关节序列。</li><li><strong>模型结构</strong>：运动、结构、视角编码器均以一维时间卷积提取序列特征；结构与视角分支再沿时间最大池化。解码器以与编码器对称的卷积层重建三维序列，判别器则采用类似运动编码器的时间卷积网络。</li><li><strong>数据流</strong>：先编码源骨架得到源动作，编码目标骨架得到目标结构；将两者和所选视角送入解码器得到重定向三维骨架，旋转并投影成二维；随后逐帧转为标签图，送入目标人物的生成器合成视频。训练时还把原序列与其肢体缩放版本交叉交换编码，并要求重建各自序列。</li><li><strong>关键技术</strong>：肢体缩放以骨盆为树根，对全序列保持同一局部肢体比例并再施加全局缩放，因此只扰动结构；视角扰动把解码三维骨架绕由双肩和双髋估计的竖直轴旋转后投影。运动码须同时对结构和旋转不变，结构码须跨时间且对旋转不变，视角码须跨时间且对结构缩放不变；重建与对抗项约束可重建性和旋转后骨架的真实性。</li><li><strong>公式与超参数</strong>：关键关系为 x′_t=δ(x_t;γ,γ_g)，x̂^(k)=φ(X̂,kπ/(K+1))；交叉重建损失 L_crs=[|x−x̂′|/2+|x′−x̂″|/2]/(2NT)，总目标把 L_rec、L_crs、L_adv、结构与视角三元组损失及四个不变性损失按权重相加。三元组间隔 m=0.2；Cm=128、Cs=256、Cv=8、M=T/8，缩放因子在[0.5,2]均匀采样，K=3；训练 200, 000 步、batch size=64、α=0.0002，(λrec,λcrs,λadv,λtrip,λinv)=(10, 4, 2, 10, 2)。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Solo-Dancer：作者从 YouTube 收集的未标注单人舞网页视频，用于 in-the-wild 训练。</li><li><strong>数据集</strong>：Mixamo：合成角色动作数据，用于无监督训练、保留测试集真值误差测量和统一基线比较。</li><li><strong>数据集</strong>：自录目标人物视频：用于训练骨架到视频的目标人物生成器。</li><li><strong>规模与划分</strong>：Solo-Dancer 含 8 类、337 个仅有单舞者的视频，共 11.5 小时。Mixamo 训练集含 32 个角色，每个角色 800 个序列、1.2 小时；论文只说明另有保留测试集，未给出其数量。渲染训练录制 5 名目标人物。</li><li><strong>模型</strong>：骨架提取使用预训练 DensePose，缺失点做最近邻插值；高斯时间平滑 σ=2，骨架含 N=15 个关节。渲染采用 Everybody Dance Now 流水线，每个目标视频的生成器训练 40 个 epoch，输出 512×512；论文未报告各网络参数总量。</li><li><strong>硬件</strong>：正文实验设置和完整附录均未报告训练或推理硬件型号、设备数量或运行时间。</li><li><strong>代码</strong>：论文首页称代码、模型和数据公开在项目页 <a href="https://yzhq97.github.io/transmomo/；附录称详细骨架格式将在" target="_blank" rel="noopener noreferrer">https://yzhq97.github.io/transmomo/；附录称详细骨架格式将在</a> GitHub 仓库给出，但 PDF 没有列出独立仓库地址。</li><li><strong>训练平台</strong>：数据与实验载体是 YouTube 网页视频、Mixamo 合成角色和自录人物视频；任务在骨架与视频上离线评估，不涉及机器人、实车或机器人仿真器。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Mixamo 保留测试集：有真值关节序列，所有方法统一在 Mixamo 上训练和测试。</li><li><strong>评估基准</strong>：Solo-Dancer 真实网页数据设置：另训仅使用该数据的 Ours (wild)，以相同指标评估并与合成训练模型比较。</li><li><strong>评估指标</strong>：MSE 与 MAE 是髋部对齐后、在 Mixamo 原始尺度计算的关节位置误差，越低越好。</li><li><strong>评估指标</strong>：FID 是生成帧与真实目标帧的感知距离，越低表示视觉一致性越高。</li><li><strong>评估指标</strong>：User 与 User (wild) 是成对用户测试中更偏好本方法相应训练版本的比例，越高越好。</li><li><strong>对比方法</strong>：Limb Normalization（LN）：为每条肢体计算缩放因子并做局部归一化。</li><li><strong>对比方法</strong>：Neural Kinematic Networks（NKN）：使用检测的三维关键点做无监督动作重定向。</li><li><strong>对比方法</strong>：Everybody Dance Now（EDN）：对所有关键点应用全局线性变换。</li><li><strong>对比方法</strong>：Learning Character-Agnostic Motion（LCM）：在二维空间以全监督方式做表示解耦。</li><li><strong>关键结果</strong>：骨架误差方面，Ours 的 MSE/MAE 为 0.0131/0.0673，Ours (wild) 为 0.0121/0.0627；二者均低于最佳基线 LCM 的 0.0151/0.0749，且越低越好。</li><li><strong>关键结果</strong>：生成帧 FID 方面，Ours 为 31.26，Ours (wild) 为 31.29，均低于最佳基线 LCM 的 37.15（越低越好）；Mixamo 版本略优于 wild 版本。</li><li><strong>关键结果</strong>：用户偏好中，本方法相对 LN、NKN、EDN、LCM 分别为 81.7%/84.5%/75.2%/68.5%，wild 版本为 82.9%/86.3%/77.1%/71.6%，越高越好。</li><li><strong>关键结果</strong>：Figure 6 的动作重定向结果按源帧、源骨架、变换后骨架、生成帧展示，并显示源动作被迁移到目标人物结构后再渲染成帧。</li><li><strong>关键结果</strong>：Figure 7 显示生成骨架的连续旋转及逐视角对应渲染，验证解码骨架的视角可显式操纵并合成新视角视频。</li><li><strong>关键结果</strong>：Figure 8 在身体结构（横轴）与动作（纵轴）上做线性潜空间插值；两种因素都随插值平滑变化，支持潜表示的连续操纵。</li><li><strong>消融实验</strong>：去掉交叉重建后 MSE/MAE 为 0.0392/0.1259，完整模型为 0.0131/0.0673；两项误差均变差，是最严重的消融。</li><li><strong>消融实验</strong>：去掉三元组损失后 MSE/MAE 为 0.0154/0.0708，完整模型为 0.0131/0.0673；定量误差和附录帧级质量均退化。</li><li><strong>消融实验</strong>：去掉对抗损失后 MSE/MAE 为 0.0136/0.0682，完整模型为 0.0131/0.0673；定量差异较小，但旋转序列定性上更不自然。</li><li><strong>实验条件</strong>：主结果是离线骨架与视频评测：所有方法在统一 Mixamo 上训练和测试，另有仅用 Solo-Dancer 训练的版本。用户研究由 100 名志愿者做 A/B 成对选择；覆盖 4 个基线与 2 个本方法版本，每个方法测试 90 段由 30 个源和 3 个目标组合的 10 秒视频；每个基线的 90 段视频与本方法比较 100 次。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2004.01398/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">TEA: Temporal Excitation and Aggregation for Action Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2003.13141/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Learning a Weakly-Supervised Video Actor-Action Segmentation Model with a Wise Selection</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

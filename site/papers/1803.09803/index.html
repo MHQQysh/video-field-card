@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Generating Talking Face Landmarks from Speech - 视频领域每日论文卡</title>
+    <meta name="description" content="要解决的问题是在只有语音、没有摄像头视频的通信链路中，实时生成与声学内容同步的说话脸关键点；核心风险是唇动与语音错配反而给听者增加困惑。 具体场景是电话、带宽受限或因隐私不传视频的接收端：本文实际只把输入语音实时转成归一化平均脸的关键点序列；姿态、表情、光照及像素渲染只是模块化设计设想的潜在后续用途，论文没有实现或评测这些后续模块。 论文真正检验的是：跨说话人对齐并去除身份形状后，基于时序声学特征的 LSTM 能否泛化到未见说话人与未见句子，并在独立 LDC 语料上同时获得较低的关键点运动误差和难以辨真的主观结果。 研究背景：视觉语音线索来自说话者面部及嘴唇、牙齿、舌头等发音器官；论文指出，即使视觉信号是合成的，它也能帮助普通人和听障人群理解语音，而且在背景噪声、信道失真或混响导致声学信号退化时收益更明显。 核心痛点：电话等场景可能因缺少摄像头、通信带宽有限或隐私顾虑而没有视觉模态；若生成的唇动与声音不同步，会引入更多困惑。语音还随说话人、口音、情绪和录音环境变化；已有端到端视频生成要么依赖目标身份的数小时视频，要么难以独立操控姿态、表情和光照。 任务定义：输入是声学语音的 log-mel 一阶、二阶时间差序列；系统逐帧输出归一化平均脸上 68 个关键点的 x、y 坐标，并以未见说话人的未见话语作为泛化目标，而不是直接渲染某个固定身份的像素视频。 研究目标：研究目标是把与语音内容相关的视听协调从说话人脸形差异中分离出来：先生成直观、可操控的关键参数，再把姿态、表情、光照等非语音因素留给后续渲染，同时让接收端能够实时工作。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1803.09803">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1803.09803.webp" alt="Generating Talking Face Landmarks from Speech" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">要解决的问题是在只有语音、没有摄像头视频的通信链路中，实时生成与声学内容同步的说话脸关键点；核心风险是唇动与语音错配反而给听者增加困惑。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Generating Talking Face Landmarks from Speech</h1>
+            <div class="detail-meta">2018-03-27 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1803.09803" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1803.09803" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1803.09803</span></div>
+            <p class="detail-summary">要解决的问题是在只有语音、没有摄像头视频的通信链路中，实时生成与声学内容同步的说话脸关键点；核心风险是唇动与语音错配反而给听者增加困惑。 具体场景是电话、带宽受限或因隐私不传视频的接收端：本文实际只把输入语音实时转成归一化平均脸的关键点序列；姿态、表情、光照及像素渲染只是模块化设计设想的潜在后续用途，论文没有实现或评测这些后续模块。 论文真正检验的是：跨说话人对齐并去除身份形状后，基于时序声学特征的 LSTM 能否泛化到未见说话人与未见句子，并在独立 LDC 语料上同时获得较低的关键点运动误差和难以辨真的主观结果。 研究背景：视觉语音线索来自说话者面部及嘴唇、牙齿、舌头等发音器官；论文指出，即使视觉信号是合成的，它也能帮助普通人和听障人群理解语音，而且在背景噪声、信道失真或混响导致声学信号退化时收益更明显。 核心痛点：电话等场景可能因缺少摄像头、通信带宽有限或隐私顾虑而没有视觉模态；若生成的唇动与声音不同步，会引入更多困惑。语音还随说话人、口音、情绪和录音环境变化；已有端到端视频生成要么依赖目标身份的数小时视频，要么难以独立操控姿态、表情和光照。 任务定义：输入是声学语音的 log-mel 一阶、二阶时间差序列；系统逐帧输出归一化平均脸上 68 个关键点的 x、y 坐标，并以未见说话人的未见话语作为泛化目标，而不是直接渲染某个固定身份的像素视频。 研究目标：研究目标是把与语音内容相关的视听协调从说话人脸形差异中分离出来：先生成直观、可操控的关键参数，再把姿态、表情、光照等非语音因素留给后续渲染，同时让接收端能够实时工作。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Rochester（论文首页唯一明确署名机构）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1803.09803/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">要解决的问题是在只有语音、没有摄像头视频的通信链路中，实时生成与声学内容同步的说话脸关键点；核心风险是唇动与语音错配反而给听者增加困惑。</p>
+  <ul class="reading-intro-points"><li>要解决的问题是在只有语音、没有摄像头视频的通信链路中，实时生成与声学内容同步的说话脸关键点；核心风险是唇动与语音错配反而给听者增加困惑。</li><li>具体场景是电话、带宽受限或因隐私不传视频的接收端：本文实际只把输入语音实时转成归一化平均脸的关键点序列；姿态、表情、光照及像素渲染只是模块化设计设想的潜在后续用途，论文没有实现或评测这些后续模块。</li><li>论文真正检验的是：跨说话人对齐并去除身份形状后，基于时序声学特征的 LSTM 能否泛化到未见说话人与未见句子，并在独立 LDC 语料上同时获得较低的关键点运动误差和难以辨真的主观结果。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Rochester（论文首页唯一明确署名机构）</li><li><strong>实验室 / 团队</strong>：论文首页及脚注未命名具体实验室；脚注只列 University of Rochester Pilot Award Program in AR/VR 与 National Science Foundation 资助。</li><li><strong>作者与归属</strong>：Sefik Emre Eskimez、Ross K. Maddox、Chenliang Xu、Zhiyao Duan—University of Rochester；四位作者的邮箱与统一校址均列在首页。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>要解决的问题是在只有语音、没有摄像头视频的通信链路中，实时生成与声学内容同步的说话脸关键点；核心风险是唇动与语音错配反而给听者增加困惑。</li><li>具体场景是电话、带宽受限或因隐私不传视频的接收端：本文实际只把输入语音实时转成归一化平均脸的关键点序列；姿态、表情、光照及像素渲染只是模块化设计设想的潜在后续用途，论文没有实现或评测这些后续模块。</li><li>论文真正检验的是：跨说话人对齐并去除身份形状后，基于时序声学特征的 LSTM 能否泛化到未见说话人与未见句子，并在独立 LDC 语料上同时获得较低的关键点运动误差和难以辨真的主观结果。</li><li><strong>研究背景</strong>：视觉语音线索来自说话者面部及嘴唇、牙齿、舌头等发音器官；论文指出，即使视觉信号是合成的，它也能帮助普通人和听障人群理解语音，而且在背景噪声、信道失真或混响导致声学信号退化时收益更明显。</li><li><strong>核心痛点</strong>：电话等场景可能因缺少摄像头、通信带宽有限或隐私顾虑而没有视觉模态；若生成的唇动与声音不同步，会引入更多困惑。语音还随说话人、口音、情绪和录音环境变化；已有端到端视频生成要么依赖目标身份的数小时视频，要么难以独立操控姿态、表情和光照。</li><li><strong>任务定义</strong>：输入是声学语音的 log-mel 一阶、二阶时间差序列；系统逐帧输出归一化平均脸上 68 个关键点的 x、y 坐标，并以未见说话人的未见话语作为泛化目标，而不是直接渲染某个固定身份的像素视频。</li><li><strong>研究目标</strong>：研究目标是把与语音内容相关的视听协调从说话人脸形差异中分离出来：先生成直观、可操控的关键参数，再把姿态、表情、光照等非语音因素留给后续渲染，同时让接收端能够实时工作。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出可实时运行的语音到说话脸关键点系统：四层 LSTM 从声学序列逐帧预测 68 个点的 x、y 坐标，并能处理未见说话人与未见话语。</li><li>设计跨说话人的几何规范化：只用每段首帧的两处外眼角估计 6-DOF 仿射变换，固定到 (180, 200) 与 (420, 200)，整段共用该变换，再映射到训练集平均脸以移除身份形状。</li><li>把 64-bin log-mel 在无重叠 40 ms Hann 窗下提取，并只以一阶、二阶时间差组成 128 维输入；特征对照显示，直接使用 log-mel（有或无导数）更易在静音段保持张口且唇动较弱。</li><li>采用跨语料评测：在 GRID 训练、完全不同且词汇更大的 LDC 上做坐标与运动 RMSE 模型选择，再用真人判断真假关键点视频来检验感知真实性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：特征模块把语音变成帧同步的动态 log-mel 表示；几何模块先用首帧眼角做整段对齐，再把个体脸形迁移到训练集平均脸；时序模块用 LSTM 将短时上下文映射为当前或延迟帧的关键点；输出后处理重新钉住眼角，以减少生成序列的抖动。</li><li><strong>输入与表示</strong>：视觉监督由 DLIB 从每帧提取 68 个关键点的 x、y 坐标。音频先计算覆盖全频段的 64-bin log-mel，窗口为无重叠 40 ms Hann 窗；随后拼接一阶与二阶时间差，形成每帧 128 维特征，并向网络提供当前帧及此前 N 帧的上下文。</li><li><strong>模型结构</strong>：网络是带 sigmoid 激活的四层 LSTM，层间和循环方向都保留时间连接；每个时间步输出一帧关键点坐标。输出可以对应当前帧，也可通过 1–5 帧（40–200 ms）延迟对应过去帧，让网络利用未来声音线索准备先于发声发生的唇动，同时仍满足论文所称的实时容忍范围。</li><li><strong>数据流</strong>：训练时先从视频逐帧提取关键点；以每段首帧两处外眼角求仿射变换并作用于该段所有帧；对齐后用全训练集平均脸和首帧之间的变换缩放逐帧位移，再加回平均脸，得到去身份监督序列。并行地从音频得到动态 log-mel 特征；LSTM 按时间步预测坐标，最后再次固定眼角得到更稳定的输出。</li><li><strong>关键技术</strong>：眼角对齐只估计一次整段共用的 6-DOF 变换，将外眼角钉在 (180, 200) 和 (420, 200)，避免逐帧对齐受眨眼影响而产生缩放跳变；该整段复用还假设视频内头部不显著移动，若头部明显移动，同一仿射变换便无法对齐不同帧；去身份步骤保留相对首帧的动态位移而替换静态脸形；短时上下文与可控延迟用于处理唇动先于声音的现象。</li><li><strong>公式与超参数</strong>：目标函数为 J_MSE = (Σ_t ||s_t − ŝ_t||²)/N，其中 s_t 与 ŝ_t 分别是第 t 帧真值和预测关键点坐标，N 为样本数。训练使用 Adam；层间及循环连接 dropout=0.2，序列长 75 帧，batch size=128，learning rate=0.001。方法描述称设计可引入 1–5 帧（40–200 ms）延迟；Table 1 实际只比较 D0、D40、D80 三档延迟和 C3、C5 两档上下文，不能把设计范围内其余延迟写成已评测配置。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：GRID（训练）：语料含 16 名女性、18 名男性英语母语者，每人 1000 条、每条 3 s；论文实际称模型在其中 27 位说话人的正面视频上训练。</li><li><strong>数据集</strong>：LDC Audiovisual Database of Spoken American English（独立评测）：10 名女性、4 名男性，每人 94 段，共 1316 段，分辨率 720x480；视频统一重采样到 25 FPS。</li><li><strong>规模与划分</strong>：GRID 使用高分辨率 720x576、25 FPS（每条 75 帧）与 44.1 kHz 音频；正文只明确 27 位说话人用于训练，未给出训练/验证划分、实际训练话语总数或排除其余说话人的规则。LDC 被指定为另一语料上的评测集。</li><li><strong>模型</strong>：核心模型为四层 sigmoid LSTM；DLIB 用于自动提取 68 点，Adam 用于优化。论文还称公开了预训练 talking-face 模型，但未报告参数量。</li><li><strong>硬件</strong>：论文仅说明系统面向实时生成、所引入等待量仍可容忍；从训练设置、实验章节到结论与参考文献尾部均未报告 CPU/GPU 型号、显存、训练时长或推理吞吐。</li><li><strong>代码</strong>：论文正文明确称代码与预训练模型已发布，并在脚注给出 <a href="http://www.ece.rochester.edu/projects/air/projects/talkingface.html；但输入元数据的" target="_blank" rel="noopener noreferrer">http://www.ece.rochester.edu/projects/air/projects/talkingface.html；但输入元数据的</a> code_url 与 project_url 均为空，本卡不把脚注地址回填为元数据字段。</li><li><strong>训练平台</strong>：软件与数据平台是 DLIB 人脸关键点工具以及 GRID、LDC 音视频语料；论文没有使用仿真器、机器人或实车，也未报告专用部署设备。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：跨数据集客观评测：模型在 GRID 上训练，在词汇更大的 LDC 上测试，并按表一选择延迟/上下文配置。</li><li><strong>评估基准</strong>：LDC 主观真假判别：受试者观看真实与生成的规范化关键点视频，检验视觉真实性而非语音识别正确率。</li><li><strong>评估指标</strong>：坐标 RMSE：摘要明确把该误差及其时间差误差限定为唇部关键点，实验节却宽泛写作 face landmarks，论文口径存在歧义，不能无条件解读为全脸所有关键点；坐标归一化到 0–1，RMSE 越低越好，0.01 约等于 1% 误差。</li><li><strong>评估指标</strong>：一阶与二阶关键点时间差的 RMSE：分别刻画速度式与加速度式运动误差，越低越好，理想值为零。</li><li><strong>评估指标</strong>：主观指标为真假分类 accuracy 与 0–100 的百分制 confidence；随机二分类的机会水平为 50%，accuracy 越接近机会水平越难区分。</li><li><strong>对比方法</strong>：表一比较六个因果 LSTM 配置（D0-C3、D0-C5、D40-C3、D40-C5、D80-C3、D80-C5）；双向 LSTM 因因果约束未参与。</li><li><strong>对比方法</strong>：另一个结构对照用全连接网络替代 LSTM；其输出帧间常出现突跳，作者归因于缺少时序连接。</li><li><strong>关键结果</strong>：表一中 D40-C5 最优：坐标 RMSE 0.0921、一阶差分 RMSE 0.0032、二阶差分 RMSE 0.0065，三项均越低越好。</li><li><strong>关键结果</strong>：主观真假判别平均准确率为 42.01%，低于 50% 机会水平；作者据此认为受试者难以区分真实与生成样本。</li><li><strong>关键结果</strong>：主观图中的平均 confidence 为 72.17；判断正确/错误时分别为 69.61/74.06，对真实/生成样本分别为 70.97/73.37，图中单位均为百分数。</li><li><strong>关键结果</strong>：定性失败模式是 Figure 3 的第二个示例未能正确生成“oh”；结论进一步称系统不能正确生成“oh”和“oo”，将其列为主要局限，并计划通过重新平衡数据集的音素内容来覆盖所有音素。</li><li><strong>消融实验</strong>：声学输入对照显示，直接使用 log-mel，或将其与一阶、二阶导数一起输入，都会使很多静音片段中的嘴持续张开、唇动弱于只用差分的当前方案；论文未给出该对照的数值表。</li><li><strong>消融实验</strong>：延迟/上下文模型选择显示 D40-C5 优于其余五种配置；例如相对 D0-C5，坐标 RMSE 从 0.0945 降至 0.0921，一阶差分从 0.0042 降至 0.0032，二阶差分从 0.0071 降至 0.0065。</li><li><strong>消融实验</strong>：结构对照中，全连接网络代替 LSTM 会产生突兀的帧间跳变；这项观察为定性结果，正文没有报告对应 RMSE。</li><li><strong>实验条件</strong>：客观与主观测试均在 LDC 上；视频由较高帧率重采样为 25 FPS，音频由 48 kHz 降采样到 44.1 kHz。主观测试有 17 名 University of Rochester 研究生志愿者；每人随机观看 25 段真实和 25 段生成视频，每段出现两次，并为让预测与带噪真值外观匹配而向预测关键点加入 Gaussian noise。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1803.10404/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Lip Movements Generation at a Glance</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1803.08842/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Audio-Visual Event Localization in Unconstrained Videos</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

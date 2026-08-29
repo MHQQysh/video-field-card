@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Learning Actor Relation Graphs for Group Activity Recognition - 视频领域每日论文卡</title>
+    <meta name="description" content="多人物场景的群体活动识别需要在只有个体动作标签和群体活动标签、没有底层交互标注的条件下，判断哪些人物关系真正决定集体活动；论文以可学习的 Actor Relation Graph 显式联合建模人物外观与相对位置关系。 面向监控、体育视频分析和社会行为理解等多人物视频场景；给定视频序列及人物框，模型同时输出场景级群体活动和人物级个体动作，并能即时生成当前视频特有的演员关系图。 论文真正检验的是：相较手工预设图结构、复杂消息传递或密集帧 RNN，能否自动学习稀疏且可解释的演员关系图，并以局部空间连接和随机稀疏时序采样降低关系建模成本，同时提高识别准确率和关系表征的类别可分性。 研究背景：群体活动识别不仅要描述场景中每个人的动作，还要推断多人共同活动；能否找出相关人物关系并在其上推理，是理解多人物场景的关键。 核心痛点：训练数据只有个体动作与群体活动标签，没有底层交互关系标注。既有方法或采用事先手工规定、缺乏弹性的图结构，或依赖复杂而不直观的消息传递；用 RNN 聚合密集采样帧还会带来较高计算成本，并难以适应群体活动变化。 任务定义：输入是一段视频序列及场景内人物的边界框；模型从采样帧提取人物表示、建立人物间关系并推理，最终分别预测每个人的动作与整段场景的群体活动。 研究目标：建立一种可放在现有 CNN 之上的灵活、高效关系建模机制，使人物之间的图连接由视频数据端到端自动学习，并通过标准矩阵运算同时利用外观与位置关系完成群体活动推理。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1904.10117">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1904.10117.webp" alt="Learning Actor Relation Graphs for Group Activity Recognition" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">多人物场景的群体活动识别需要在只有个体动作标签和群体活动标签、没有底层交互标注的条件下，判断哪些人物关系真正决定集体活动；论文以可学习的 Actor Relation Graph 显式联合建模人物外观与相对位置关系。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Learning Actor Relation Graphs for Group Activity Recognition</h1>
+            <div class="detail-meta">2019-04-23 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1904.10117" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1904.10117" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1904.10117</span></div>
+            <p class="detail-summary">多人物场景的群体活动识别需要在只有个体动作标签和群体活动标签、没有底层交互标注的条件下，判断哪些人物关系真正决定集体活动；论文以可学习的 Actor Relation Graph 显式联合建模人物外观与相对位置关系。 面向监控、体育视频分析和社会行为理解等多人物视频场景；给定视频序列及人物框，模型同时输出场景级群体活动和人物级个体动作，并能即时生成当前视频特有的演员关系图。 论文真正检验的是：相较手工预设图结构、复杂消息传递或密集帧 RNN，能否自动学习稀疏且可解释的演员关系图，并以局部空间连接和随机稀疏时序采样降低关系建模成本，同时提高识别准确率和关系表征的类别可分性。 研究背景：群体活动识别不仅要描述场景中每个人的动作，还要推断多人共同活动；能否找出相关人物关系并在其上推理，是理解多人物场景的关键。 核心痛点：训练数据只有个体动作与群体活动标签，没有底层交互关系标注。既有方法或采用事先手工规定、缺乏弹性的图结构，或依赖复杂而不直观的消息传递；用 RNN 聚合密集采样帧还会带来较高计算成本，并难以适应群体活动变化。 任务定义：输入是一段视频序列及场景内人物的边界框；模型从采样帧提取人物表示、建立人物间关系并推理，最终分别预测每个人的动作与整段场景的群体活动。 研究目标：建立一种可放在现有 CNN 之上的灵活、高效关系建模机制，使人物之间的图连接由视频数据端到端自动学习，并通过标准矩阵运算同时利用外观与位置关系完成群体活动推理。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：论文首页署名机构为南京大学（Nanjing University, China）。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1904.10117/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">多人物场景的群体活动识别需要在只有个体动作标签和群体活动标签、没有底层交互标注的条件下，判断哪些人物关系真正决定集体活动；论文以可学习的 Actor Relation Graph 显式联合建模人物外观与相对位置关系。</p>
+  <ul class="reading-intro-points"><li>多人物场景的群体活动识别需要在只有个体动作标签和群体活动标签、没有底层交互标注的条件下，判断哪些人物关系真正决定集体活动；论文以可学习的 Actor Relation Graph 显式联合建模人物外观与相对位置关系。</li><li>面向监控、体育视频分析和社会行为理解等多人物视频场景；给定视频序列及人物框，模型同时输出场景级群体活动和人物级个体动作，并能即时生成当前视频特有的演员关系图。</li><li>论文真正检验的是：相较手工预设图结构、复杂消息传递或密集帧 RNN，能否自动学习稀疏且可解释的演员关系图，并以局部空间连接和随机稀疏时序采样降低关系建模成本，同时提高识别准确率和关系表征的类别可分性。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：论文首页署名机构为南京大学（Nanjing University, China）。</li><li><strong>实验室 / 团队</strong>：论文首页明确署名 State Key Laboratory for Novel Software Technology；元数据中的 nju-mcg 是目录团队标签，并非首页出现的实验室名称。</li><li><strong>作者与归属</strong>：Jianchao Wu、Limin Wang、Li Wang、Jie Guo、Gangshan Wu—State Key Laboratory for Novel Software Technology, Nanjing University, China；首页五位作者共用这一署名行。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>多人物场景的群体活动识别需要在只有个体动作标签和群体活动标签、没有底层交互标注的条件下，判断哪些人物关系真正决定集体活动；论文以可学习的 Actor Relation Graph 显式联合建模人物外观与相对位置关系。</li><li>面向监控、体育视频分析和社会行为理解等多人物视频场景；给定视频序列及人物框，模型同时输出场景级群体活动和人物级个体动作，并能即时生成当前视频特有的演员关系图。</li><li>论文真正检验的是：相较手工预设图结构、复杂消息传递或密集帧 RNN，能否自动学习稀疏且可解释的演员关系图，并以局部空间连接和随机稀疏时序采样降低关系建模成本，同时提高识别准确率和关系表征的类别可分性。</li><li><strong>研究背景</strong>：群体活动识别不仅要描述场景中每个人的动作，还要推断多人共同活动；能否找出相关人物关系并在其上推理，是理解多人物场景的关键。</li><li><strong>核心痛点</strong>：训练数据只有个体动作与群体活动标签，没有底层交互关系标注。既有方法或采用事先手工规定、缺乏弹性的图结构，或依赖复杂而不直观的消息传递；用 RNN 聚合密集采样帧还会带来较高计算成本，并难以适应群体活动变化。</li><li><strong>任务定义</strong>：输入是一段视频序列及场景内人物的边界框；模型从采样帧提取人物表示、建立人物间关系并推理，最终分别预测每个人的动作与整段场景的群体活动。</li><li><strong>研究目标</strong>：建立一种可放在现有 CNN 之上的灵活、高效关系建模机制，使人物之间的图连接由视频数据端到端自动学习，并通过标准矩阵运算同时利用外观与位置关系完成群体活动推理。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 Actor Relation Graph：以人物为节点、人物间关系为加权边，显式分开计算外观关系和位置关系，再用 GCN 端到端学习连接并执行群体关系推理。</li><li>提出两种稀疏化变体：localized ARG 只保留空间局部邻域连接，randomized ARG 在训练时随机保留少量视频帧，以降低时序关系建模成本并增加训练样本多样性。</li><li>在同一人物集合上构建多张参数不共享的关系图以关注不同关系语义，并采用 GCN 后逐元素求和的后期融合，避免卷积前合图造成的关系混淆。</li><li>在 Volleyball 与 Collective Activity 两个基准上取得当时最佳结果，并用关系矩阵与 t-SNE 可视化展示模型会突出关键人物、使不同群体活动的表示更易分离。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：ARG 位于人物特征抽取器与分类器之间：它把普通 CNN 产生的逐人物特征组织成图，GCN 按学习到的边权聚合邻居信息，输出供个体动作与群体活动分类使用的关系特征。</li><li><strong>输入与表示</strong>：输入为视频序列和人物框。模型均匀采样 K 帧，以 Inception-v3 生成多尺度特征图，经 RoIAlign 与全连接层把每个人物框变成 d 维外观向量；K 帧内共 N 个框组成 X∈R^{N×d}，位置向量 x_i^s=(t_i^x,t_i^y) 取框中心坐标。</li><li><strong>模型结构</strong>：在同一人物集合上构建 N_g 张权重不共享的关系图；G_ij 表示人物 j 的特征对人物 i 的重要度，外观函数与位置函数组合后按节点归一化。每张图分别经过 GCN，再按对应人物做后期逐元素求和；关系特征与原始特征相加后进入个体动作和群体活动两个分类头。</li><li><strong>数据流</strong>：采样视频帧→CNN 特征图→RoIAlign 提取各人物框→全连接层形成逐人物矩阵 X→用两两外观与相对位置计算多张 ARG→GCN 在每张图上传播→融合各图关系特征并与原特征相加。个体分支对每个人物表示做全连接分类；群体分支先对人物表示做 max pooling 得到场景表示，再输出群体活动。</li><li><strong>关键技术</strong>：外观边权比较 dot-product、embedded dot-product 与 Relation Network，最终采用可学习投影后的缩放点积；空间上用人物框中心距离阈值形成 distance mask；多图用不共享参数捕获不同语义；时间上训练时稀疏随机采帧建图，测试时滑窗并平均各窗口活动得分。</li><li><strong>公式与超参数</strong>：关系权重按 G_ij=f_s·exp(f_a)/Σ_j[f_s·exp(f_a)] 计算，使每个节点的关系权重和为 1；GCN 可写为 Z_next=σ(GZW)，多图输出在卷积后求和。训练随机采 K=3 帧，最终采用 N_g=16 张图、d_k=256、d_s=32、距离阈值 μ=图像宽度的 1/5、个体动作损失权重 λ=1，并使用单层 GCN。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Volleyball：排球比赛视频片段，含群体活动和人物动作标注；中心帧之外的人物真值框使用既有 tracklet 数据补充。</li><li><strong>数据集</strong>：Collective Activity：短视频中的多人群体活动数据，帧级群体标签定义为多数人参与的活动。</li><li><strong>规模与划分</strong>：Volleyball 含 4830 个 clips、来自 55 场比赛，划分为 3493 个训练 clips 和 1337 个测试 clips，共有 8 类群体活动；按既有协议每个 clip 使用 10 帧，即标注帧前 5 帧和后 4 帧。Collective Activity 含 44 段短视频、约 2500 帧、5 类群体活动和 6 类个体动作，取 1/3 视频序列测试，其余训练。</li><li><strong>模型</strong>：消融以 ImageNet 预训练的 Inception-v3 为主干，也用 VGG 做公平比较；每个人物提取 1024 维特征。因显存限制分两阶段训练：先微调随机单帧、无 GCN 的基础模型，再冻结特征抽取器训练 GCN；proposal 框由训练集上训练的 Faster R-CNN 在测试时产生。</li><li><strong>硬件</strong>：论文报告在单张 TITAN-XP GPU 上推理约零点二秒/视频；通读正文实验设置、全文结尾与参考文献尾部，未发现训练 GPU 型号或数量的报告。</li><li><strong>代码</strong>：论文首页脚注明确声明代码可用，并给出 <a href="https://github.com/wjchaoGit/Group-Activity-Recognition；顶层" target="_blank" rel="noopener noreferrer">https://github.com/wjchaoGit/Group-Activity-Recognition；顶层</a> code_url 仍按输入元数据逐字继承为空。</li><li><strong>训练平台</strong>：实现基于 PyTorch；实验均为公开视频数据集上的离线群体活动分类，论文没有报告仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Volleyball：同时报告 group activity 与 individual action accuracy，并区分 ground-truth 框和 proposal 框。</li><li><strong>评估基准</strong>：Collective Activity：报告 group activity accuracy，同样区分 ground-truth 框和 proposal 框。</li><li><strong>评估指标</strong>：群体活动识别准确率（Accuracy，越高越好）；全部消融与两个基准的主结果均采用这一口径。</li><li><strong>评估指标</strong>：个体动作识别准确率（Accuracy，越高越好）；主对比表中仅 Volleyball 的部分方法报告该列。</li><li><strong>对比方法</strong>：Volleyball 对比 HDTM、CERN、stagNet、HRN 与 SSU，并在 AlexNet、VGG、Inception-v3 主干以及 GT/PRO 人物框口径之间对照。</li><li><strong>对比方法</strong>：Collective Activity 对比 SIM、HDTM、Cardinality Kernel、SBGAR、CERN 与 stagNet，并报告自身 Inception-v3 和 VGG 变体。</li><li><strong>关键结果</strong>：Volleyball、GT 框下，OURS+VGG19 的群体活动准确率为 92.6%（越高越好）；OURS+VGG16 的个体动作准确率为 83.1%。</li><li><strong>关键结果</strong>：同为 Inception-v3 且使用 GT 框时，OURS 的群体活动/个体动作准确率为 92.5%/83.0%，SSU 为 90.6%/81.8%。</li><li><strong>关键结果</strong>：Collective Activity、GT 框与 Inception-v3 下，OURS 群体活动准确率为 91.0%，高于表中的 stagNet(GT) 89.1% 和 CERN 87.2%（越高越好）。</li><li><strong>消融实验</strong>：外观关系：base model 为 89.8%；dot-product 与 embedded dot-product 均为 91.3%，Relation Network 为 90.7%（Volleyball 群体准确率，越高越好）。</li><li><strong>消融实验</strong>：位置关系：无位置关系为 91.3%，distance mask 为 91.6%，distance encoding 为 91.5%；后续实验采用 distance mask。</li><li><strong>消融实验</strong>：图数量：1/4/8/16/32 张图分别得到 91.6%/92.0%/92.0%/92.1%/92.0%，最终采用 16 张图。</li><li><strong>消融实验</strong>：融合方式：early fusion 为 90.8%，late summation 为 92.1%，late concatenation 为 91.9%；最终选择 GCN 后的 late summation。</li><li><strong>消融实验</strong>：时序方式：single frame 为 92.1%，TSN(3 frames) 为 92.3%，temporal-graphs(3 frames) 为 92.5%，图上的时序推理进一步提高准确率。</li><li><strong>实验条件</strong>：消融使用 Inception-v3、Volleyball 和 GT 人物框，主网络因显存限制分两阶段训练。Volleyball 训练 150 epochs、batch 32、学习率从 0.0002 降至 0.00001；Collective Activity 训练 80 epochs、batch 16、学习率 0.0001。测试时对滑窗活动得分做均值池化；GT/PRO 分别表示真值框/提议框。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1905.02716/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">EDVR: Video Restoration with Enhanced Deformable Convolutional Networks</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1902.03604/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">MOTS: Multi-Object Tracking and Segmentation</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

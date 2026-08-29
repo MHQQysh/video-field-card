@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Temporal Convolution Based Action Proposal: Submission to ActivityNet 2017 - 视频领域每日论文卡</title>
+    <meta name="description" content="论文要解决的是未裁剪视频中的时间动作定位瓶颈：动作类别识别已较成熟，但候选片段的时间边界质量限制了最终定位精度，因此工作把重点放在时间动作提议而非重新设计分类器。 具体使用场景是 ActivityNet Challenge 2017 的 task 3（时间动作提议）与 task 4（时间动作定位）：系统从未裁剪视频中先生成不带类别的候选时间段，再为候选段赋予视频级动作类别和边界。 论文真正验证的问题是：基于时间卷积和多尺度锚点的 Prop-SSAD 能否产生高召回候选，TAG 的动作性分组能否通过边界替换进一步改善候选，并让这些候选与视频级分类结果组合后提升时间动作定位。 研究背景：动作识别与时间动作定位都是视频内容分析的重要分支；时间动作定位面向未裁剪视频，要求检测动作实例并同时给出其类别和时间边界。 核心痛点：已有工作往往把候选生成与动作识别分开处理。动作分类已有较好表现，但 THUMOS&#x27;14 与 ActivityNet 等基准的定位 mAP 仍低；作者据此把主要约束归因于动作候选的质量。 任务定义：任务被拆成两部分：时间动作提议只生成动作实例的时间边界而不分类；动作识别则判定这些时间候选的类别，二者组合成最终时间动作定位。 研究目标：研究目标是集中提高时间动作提议的质量，并检验高质量候选能否在复用视频级分类结果时同步提高时间动作定位表现。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1707.06750">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1707.06750.webp" alt="Temporal Convolution Based Action Proposal: Submission to ActivityNet 2017" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文要解决的是未裁剪视频中的时间动作定位瓶颈：动作类别识别已较成熟，但候选片段的时间边界质量限制了最终定位精度，因此工作把重点放在时间动作提议而非重新设计分类器。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Temporal Convolution Based Action Proposal: Submission to ActivityNet 2017</h1>
+            <div class="detail-meta">2017-07-21 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1707.06750" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1707.06750" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1707.06750</span></div>
+            <p class="detail-summary">论文要解决的是未裁剪视频中的时间动作定位瓶颈：动作类别识别已较成熟，但候选片段的时间边界质量限制了最终定位精度，因此工作把重点放在时间动作提议而非重新设计分类器。 具体使用场景是 ActivityNet Challenge 2017 的 task 3（时间动作提议）与 task 4（时间动作定位）：系统从未裁剪视频中先生成不带类别的候选时间段，再为候选段赋予视频级动作类别和边界。 论文真正验证的问题是：基于时间卷积和多尺度锚点的 Prop-SSAD 能否产生高召回候选，TAG 的动作性分组能否通过边界替换进一步改善候选，并让这些候选与视频级分类结果组合后提升时间动作定位。 研究背景：动作识别与时间动作定位都是视频内容分析的重要分支；时间动作定位面向未裁剪视频，要求检测动作实例并同时给出其类别和时间边界。 核心痛点：已有工作往往把候选生成与动作识别分开处理。动作分类已有较好表现，但 THUMOS&#x27;14 与 ActivityNet 等基准的定位 mAP 仍低；作者据此把主要约束归因于动作候选的质量。 任务定义：任务被拆成两部分：时间动作提议只生成动作实例的时间边界而不分类；动作识别则判定这些时间候选的类别，二者组合成最终时间动作定位。 研究目标：研究目标是集中提高时间动作提议的质量，并检验高质量候选能否在复用视频级分类结果时同步提高时间动作定位表现。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Computer Vision Laboratory, Shanghai Jiao Tong University, China · Tianw…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1707.06750/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文要解决的是未裁剪视频中的时间动作定位瓶颈：动作类别识别已较成熟，但候选片段的时间边界质量限制了最终定位精度，因此工作把重点放在时间动作提议而非重新设计分类器。</p>
+  <ul class="reading-intro-points"><li>论文要解决的是未裁剪视频中的时间动作定位瓶颈：动作类别识别已较成熟，但候选片段的时间边界质量限制了最终定位精度，因此工作把重点放在时间动作提议而非重新设计分类器。</li><li>具体使用场景是 ActivityNet Challenge 2017 的 task 3（时间动作提议）与 task 4（时间动作定位）：系统从未裁剪视频中先生成不带类别的候选时间段，再为候选段赋予视频级动作类别和边界。</li><li>论文真正验证的问题是：基于时间卷积和多尺度锚点的 Prop-SSAD 能否产生高召回候选，TAG 的动作性分组能否通过边界替换进一步改善候选，并让这些候选与视频级分类结果组合后提升时间动作定位。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Computer Vision Laboratory, Shanghai Jiao Tong University, China（Tianwei Lin、Xu Zhao 的论文首页署名单位）</li><li><strong>机构</strong>：Columbia University, USA（Zheng Shou 的论文首页署名单位）</li><li><strong>实验室 / 团队</strong>：论文首页明确署名的实验室是上海交通大学 Computer Vision Laboratory；元数据中的 nus-show-lab 是目录收录标签，并非论文首页作者单位。</li><li><strong>作者与归属</strong>：Tianwei Lin、Xu Zhao—Computer Vision Laboratory, Shanghai Jiao Tong University, China</li><li><strong>作者与归属</strong>：Zheng Shou—Columbia University, USA</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文要解决的是未裁剪视频中的时间动作定位瓶颈：动作类别识别已较成熟，但候选片段的时间边界质量限制了最终定位精度，因此工作把重点放在时间动作提议而非重新设计分类器。</li><li>具体使用场景是 ActivityNet Challenge 2017 的 task 3（时间动作提议）与 task 4（时间动作定位）：系统从未裁剪视频中先生成不带类别的候选时间段，再为候选段赋予视频级动作类别和边界。</li><li>论文真正验证的问题是：基于时间卷积和多尺度锚点的 Prop-SSAD 能否产生高召回候选，TAG 的动作性分组能否通过边界替换进一步改善候选，并让这些候选与视频级分类结果组合后提升时间动作定位。</li><li><strong>研究背景</strong>：动作识别与时间动作定位都是视频内容分析的重要分支；时间动作定位面向未裁剪视频，要求检测动作实例并同时给出其类别和时间边界。</li><li><strong>核心痛点</strong>：已有工作往往把候选生成与动作识别分开处理。动作分类已有较好表现，但 THUMOS&#x27;14 与 ActivityNet 等基准的定位 mAP 仍低；作者据此把主要约束归因于动作候选的质量。</li><li><strong>任务定义</strong>：任务被拆成两部分：时间动作提议只生成动作实例的时间边界而不分类；动作识别则判定这些时间候选的类别，二者组合成最终时间动作定位。</li><li><strong>研究目标</strong>：研究目标是集中提高时间动作提议的质量，并检验高质量候选能否在复用视频级分类结果时同步提高时间动作定位表现。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>把 SSAD 改成只做提议的 Prop-SSAD：输入删除 C3D、仅保留 two-stream 特征，把锚点层从三张扩展到七张时间特征图，并把联合分类、重叠与位置损失改为只使用 overlap loss。</li><li>自行实现 TAG：用一个含单隐层的 MLP 为每个 snippet 预测 actionness，再以多个阈值分组生成候选；当 TAG 候选与 Prop-SSAD 候选的最大 IoU 高于 0.75 时，用 TAG 边界替换对应 Prop-SSAD 边界。</li><li>构建完整的提议—定位流程：从视频抽取 two-stream snippet 特征，Prop-SSAD 与 TAG 分别生成候选，边界精修后再用视频级动作分类结果为候选赋类。</li><li>在 ActivityNet 验证集上将边界精修带来的 AR-AN 从 61.52 提到 64.40，并在测试集取得 32.26 average mAP，展示提议质量可转化为定位收益。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：框架包含特征提取、时间动作提议和时间动作定位三部分：two-stream 网络把视频变成 snippet 特征序列；Prop-SSAD 生成主候选，TAG 负责候选边界精修；视频级分类结果最后为精修候选赋予动作类别。</li><li><strong>输入与表示</strong>：视频被切成不重叠的 16 帧 snippet；中心帧经 ResNet 的 Flatten-673 层形成 appearance feature，中心附近连续 6 帧计算光流后经 BN-Inception 的 global-pool 层形成 motion feature。两者拼接为每个 snippet 的 3072 维向量，并用线性插值把整段特征序列缩放到长度 256。</li><li><strong>模型结构</strong>：SSAD 的基本结构把多个 temporal anchor 关联到多尺度时间特征图，并由时间卷积预测锚点的动作类别、overlap score 和位置偏移。Prop-SSAD 只用 two-stream 输入，把锚点关联到长度为 1、2、4、8、16、32、64 的时间特征图，并只使用 overlap loss 训练。</li><li><strong>数据流</strong>：先抽取并定长化 snippet 特征序列；随后 Prop-SSAD 得到候选集 Pssad，TAG 得到候选集 Ptag。对每个 pt∈Ptag，计算它与全部 Pssad 候选的 IoU；若最大 IoU 高于 0.75，就用 pt 的边界替换对应 ps 的边界，形成最终精修候选集，最后把视频级分类类别赋给这些候选。</li><li><strong>关键技术</strong>：关键机制一是把 YOLO、SSD 式锚点思想迁移到一维时间定位，并在多尺度时间特征图上用卷积预测；关键机制二是用 MLP actionness 与多阈值 grouping 形成 TAG 候选；关键机制三是以候选间 IoU 触发边界替换，而不是把两个提议器的候选简单并集。</li><li><strong>公式与超参数</strong>：边界精修可写成：对 pt∈Ptag 取 ps*=argmax_{ps∈Pssad} IoU(pt,ps)，若 max IoU&gt;0.75，则以 pt 的边界替换 ps*；正文未给出这一过程的独立损失公式。其他明确超参数包括输入特征序列长度 256、锚点图长度集合 {1, 2, 4, 8, 16, 32, 64}，且 Prop-SSAD 只优化 overlap loss。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：ActivityNet v1.3：two-stream 网络仅在其 training set 上预训练，论文明确说明未使用外部数据。</li><li><strong>规模与划分</strong>：ActivityNet v1.3 的 training set 用于特征网络预训练；时间动作提议在 validation set 报告，时间动作定位同时在 validation 与 testing set 报告。全文未报告各划分的视频数、类别数或样本规模。</li><li><strong>模型</strong>：基础模型是 two-stream network：空间分支使用 ResNet 的 Flatten-673 输出，时间分支使用 BN-Inception 的 global-pool 输出；正文未报告具体 ResNet 变体、模型参数量或可下载权重。</li><li><strong>硬件</strong>：全文的方法、实验结果、结论与参考文献均未报告训练或推理硬件，也未给出 GPU 型号、数量、训练时长或推理速度。</li><li><strong>代码</strong>：正文未提供本文实现的代码地址；首页脚注只给出论文页面。论文还明确说明当时 TAG 原方法的代码尚未发布，因此作者自行实现了 TAG。</li><li><strong>训练平台</strong>：实验平台是 ActivityNet Challenge 的离线未裁剪视频基准及其 evaluation server；论文未使用仿真器、机器人或实车平台，也未报告在线闭环部署。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：ActivityNet 时间动作提议：在 validation set 上评测候选时间片段。</li><li><strong>评估基准</strong>：ActivityNet 时间动作定位：在 validation set 与 testing set 上评测带类别的时间区间。</li><li><strong>评估指标</strong>：提议指标是 Average Recall–Average Number of Proposals per Video 曲线下面积 AR-AN；AR 是 tIoU 从 0.5 到 0.95、步长 0.05 的 recall 均值，AR@100 表示使用 100 个候选时的平均召回，均为越高越好。</li><li><strong>评估指标</strong>：定位指标是 mAP；官方 average mAP 对 tIoU 阈值 0.5 到 0.95、步长 0.05 逐点计算后取平均，越高越好。</li><li><strong>对比方法</strong>：提议对比包含 Uniform Random baseline 以及未精修的 Prop-SSAD，用于分别衡量模型本体和 TAG 边界精修的增益。</li><li><strong>对比方法</strong>：定位对比包含 Wang et al.、Shou et al.、Xiong et al.，测试集还包含 Zhao et al.；Ours@n 表示仅用前 n 个候选进行定位。</li><li><strong>关键结果</strong>：验证集提议：Uniform Random 的 AR@10、AR@100、AR-AN 为 29.02、55.71、44.88；Prop-SSAD 为 50.44、69.54、61.52；Refined Prop-SSAD 为 52.50、73.01、64.40，三项均越高越好。</li><li><strong>关键结果</strong>：验证集定位：Ours@100 在 tIoU 0.5、0.75、0.95 下的 mAP 分别为 44.39、29.65、7.09，average mAP 为 29.17；对比方法中最高的 Xiong et al. average mAP 为 23.98，指标越高越好。</li><li><strong>关键结果</strong>：测试集定位：Ours result 的 average mAP 为 32.26，高于 Zhao et al. 的 28.28、Xiong et al. 的 26.05 与 Wang et al. 的 14.62（越高越好）。</li><li><strong>消融实验</strong>：论文未设置独立命名的消融节；Table 1 的模块级对照显示，加入 TAG 边界精修后，AR@10 从 50.44 升至 52.50、AR@100 从 69.54 升至 73.01、AR-AN 从 61.52 升至 64.40。</li><li><strong>消融实验</strong>：候选数量敏感性：Ours@1、Ours@5、Ours@10、Ours@25、Ours@100 的 average mAP 依次为 25.17、27.86、28.56、28.96、29.17，说明主要收益集中在前几个候选；论文据此认为 AR-AN 对小候选数的权重应更高。</li><li><strong>实验条件</strong>：特征网络仅用 ActivityNet v1.3 training set 预训练且没有外部数据；提议在 validation set 报告，定位在 validation 和 testing set 报告，定位类别直接采用文献 [17] 的视频级分类结果。论文脚注说明先前使用 [13] 的分类结果，因其准确率异常高而改用 [17] 并更新相关实验；这些都是离线基准结果，未报告零样本、在线闭环或机器人实测条件。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1708.05038/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">ConvNet Architecture Search for Spatiotemporal Feature Learning</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1705.07818/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">TricorNet: A Hybrid Temporal Convolutional and Recurrent Network for Video Action Segmentation</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

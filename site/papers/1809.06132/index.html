@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras - 视频领域每日论文卡</title>
+    <meta name="description" content="论文解决的是：在不依赖LiDAR生成地图的前提下，仅用多鱼眼相机为自动驾驶车辆实时构建大尺度、稠密的静态三维几何地图，并在融合前剔除潜在运动物体以抑制拖影伪影。 具体场景是装有五台前视近红外相机、GNSS/INS和三维LiDAR（仅作评测真值）的测试车，在South Buona Vista林道路段和One North城市道路上在线运行；论文报告车辆速度最高 40 km/h时仍可实时建图。 论文真正检验的是：多分辨率plane-sweeping stereo、逐级深度过滤、单阶段动态物体检测和局部TSDF融合能否在精度、完整度与速度之间取得可用平衡，并让整条车载管线达到 15 Hz。 研究背景：自动驾驶需要实时三维环境地图才能感知并导航。LiDAR可实时给出准确点云但垂直分辨率较低；相机本身不直接提供三维信息，却能借助多视几何恢复高分辨率地图。 核心痛点：已有单目或静态场景重建难以处理运动物体，动态目标会在地图中留下拖影；实例分割与场景流组合的动态建图方案约为二点五赫兹，难以服务高速行驶。与此同时，鱼眼图像中心的角分辨率较低，实时下采样会进一步恶化车辆正前方远处物体的深度估计。 任务定义：每个时刻输入多台硬件同步鱼眼相机的图像、相机间已知相对位姿以及参考相机位姿；系统输出参考相机深度图和潜在运动物体掩码，再把剔除这些区域后的深度融合为周围静态环境的TSDF三维地图。 研究目标：研究目标不只是提高单帧深度，而是让多尺度深度估计、离群深度过滤、快速动态目标处理和局部体素交换共同兼顾远近场几何质量、动态环境鲁棒性、受限车载算力与长距离运行的可扩展性。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1809.06132">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1809.06132.webp" alt="Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文解决的是：在不依赖LiDAR生成地图的前提下，仅用多鱼眼相机为自动驾驶车辆实时构建大尺度、稠密的静态三维几何地图，并在融合前剔除潜在运动物体以抑制拖影伪影。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Real-Time Dense Mapping for Self-driving Vehicles using Fisheye Cameras</h1>
+            <div class="detail-meta">2018-09-17 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1809.06132" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1809.06132" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1809.06132</span></div>
+            <p class="detail-summary">论文解决的是：在不依赖LiDAR生成地图的前提下，仅用多鱼眼相机为自动驾驶车辆实时构建大尺度、稠密的静态三维几何地图，并在融合前剔除潜在运动物体以抑制拖影伪影。 具体场景是装有五台前视近红外相机、GNSS/INS和三维LiDAR（仅作评测真值）的测试车，在South Buona Vista林道路段和One North城市道路上在线运行；论文报告车辆速度最高 40 km/h时仍可实时建图。 论文真正检验的是：多分辨率plane-sweeping stereo、逐级深度过滤、单阶段动态物体检测和局部TSDF融合能否在精度、完整度与速度之间取得可用平衡，并让整条车载管线达到 15 Hz。 研究背景：自动驾驶需要实时三维环境地图才能感知并导航。LiDAR可实时给出准确点云但垂直分辨率较低；相机本身不直接提供三维信息，却能借助多视几何恢复高分辨率地图。 核心痛点：已有单目或静态场景重建难以处理运动物体，动态目标会在地图中留下拖影；实例分割与场景流组合的动态建图方案约为二点五赫兹，难以服务高速行驶。与此同时，鱼眼图像中心的角分辨率较低，实时下采样会进一步恶化车辆正前方远处物体的深度估计。 任务定义：每个时刻输入多台硬件同步鱼眼相机的图像、相机间已知相对位姿以及参考相机位姿；系统输出参考相机深度图和潜在运动物体掩码，再把剔除这些区域后的深度融合为周围静态环境的TSDF三维地图。 研究目标：研究目标不只是提高单帧深度，而是让多尺度深度估计、离群深度过滤、快速动态目标处理和局部体素交换共同兼顾远近场几何质量、动态环境鲁棒性、受限车载算力与长距离运行的可扩展性。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：论文首页脚注明确列出Department of Computer Science, ETH Zürich、DSO National Labora…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1809.06132/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文解决的是：在不依赖LiDAR生成地图的前提下，仅用多鱼眼相机为自动驾驶车辆实时构建大尺度、稠密的静态三维几何地图，并在融合前剔除潜在运动物体以抑制拖影伪影。</p>
+  <ul class="reading-intro-points"><li>论文解决的是：在不依赖LiDAR生成地图的前提下，仅用多鱼眼相机为自动驾驶车辆实时构建大尺度、稠密的静态三维几何地图，并在融合前剔除潜在运动物体以抑制拖影伪影。</li><li>具体场景是装有五台前视近红外相机、GNSS/INS和三维LiDAR（仅作评测真值）的测试车，在South Buona Vista林道路段和One North城市道路上在线运行；论文报告车辆速度最高 40 km/h时仍可实时建图。</li><li>论文真正检验的是：多分辨率plane-sweeping stereo、逐级深度过滤、单阶段动态物体检测和局部TSDF融合能否在精度、完整度与速度之间取得可用平衡，并让整条车载管线达到 15 Hz。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：论文首页脚注明确列出Department of Computer Science, ETH Zürich、DSO National Laboratories、MPI-IS and University of Tübingen、Microsoft, Switzerland和Chalmers University of Technology。</li><li><strong>实验室 / 团队</strong>：论文首页的作者归属只以部门或机构脚注呈现，未另行单列具名实验室。</li><li><strong>作者与归属</strong>：Zhaopeng Cui—Department of Computer Science, ETH Zürich。</li><li><strong>作者与归属</strong>：Lionel Heng、Ye Chuan Yeo—DSO National Laboratories。</li><li><strong>作者与归属</strong>：Andreas Geiger—MPI-IS and University of Tübingen。</li><li><strong>作者与归属</strong>：Marc Pollefeys—Department of Computer Science, ETH Zürich；Microsoft, Switzerland。</li><li><strong>作者与归属</strong>：Torsten Sattler—Chalmers University of Technology。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文解决的是：在不依赖LiDAR生成地图的前提下，仅用多鱼眼相机为自动驾驶车辆实时构建大尺度、稠密的静态三维几何地图，并在融合前剔除潜在运动物体以抑制拖影伪影。</li><li>具体场景是装有五台前视近红外相机、GNSS/INS和三维LiDAR（仅作评测真值）的测试车，在South Buona Vista林道路段和One North城市道路上在线运行；论文报告车辆速度最高 40 km/h时仍可实时建图。</li><li>论文真正检验的是：多分辨率plane-sweeping stereo、逐级深度过滤、单阶段动态物体检测和局部TSDF融合能否在精度、完整度与速度之间取得可用平衡，并让整条车载管线达到 15 Hz。</li><li><strong>研究背景</strong>：自动驾驶需要实时三维环境地图才能感知并导航。LiDAR可实时给出准确点云但垂直分辨率较低；相机本身不直接提供三维信息，却能借助多视几何恢复高分辨率地图。</li><li><strong>核心痛点</strong>：已有单目或静态场景重建难以处理运动物体，动态目标会在地图中留下拖影；实例分割与场景流组合的动态建图方案约为二点五赫兹，难以服务高速行驶。与此同时，鱼眼图像中心的角分辨率较低，实时下采样会进一步恶化车辆正前方远处物体的深度估计。</li><li><strong>任务定义</strong>：每个时刻输入多台硬件同步鱼眼相机的图像、相机间已知相对位姿以及参考相机位姿；系统输出参考相机深度图和潜在运动物体掩码，再把剔除这些区域后的深度融合为周围静态环境的TSDF三维地图。</li><li><strong>研究目标</strong>：研究目标不只是提高单帧深度，而是让多尺度深度估计、离群深度过滤、快速动态目标处理和局部体素交换共同兼顾远近场几何质量、动态环境鲁棒性、受限车载算力与长距离运行的可扩展性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出一套完全依靠鱼眼相机、可在自动驾驶车辆上实时运行的实用稠密建图系统。</li><li>提出面向鱼眼中心低角分辨率问题的多尺度深度估计策略，在覆盖大视场的同时保留正前方远物体的细节。</li><li>系统研究多种深度过滤和局部地图裁剪方法，并用LiDAR数据评估其对深度误差、地图精度与完整度的影响。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：在线系统分为三个相互衔接的模块：plane-sweeping stereo为参考相机估计深度；YOLOv3生成潜在运动车辆的框并在深度图中屏蔽相应区域；TSDF模块借助相机位姿跨时刻融合剩余深度，输出静态三维地图。</li><li><strong>输入与表示</strong>：深度模块接收同一时刻的参考鱼眼图、支持鱼眼图及其已知相对位姿，把扫掠平面转成逐像素深度假设，并以局部窗口负ZNCC衡量匹配代价。检测器接收参考相机的灰度鱼眼图。融合端将场景表示为体素集合，每个体素保存截断符号距离D(X)与累计观测权重w(X)；参考相机位姿可由VIO或GNSS/INS提供。</li><li><strong>模型结构</strong>：plane sweep采用两组方向：与参考图像平面平行的 64 个平面，以及与地面平行的 30 个平面。动态模块使用单阶段YOLOv3，在S×S网格的每格预测B个框、类别概率和框属性。建图模块复用InfiniTAM的四阶段结构：分配新体素块、更新当前可见块、融合新三维信息、把旧块从GPU换出。</li><li><strong>数据流</strong>：先在下采样鱼眼图上估深并上采样到原尺寸，再对原分辨率中心裁剪区独立估深并合并两张深度图；随后依次用最佳匹配代价、第一/第二候选代价比和局部深度连续性去除离群值。参考图同时进入检测器，检测框对应深度在融合前被屏蔽。有效深度沿鱼眼反投影射线触发体素块分配，系统更新可见块、执行TSDF积分，并将驶离局部区域的体素块换出。</li><li><strong>关键技术</strong>：多尺度分支把 1024×544 原图降到 512×272 覆盖完整鱼眼视场，同时用 572×332 的原分辨率中心裁剪补偿远距前向区域。深度过滤分别处理高匹配代价、匹配不唯一和邻域不连续；检测框虽比实例掩码粗，但时间积分可补回误删背景。在线地图只保留车辆周围 60 m×60 m×3 m区域，并仅采用至少 3 次观测的体素块，以限制内存并抑制远距离噪声。</li><li><strong>公式与超参数</strong>：Equation (1)用鱼眼统一投影模型反投影像素：令a=[ξ+sqrt(1+(1−ξ^2)(x^2+y^2))]/(x^2+y^2+1)，则r(p)=[ax, ay, a−ξ]^T，并在射线上d−μ到d+μ范围积分。Equation (2)以D(X)←[w(X)D(X)+min(1,η/μ)]/[w(X)+1]更新TSDF。plane sweep使用 64 个正视平面、30 个地面平面，原分辨率与下采样图的ZNCC窗口分别为 9×9 和 7×7；图像上、下部的α分别为 0.05 和 0.3，γ为零点五米、δ= 0.3。检测器先以学习率 10e−4 训练首尾层 10 个epoch，再以 10e−5 微调全部层 20 个epoch。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：自驾建图评测使用South Buona Vista（林间道路，3 km）和One North（城市道路，5 km）两条序列，并把 2 台LiDAR的累计点云投影到参考鱼眼图作为深度真值。</li><li><strong>数据集</strong>：动态车辆检测以Microsoft COCO预训练模型为起点，另标注车载采集的 2609 张灰度鱼眼图和约 11200 辆车用于适配。</li><li><strong>规模与划分</strong>：两条道路序列长度分别为 3 km和 5 km；深度误差评测从每个环境各人工选取一段无运动物体序列。检测标注规模为 2609 张图、约 11200 辆车；全文实验设置未给出这些标注的train/validation/test划分，也未给出人工选取序列的精确帧数。</li><li><strong>模型</strong>：学习模型为YOLOv3：从Microsoft COCO模型出发，截去首层与末层后在灰度鱼眼数据上微调；论文未报告参数量。深度估计是几何plane-sweeping stereo而非学习模型，体融合采用InfiniTAM管线。</li><li><strong>硬件</strong>：车内有两台PC，每台配置Intel i7 2.4 GHz CPU与NVIDIA GTX 1080 GPU；另有一台Intel i7 2.8 GHz CPU、NVIDIA Quadro M5000M GPU的笔记本。深度估计与动态检测各占一台PC，TSDF融合在笔记本运行。</li><li><strong>代码</strong>：论文明确写出检测器使用TensorFlow实现、体融合采用InfiniTAM库；从方法实现段、实验设置到结论及参考文献尾部均未给出本系统的源码仓库地址或代码发布声明，故顶层code_url保持为空。</li><li><strong>训练平台</strong>：实验载体是自驾测试车：车顶安装五台朝前的近红外相机，输出 1024×544 灰度图、25 fps，并与GNSS/INS硬件时间同步；车顶三维LiDAR只用于构造评测点云，相机位姿取自GNSS/INS。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：South Buona Vista：主要是穿越森林的道路，序列长度 3 km。</li><li><strong>评估基准</strong>：One North：城市道路序列长 5 km，场景遮挡比South Buona Vista更复杂。</li><li><strong>评估指标</strong>：深度估计以每帧预测深度相对LiDAR真值深度的绝对差计算均值和中位数，单位为m，数值越低越好。</li><li><strong>评估指标</strong>：三维地图accuracy定义为Sc中到Sgt最近点距离不超过t1的点比例，completeness定义为Sgt中到Sc最近点距离不超过t2的点比例；两者均越高越好。</li><li><strong>对比方法</strong>：深度阶段比较完整原分辨率、半分辨率与多尺度输入的绝对误差和无过滤运行时间。</li><li><strong>对比方法</strong>：过滤与视角对比包括raw深度、最佳代价过滤、唯一性比过滤、局部连续性过滤，以及三相机与五相机配置。</li><li><strong>对比方法</strong>：地图阶段以LiDAR真值地图为参照，并比较是否删除低观测体素、是否启用运动物体检测。</li><li><strong>关键结果</strong>：深度估计、动态检测和TSDF融合平均每帧约为 60 ms、40 ms、20 ms；三者并行后整条管线为 15 Hz，作者报告车辆速度最高 40 km/h时仍足够实时。</li><li><strong>关键结果</strong>：不含过滤时，完整分辨率、下采样和多尺度深度估计分别为五十毫秒、十六毫秒、三十六毫秒；多尺度比完整分辨率快约 28%，误差接近完整分辨率并优于半分辨率。</li><li><strong>关键结果</strong>：三步深度过滤后，中位绝对误差下降超过 40%，平均绝对误差下降超过 60%，两项均是越低越好。</li><li><strong>关键结果</strong>：三相机配置节省约 17% 运行时间，但两种三相机布局的深度误差都高于五相机配置。</li><li><strong>关键结果</strong>：两个数据集上均有超过 85% 的重建点误差小于 0.1 m；在零点零五米体素下，One North于零点二五米阈值时完整度仍超过 80%。</li><li><strong>关键结果</strong>：定性对照中，关闭检测会留下运动汽车的点迹；启用检测后该车被完全滤除，粗框误删的背景可由时间积分恢复。</li><li><strong>消融实验</strong>：分辨率消融比较完整、半分辨率和多尺度方案，显示多尺度在前向大深度区域显著优于简单降采样，并接近完整分辨率质量。</li><li><strong>消融实验</strong>：过滤消融逐步加入最佳代价、唯一性比和局部连续性检查；前两步贡献主要误差下降，最后一步改善较小。</li><li><strong>消融实验</strong>：相机数量消融比较左右最外加中央、三个中央以及全部五相机布局，速度收益伴随更高深度误差。</li><li><strong>消融实验</strong>：体素消融显示不删除低观测体素会提高完整度但牺牲精度。</li><li><strong>消融实验</strong>：运动物体检测开关消融显示，关闭检测会留下移动汽车拖影，启用检测后该车被完全滤除。</li><li><strong>实验条件</strong>：实验评估的是车载在线建图管线，并以离线量化方式计算深度和地图指标；论文未报告规划或控制闭环评估。相机位姿来自GNSS/INS，2 台LiDAR累计点云提供深度或地图真值；为避免累计真值受运动物体污染，深度误差只在每个环境人工选出的无运动物体序列上计算，各模块在指定车载PC和笔记本上并行运行。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1811.01549/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">StNet: Local and Global Spatial-Temporal Modeling for Action Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1809.05477/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Project AutoVision: Localization and 3D Scene Perception for an Autonomous Vehicle with a Multi-Camera System</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Temporal Action Localization in Untrimmed Videos via Multi-stage CNNs - 视频领域每日论文卡</title>
+    <meta name="description" content="论文解决未裁剪长视频中的时间动作定位：给定一段长视频，不只识别动作类别，还要回答某个动作何时开始、何时结束；现实视频可能同时含多个动作实例、背景场景和其他活动，因此需要在复杂时间轴上划出准确边界。 具体场景是监控等长视频分析：系统从整段未裁剪视频中输出动作实例的时间位置和置信度，再以 NMS 去除冗余检测；这类定位可节省大量时间和计算成本。 论文真正检验的是：将候选筛选、动作分类初始化和重叠感知定位串成多阶段 Segment-CNN，能否让模型更偏好与真值时间重叠更高的片段，从而得到更精确的时间边界；预测时只运行提议网络和定位网络。 研究背景：动作识别过去多在人工裁剪的短视频上判断类别；论文把问题推进到野外未裁剪长视频中的时间动作定位，现实序列可同时包含多个动作实例、背景和其他活动。 核心痛点：当时强系统依赖 iDT/FV 等手工表示；帧级二维卷积网络又不显式捕获对边界重要的运动。普通分类网络只寻找类别判别证据，即使候选与真值仅有很小时间重叠也可能给高分，随后 NMS 可能删掉重叠更大的候选。 任务定义：输入视频 X 是按时间排列的帧序列，训练标注为若干动作实例的类别、起始帧和结束帧；输出是在未裁剪视频中带类别、时间区间和置信度的动作实例，正确检测还须类别正确且时间 IoU 超过评测阈值。 研究目标：目标是检验：以三维卷积同时编码外观与运动，用提议网络删除明显背景、以分类网络初始化定位网络，再用重叠感知损失校准候选分数，能否让后处理选择时间边界更准的片段。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1601.02129">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1601.02129.webp" alt="Temporal Action Localization in Untrimmed Videos via Multi-stage CNNs" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文解决未裁剪长视频中的时间动作定位：给定一段长视频，不只识别动作类别，还要回答某个动作何时开始、何时结束；现实视频可能同时含多个动作实例、背景场景和其他活动，因此需要在复杂时间轴上划出准确边界。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Temporal Action Localization in Untrimmed Videos via Multi-stage CNNs</h1>
+            <div class="detail-meta">2016-01-09 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1601.02129" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1601.02129" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1601.02129</span></div>
+            <p class="detail-summary">论文解决未裁剪长视频中的时间动作定位：给定一段长视频，不只识别动作类别，还要回答某个动作何时开始、何时结束；现实视频可能同时含多个动作实例、背景场景和其他活动，因此需要在复杂时间轴上划出准确边界。 具体场景是监控等长视频分析：系统从整段未裁剪视频中输出动作实例的时间位置和置信度，再以 NMS 去除冗余检测；这类定位可节省大量时间和计算成本。 论文真正检验的是：将候选筛选、动作分类初始化和重叠感知定位串成多阶段 Segment-CNN，能否让模型更偏好与真值时间重叠更高的片段，从而得到更精确的时间边界；预测时只运行提议网络和定位网络。 研究背景：动作识别过去多在人工裁剪的短视频上判断类别；论文把问题推进到野外未裁剪长视频中的时间动作定位，现实序列可同时包含多个动作实例、背景和其他活动。 核心痛点：当时强系统依赖 iDT/FV 等手工表示；帧级二维卷积网络又不显式捕获对边界重要的运动。普通分类网络只寻找类别判别证据，即使候选与真值仅有很小时间重叠也可能给高分，随后 NMS 可能删掉重叠更大的候选。 任务定义：输入视频 X 是按时间排列的帧序列，训练标注为若干动作实例的类别、起始帧和结束帧；输出是在未裁剪视频中带类别、时间区间和置信度的动作实例，正确检测还须类别正确且时间 IoU 超过评测阈值。 研究目标：目标是检验：以三维卷积同时编码外观与运动，用提议网络删除明显背景、以分类网络初始化定位网络，再用重叠感知损失校准候选分数，能否让后处理选择时间边界更准的片段。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">14 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Columbia University（论文首页署名单位）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1601.02129/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文解决未裁剪长视频中的时间动作定位：给定一段长视频，不只识别动作类别，还要回答某个动作何时开始、何时结束；现实视频可能同时含多个动作实例、背景场景和其他活动，因此需要在复杂时间轴上划出准确边界。</p>
+  <ul class="reading-intro-points"><li>论文解决未裁剪长视频中的时间动作定位：给定一段长视频，不只识别动作类别，还要回答某个动作何时开始、何时结束；现实视频可能同时含多个动作实例、背景场景和其他活动，因此需要在复杂时间轴上划出准确边界。</li><li>具体场景是监控等长视频分析：系统从整段未裁剪视频中输出动作实例的时间位置和置信度，再以 NMS 去除冗余检测；这类定位可节省大量时间和计算成本。</li><li>论文真正检验的是：将候选筛选、动作分类初始化和重叠感知定位串成多阶段 Segment-CNN，能否让模型更偏好与真值时间重叠更高的片段，从而得到更精确的时间边界；预测时只运行提议网络和定位网络。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Columbia University（论文首页署名单位）</li><li><strong>实验室 / 团队</strong>：论文首页仅列 Columbia University，未另列实验室或院系名称</li><li><strong>作者与归属</strong>：Zheng Shou、Dongang Wang、Shih-Fu Chang—Columbia University（New York, NY, USA）</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文解决未裁剪长视频中的时间动作定位：给定一段长视频，不只识别动作类别，还要回答某个动作何时开始、何时结束；现实视频可能同时含多个动作实例、背景场景和其他活动，因此需要在复杂时间轴上划出准确边界。</li><li>具体场景是监控等长视频分析：系统从整段未裁剪视频中输出动作实例的时间位置和置信度，再以 NMS 去除冗余检测；这类定位可节省大量时间和计算成本。</li><li>论文真正检验的是：将候选筛选、动作分类初始化和重叠感知定位串成多阶段 Segment-CNN，能否让模型更偏好与真值时间重叠更高的片段，从而得到更精确的时间边界；预测时只运行提议网络和定位网络。</li><li><strong>研究背景</strong>：动作识别过去多在人工裁剪的短视频上判断类别；论文把问题推进到野外未裁剪长视频中的时间动作定位，现实序列可同时包含多个动作实例、背景和其他活动。</li><li><strong>核心痛点</strong>：当时强系统依赖 iDT/FV 等手工表示；帧级二维卷积网络又不显式捕获对边界重要的运动。普通分类网络只寻找类别判别证据，即使候选与真值仅有很小时间重叠也可能给高分，随后 NMS 可能删掉重叠更大的候选。</li><li><strong>任务定义</strong>：输入视频 X 是按时间排列的帧序列，训练标注为若干动作实例的类别、起始帧和结束帧；输出是在未裁剪视频中带类别、时间区间和置信度的动作实例，正确检测还须类别正确且时间 IoU 超过评测阈值。</li><li><strong>研究目标</strong>：目标是检验：以三维卷积同时编码外观与运动，用提议网络删除明显背景、以分类网络初始化定位网络，再用重叠感知损失校准候选分数，能否让后处理选择时间边界更准的片段。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>作者称据其所知首次把三维卷积网络与多阶段训练流程用于野外未裁剪长视频的时间动作定位，使网络直接联合建模动作外观与运动。</li><li>提出 Segment-CNN：提议网络先过滤背景候选，分类网络学习逐类识别并为定位阶段提供初始化，定位网络再给固定时间候选输出动作类别和置信度，由候选窗口提供时间边界。</li><li>设计显式利用时间 IoU 的重叠损失，让片段置信度随其与真值边界的重叠变化，帮助 NMS 保留定位更准确的候选。</li><li>给出可同时利用裁剪短视频和带时间边界未裁剪视频的训练范式，以适应两种常见监督标注形式。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：提议网络把片段判成动作或背景以压缩候选；分类网络学习各动作类别与背景的逐类模型；定位网络由分类权重继续细调，并用时间重叠校准类别置信度。训练需要三网，推理只运行提议与定位网络。</li><li><strong>输入与表示</strong>：视频表示为 X={x_t}_{t=1}^T，动作标注集合中的每个实例给出类别 k_m、起始帧 ψ_m 与结束帧 ψ&#x27;_m。未裁剪视频先缩放到 171×128，再以 16、32、64、128、256、512 帧窗口和 75% 重叠滑动，每个窗口均匀采样 16 帧形成网络输入；裁剪视频直接均匀采样 16 帧。</li><li><strong>模型结构</strong>：三套网络均采用相同的 C3D 式三维卷积架构，但论文没有说三者共享权重：卷积在时空三个维度的核尺寸均为 3、步长 1，空间最大池化为 2×2、步长 2；单段输入为 171×128×16。主干从 conv1a(64) 逐级到 conv5b(512)，再接 fc6(4096)、fc7(4096) 与 fc8(K+1)。</li><li><strong>数据流</strong>：训练时先用动作/背景片段训练提议网络，再用保留候选训练逐类分类网络，并从其权重细调定位网络。推理时多尺度片段先经提议网络，保留 P_pro≥0.7 的候选；定位网络给出类别与 P_loc，背景预测被删除，分数再乘训练集中的类别—窗口长度频率，最后按 P_loc 做 NMS，阈值取评测 θ−0.1。</li><li><strong>关键技术</strong>：提议数据按时间 IoU 分配：最高 IoU&gt;0.7 记正例、&lt;0.3 记背景；若某真值没有 IoU&gt;0.7 的窗口，则把其最高重叠且 IoU&gt;0.5 的窗口补为正例。定位网络给每个正片段附真实重叠 v，使置信度目标随时间重叠变化；C3D 的 Sports-1M 权重初始化提议与分类网络，分类权重再初始化定位网络。</li><li><strong>公式与超参数</strong>：总损失为 L=L_softmax+λL_overlap；在 λ=1 时，对正例，组合损失 L 在正确类分数 P_n^(k_n)=√(v_n^α) 处达到最小；对背景则 L_overlap=0，因而按真实时间重叠 v 校准置信度。实验取 α=0.25；分类网络的 SGD 学习率为 0.0001（fc8 为 0.01）、动量 0.9、权重衰减 0.0005，并每 10K 次迭代减半。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：MEXaction2 含 BullChargeCape、HorseRiding 两类；INA 未裁剪部分约 77 小时，带边界实例按 1336/310/329 划分训练/验证/测试。</li><li><strong>数据集</strong>：THUMOS 2014 含 20 个检测类别；训练侧有 2755 个 UCF101 裁剪视频，验证集有 1010 个未裁剪视频和 3007 个实例；测试集有 1574 个未裁剪视频、3358 个实例，但只保留含目标动作的 213 个视频并排除 1361 个背景视频。</li><li><strong>规模与划分</strong>：训练利用两种监督：裁剪视频整段是单个动作实例，未裁剪视频含动作类别与起止边界；候选由多尺度滑窗生成并按 IoU 采样。MEXaction2 与 THUMOS 2014 的具体规模和划分分别列于 datasets 条目。</li><li><strong>模型</strong>：基础模型是 C3D 在 Sports-1M 训练集上学得的三维卷积网络，用来初始化提议与分类分支；实现基于 Caffe，定位网络由分类网络继续细调。网络结构小节只逐层给出结构，效率分析小节仅报告三张深网模型合计存储小于 1 GB，全文未给参数总量。</li><li><strong>硬件</strong>：效率分析小节明确使用 GeForce GTX 980（4G 显存）：每批约 1 秒、约处理 25 个片段；结合训练设置与全文实验部分检查，论文未报告训练所用 CPU、其余 GPU 数量或总训练时长。</li><li><strong>代码</strong>：论文首页脚注明确给出 <a href="https://github.com/zhengshou/scnn/，称源码与训练模型可在线获得；实验实现使用" target="_blank" rel="noopener noreferrer">https://github.com/zhengshou/scnn/，称源码与训练模型可在线获得；实验实现使用</a> Caffe 与 C3D。</li><li><strong>训练平台</strong>：数据集、主实验和效率分析部分的平台范围是对 MEXaction2 与 THUMOS 2014 视频做离线时间动作检测：系统把定位视为检索问题，在未裁剪视频时间轴上产生候选并评分；从实验到结论均未设置机器人、实车、仿真器或闭环实验。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：MEXaction2：按 Table 1 在 IoU=0.5 下评估 BullChargeCape、HorseRiding 两类 AP 及 mAP；DTF 结果由作者按标准口径重新评测。</li><li><strong>评估基准</strong>：THUMOS 2014：按 Table 2 在 IoU 阈值 0.1、0.2、0.3、0.4、0.5 下报告 mAP；测试时只保留 1574 个未裁剪视频中含目标动作的 213 个，排除 1361 个背景视频。</li><li><strong>评估指标</strong>：AP/mAP 均为越高越好；预测只有在类别正确、与真值的时间 IoU 大于指定阈值时才算正确，同一真值不允许冗余检测。</li><li><strong>对比方法</strong>：在 MEXaction2 上对比 DTF 的稠密轨迹词袋表示；在 THUMOS 2014 上对比 Karaman 等的 iDT/FV+显著性+帧级 CNN、Wang 等的 iDT/FV+帧级 CNN，以及 Oneata 等的滑窗 iDT/FV 与图像、音频、视频级分数融合。</li><li><strong>关键结果</strong>：在 MEXaction2、IoU=0.5 时，论文报告该方法把 mAP 从 DTF 的 1.7% 提高到 7.4%（越高越好）。</li><li><strong>关键结果</strong>：在 THUMOS 2014 上，Table 2 的 mAP(%) 表头下，S-CNN 在 IoU 0.1/0.2/0.3/0.4/0.5 的数值依次为 47.7/43.5/36.3/28.7/19.0，强基线 Oneata 等为 39.8/36.2/28.8/21.8/15.0；数值按百分数点读取且全阈值均为越高越好。</li><li><strong>关键结果</strong>：在 THUMOS 2014 的 IoU=0.5 下，S-CNN 在 20 类中的 14 类显著优于对手，总体 mAP 从当时最佳 15.0% 提升到 19.0%。</li><li><strong>消融实验</strong>：THUMOS 2014 的 Table 3 在 mAP(%) 表头下报告：去掉提议网络为 17.1，保留提议网络为 19.0（IoU=0.5，数值按百分数点读取且越高越好）；提议分支同时过滤背景、减少后续计算。</li><li><strong>消融实验</strong>：在固定设置下，完整 S-CNN 随 top-κ 深度变化始终高于“无分类网络”版本；加入定位网络也显著优于仅含提议+分类的版本，说明分类初始化与重叠损失分别贡献了增益。</li><li><strong>消融实验</strong>：重叠损失的 α 从 0.25 变到 1.0 时性能保持稳定，说明结果对该超参数在此区间不敏感。</li><li><strong>实验条件</strong>：MEXaction2 的提议/分类/定位网络分别训练 30K/20K/20K 次；THUMOS 2014 三网均训练 30K 次，两者均取 α=0.25。NMS 阈值设为评测阈值 θ−0.1；THUMOS 结果使用组织者更新后的公平评测工具重新计算。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1604.07279/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Actionness Estimation Using Hybrid Fully Convolutional Networks</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1512.09049/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">LIBSVX: A Supervoxel Library and Benchmark for Early Video Processing</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

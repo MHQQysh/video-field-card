@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Temporal Segment Networks for Action Recognition in Videos - 视频领域每日论文卡</title>
+    <meta name="description" content="论文要解决的是深度视频动作识别只看单帧或短片段、难以覆盖整段视频长期结构的问题；TSN 用稀疏且全局的分段采样，把整段视频的信息纳入端到端学习，同时让采样计算量不随视频时长增长。 使用场景同时覆盖已裁剪动作片段和含大量背景的未裁剪长视频：前者聚合多片段分类分数，后者用多尺度时间窗口覆盖不同位置和时长的动作，再抑制无关背景并输出视频类别。 论文真正检验的研究问题有三层：长期时间结构能否被有效学习；同一动作模型能否用于更现实的未裁剪视频；在标注样本有限、光流代价高时，训练与大规模应用能否兼顾准确率和效率。 研究背景：视频动作识别依赖互补的外观与时间动态线索，但尺度变化、视角变化和相机运动使两类信息的提取与利用并不直接；当时端到端 ConvNet 相对手工特征带来的提升仍然有限。 核心痛点：现有深度方法多聚焦单帧或至多 10 帧左右的短期运动；用固定间隔密集采样延长时间范围会增加长视频计算与显存压力。未裁剪视频又常由背景占主导，有限规模数据易过拟合，而光流提取成为大规模部署瓶颈。 任务定义：输入是一段已裁剪或未裁剪视频；TSN 将其切成若干等时长片段，每段随机抽取一个短 snippet，由共享 ConvNet 产生类别分数，经分段共识与 Softmax 得到整段视频的动作类别概率。对未裁剪视频，再以多尺度时间滑窗和窗口级聚合形成最终视频预测。 研究目标：目标不是单纯加深骨干网络，而是在固定的稀疏采样预算下让训练覆盖完整视频，并验证分段数、聚合函数与训练实践能否同时改善裁剪和未裁剪视频识别，同时保持可部署的计算效率。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1705.02953">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1705.02953.webp" alt="Temporal Segment Networks for Action Recognition in Videos" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文要解决的是深度视频动作识别只看单帧或短片段、难以覆盖整段视频长期结构的问题；TSN 用稀疏且全局的分段采样，把整段视频的信息纳入端到端学习，同时让采样计算量不随视频时长增长。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Temporal Segment Networks for Action Recognition in Videos</h1>
+            <div class="detail-meta">2017-05-08 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1705.02953" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1705.02953" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1705.02953</span></div>
+            <p class="detail-summary">论文要解决的是深度视频动作识别只看单帧或短片段、难以覆盖整段视频长期结构的问题；TSN 用稀疏且全局的分段采样，把整段视频的信息纳入端到端学习，同时让采样计算量不随视频时长增长。 使用场景同时覆盖已裁剪动作片段和含大量背景的未裁剪长视频：前者聚合多片段分类分数，后者用多尺度时间窗口覆盖不同位置和时长的动作，再抑制无关背景并输出视频类别。 论文真正检验的研究问题有三层：长期时间结构能否被有效学习；同一动作模型能否用于更现实的未裁剪视频；在标注样本有限、光流代价高时，训练与大规模应用能否兼顾准确率和效率。 研究背景：视频动作识别依赖互补的外观与时间动态线索，但尺度变化、视角变化和相机运动使两类信息的提取与利用并不直接；当时端到端 ConvNet 相对手工特征带来的提升仍然有限。 核心痛点：现有深度方法多聚焦单帧或至多 10 帧左右的短期运动；用固定间隔密集采样延长时间范围会增加长视频计算与显存压力。未裁剪视频又常由背景占主导，有限规模数据易过拟合，而光流提取成为大规模部署瓶颈。 任务定义：输入是一段已裁剪或未裁剪视频；TSN 将其切成若干等时长片段，每段随机抽取一个短 snippet，由共享 ConvNet 产生类别分数，经分段共识与 Softmax 得到整段视频的动作类别概率。对未裁剪视频，再以多尺度时间滑窗和窗口级聚合形成最终视频预测。 研究目标：目标不是单纯加深骨干网络，而是在固定的稀疏采样预算下让训练覆盖完整视频，并验证分段数、聚合函数与训练实践能否同时改善裁剪和未裁剪视频识别，同时保持可部署的计算效率。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：苏黎世联邦理工学院 · ETH Zurich</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1705.02953/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文要解决的是深度视频动作识别只看单帧或短片段、难以覆盖整段视频长期结构的问题；TSN 用稀疏且全局的分段采样，把整段视频的信息纳入端到端学习，同时让采样计算量不随视频时长增长。</p>
+  <ul class="reading-intro-points"><li>论文要解决的是深度视频动作识别只看单帧或短片段、难以覆盖整段视频长期结构的问题；TSN 用稀疏且全局的分段采样，把整段视频的信息纳入端到端学习，同时让采样计算量不随视频时长增长。</li><li>使用场景同时覆盖已裁剪动作片段和含大量背景的未裁剪长视频：前者聚合多片段分类分数，后者用多尺度时间窗口覆盖不同位置和时长的动作，再抑制无关背景并输出视频类别。</li><li>论文真正检验的研究问题有三层：长期时间结构能否被有效学习；同一动作模型能否用于更现实的未裁剪视频；在标注样本有限、光流代价高时，训练与大规模应用能否兼顾准确率和效率。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：苏黎世联邦理工学院（ETH Zurich）</li><li><strong>机构</strong>：香港中文大学信息工程系（The Chinese University of Hong Kong）</li><li><strong>机构</strong>：中国科学院深圳先进技术研究院</li><li><strong>实验室 / 团队</strong>：Computer Vision Laboratory（苏黎世联邦理工学院计算机视觉实验室）</li><li><strong>作者与归属</strong>：Limin Wang、Luc Van Gool—苏黎世联邦理工学院 Computer Vision Laboratory</li><li><strong>作者与归属</strong>：Yuanjun Xiong、Dahua Lin、Xiaoou Tang—香港中文大学信息工程系</li><li><strong>作者与归属</strong>：Zhe Wang、Yu Qiao—中国科学院深圳先进技术研究院</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文要解决的是深度视频动作识别只看单帧或短片段、难以覆盖整段视频长期结构的问题；TSN 用稀疏且全局的分段采样，把整段视频的信息纳入端到端学习，同时让采样计算量不随视频时长增长。</li><li>使用场景同时覆盖已裁剪动作片段和含大量背景的未裁剪长视频：前者聚合多片段分类分数，后者用多尺度时间窗口覆盖不同位置和时长的动作，再抑制无关背景并输出视频类别。</li><li>论文真正检验的研究问题有三层：长期时间结构能否被有效学习；同一动作模型能否用于更现实的未裁剪视频；在标注样本有限、光流代价高时，训练与大规模应用能否兼顾准确率和效率。</li><li><strong>研究背景</strong>：视频动作识别依赖互补的外观与时间动态线索，但尺度变化、视角变化和相机运动使两类信息的提取与利用并不直接；当时端到端 ConvNet 相对手工特征带来的提升仍然有限。</li><li><strong>核心痛点</strong>：现有深度方法多聚焦单帧或至多 10 帧左右的短期运动；用固定间隔密集采样延长时间范围会增加长视频计算与显存压力。未裁剪视频又常由背景占主导，有限规模数据易过拟合，而光流提取成为大规模部署瓶颈。</li><li><strong>任务定义</strong>：输入是一段已裁剪或未裁剪视频；TSN 将其切成若干等时长片段，每段随机抽取一个短 snippet，由共享 ConvNet 产生类别分数，经分段共识与 Softmax 得到整段视频的动作类别概率。对未裁剪视频，再以多尺度时间滑窗和窗口级聚合形成最终视频预测。</li><li><strong>研究目标</strong>：目标不是单纯加深骨干网络，而是在固定的稀疏采样预算下让训练覆盖完整视频，并验证分段数、聚合函数与训练实践能否同时改善裁剪和未裁剪视频识别，同时保持可部署的计算效率。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出视频级 TSN：把整段视频等分后稀疏抽取 snippet，再以分段共识联合学习，从而在固定采样成本下建模长期时间结构。</li><li>系统定义并分析最大池化、平均池化、线性加权、top-K 池化与注意力加权五类共识函数，使模型能在全片段利用和抑制背景之间选择。</li><li>为未裁剪视频提出多尺度时间窗口集成 M-TWI：先在多种时长窗口内取类别最大响应，再跨窗口与尺度聚合，以处理动作位置、持续时间和背景干扰。</li><li>给出有限样本下的完整训练与输入实践，包括跨模态初始化、partial BN、高比例 dropout、裁剪增强，以及用 RGB difference 取代昂贵光流的实时方案。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：TSN 是训练阶段的视频级封装：用分段采样把长视频变成少量 snippet，并以共识函数形成可反传的视频级监督；M-TWI 则是未裁剪视频推理层，在已学得的 TSN 动作模型之上选择和整合可能含动作的时间窗口。</li><li><strong>输入与表示</strong>：每个 snippet 可由四种模态表示：单张 RGB 图像、连续帧的 stacked RGB differences、堆叠 optical-flow fields、以及补偿相机运动的 stacked warped optical-flow fields。RGB 负责外观，后三者提供运动线索；各模态分别预测后再融合。</li><li><strong>模型结构</strong>：给定视频 V，先等分为 K 个片段 S；从每个片段抽取 Tk。共享参数 W 的 ConvNet F(Tk;W) 为各 snippet 输出类别分数，分段共识 G 将所有分数汇总，预测函数 H 采用 Softmax 输出视频级类别概率；所有 snippet 分支共享网络参数，多个模态的预测最后再融合。</li><li><strong>数据流</strong>：训练时依次执行全视频分段、每段随机抽样、模态构造、共享骨干打分、共识聚合、Softmax 与视频级交叉熵，并把所有 snippet 的梯度共同传回 W。裁剪视频测试时均匀采样 25 个 snippets，对角点、中心及翻转裁剪求平均。未裁剪视频按 1 FPS 取样，使用长度为 1、2、4、8、16 秒且步长为 0.8 × l 的窗口；窗口内按类别取最大值，同长度窗口再以 top-K 聚合，其中 K=max(15,⌈N_l/4⌉)，最后平均各尺度预测。</li><li><strong>关键技术</strong>：共识层提供 max、average、top-K、linear weighting 与内容自适应 attention weighting；训练侧把 RGB 预训练首层权重跨通道求均值并复制到光流或 RGB-difference 输入，partial BN 只更新首个 BN 层的统计量，其余层冻结，并在全局池化后使用 0.8 dropout；corner cropping 与 scale jittering 进一步正则化。</li><li><strong>公式与超参数</strong>：核心前向式为 TSN(T1,…,TK)=H(G(F(T1;W),…,F(TK;W)))：W 是各 snippet 共享的 ConvNet 参数，G 聚合各段类别分数，H 取 Softmax 得视频概率。类别交叉熵写为 L=-Σ_i y_i(g_i-log Σ_j exp(g_j))，其中 C 是类别数、y_i 是真值标签、g_j 是共识分数。实现采用 mini-batch SGD，batch size 128、momentum 0.9；UCF101 空间流初始学习率 0.001，每 1, 500 次迭代衰减并在 3, 500 次停止；时间流初始学习率 0.005，在 12, 000 与 18, 000 次衰减，20, 000 次停止；后续实验默认 K=7。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：UCF101：已裁剪动作视频基准，按官方多划分协议评测。</li><li><strong>数据集</strong>：HMDB51：来自电影与网络等多来源的已裁剪真实动作视频基准。</li><li><strong>数据集</strong>：THUMOS14：包含训练、验证、测试和背景集合的未裁剪视频基准。</li><li><strong>数据集</strong>：ActivityNet v1.2：大规模未裁剪人类活动视频基准。</li><li><strong>规模与划分</strong>：UCF101 有 101 类、13, 320 个视频片段，采用三个训练/测试划分；HMDB51 有 51 类、6, 766 个视频片段，也采用三个划分并报告平均准确率。THUMOS14 用 UCF101 训练集与 1, 010 个验证视频训练，在 1, 575 个测试视频上评估；ActivityNet v1.2 有 100 类，训练、验证、测试分别为 4, 819、2, 383、2, 480 个视频。</li><li><strong>模型</strong>：消融实验采用兼顾精度与效率的 BN-Inception（inception v2）骨干，ActivityNet 挑战还实例化 Inception V3 与 ResNet-152；网络以 ImageNet 模型预训练。正文的架构与实现章节均未给出这些模型的参数规模。</li><li><strong>硬件</strong>：UCF101 训练使用 8 块 TITANX GPU：空间 TSN 约 0.6 小时、时间 TSN 约 8 小时；速度表也在 TitanX GPU 上测试。挑战模型在单节点 8 块 TitanX GPU 上可于 10 小时内训练完成。</li><li><strong>代码</strong>：论文明确声明方法代码与已训练模型公开，并在脚注给出 <a href="https://github.com/yjxiong/temporal-segment-networks/；其多" target="_blank" rel="noopener noreferrer">https://github.com/yjxiong/temporal-segment-networks/；其多</a> GPU Caffe 修改版另给出 <a href="https://github.com/yjxiong/caffe" target="_blank" rel="noopener noreferrer">https://github.com/yjxiong/caffe</a>。</li><li><strong>训练平台</strong>：实现平台是修改版 Caffe 加 OpenMPI 的多 GPU 数据并行；光流与 warped optical flow 使用 OpenCV CUDA 实现的 TV-L1。正文实验设置与结论均是离线视频分类，没有报告仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：HMDB51 与 UCF101：裁剪视频动作分类。</li><li><strong>评估基准</strong>：THUMOS14 与 ActivityNet v1.2：含大量背景的未裁剪视频动作分类。</li><li><strong>评估指标</strong>：HMDB51 与 UCF101 使用多划分平均分类准确率，越高越好。</li><li><strong>评估指标</strong>：THUMOS14 与 ActivityNet 使用 mean average precision（mAP），越高越好。</li><li><strong>对比方法</strong>：裁剪视频对比手工表示 iDT+FV、MoFAP，以及 Two Stream、C3D、TDD+FV、LTC、KVMF 等深度方法。</li><li><strong>对比方法</strong>：未裁剪视频对比 iDT、Two-Stream ConvNet、enhanced motion vector、3D ConvNet、object+motion 与 Depth2Action。</li><li><strong>对比方法</strong>：实时方案另与 Enhanced MV 和 Two-Stream 3DNet 比较识别准确率与 FPS。</li><li><strong>关键结果</strong>：HMDB51 上 TSN（7 segments）为 71.0%，对比 MPR 的 65.5%，作者称高 5.5%（按准确率差即五点五个百分点，越高越好）。</li><li><strong>关键结果</strong>：UCF101 上 TSN（7 segments）为 94.9%，对比 KVMF 的 93.1%，作者称高 1.8%（按准确率差即一点八个百分点，越高越好）。</li><li><strong>关键结果</strong>：THUMOS14 上 TSN（7 segments）达到 80.1% mAP，对比 object+motion 的 71.6%，作者称高 8.5%（按表中差值即八点五个百分点）。</li><li><strong>关键结果</strong>：ActivityNet v1.2 上 TSN（7 segments）达到 89.6% mAP，对比 Depth2Action 的 78.1%，作者称高 11.5%（按表中差值即十一点五个百分点）。</li><li><strong>关键结果</strong>：RGB+RGB Diff. 的 TSN 在 UCF101 达到 91.0% 准确率和 340 FPS，属于离线分类模型的高速推理结果。</li><li><strong>关键结果</strong>：ActivityNet 2016 挑战测试集上，作者团队在 24 支队伍中排名第一，mAP 为 93.23%，top-one accuracy 为 88.14%。</li><li><strong>消融实验</strong>：UCF101 split 1 的 two-stream 准确率从仅预训练空间流的 90.0%，升至加入跨模态初始化的 91.5%，再由 partial BN 与 dropout 提升到 92.0%。</li><li><strong>消融实验</strong>：UCF101 上分段数 K=1 时 two-stream 为 92.4%，K=7 时为 94.9%，K=9 仍为 94.9%，说明收益在更多分段后趋于饱和。</li><li><strong>消融实验</strong>：共识函数消融中，UCF101 的 average pooling 最佳为 94.9%；ActivityNet 上 average pooling 为 87.8%，top-K 为 88.1%，attention weighting 为 88.2%，复杂聚合更适合未裁剪背景。</li><li><strong>实验条件</strong>：主结果均为离线、监督式视频分类，而非零样本或闭环控制：裁剪集以 RGB 与 optical flow 等权融合，TSN 取 3 段或 7 段并使用平均共识；未裁剪集使用 top-K 共识与 M-TWI，主对比采用 train+val 训练、test 评估。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1705.07818/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">TricorNet: A Hybrid Temporal Convolutional and Recurrent Network for Video Action Segmentation</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1704.08723/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Action Understanding with Multiple Classes of Actors</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

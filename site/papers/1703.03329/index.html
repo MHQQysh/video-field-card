@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UntrimmedNets for Weakly Supervised Action Recognition and Detection - 视频领域每日论文卡</title>
+    <meta name="description" content="问题：如何在训练时只有未裁剪视频及视频级动作标签、没有动作实例时间边界的条件下，直接学出既可做弱监督动作识别又可做弱监督动作检测的模型。 场景：面向 YouTube 等天然未裁剪的长视频；逐个标注、裁剪动作时段昂贵且耗时，而且动作的精确时间范围本身可能主观、标注者之间不一致。 研究问题：仅靠视频标签，分类模块与选择模块能否联合学习“片段是什么动作”和“哪些片段重要”，并让同一端到端模型在 THUMOS14、ActivityNet 的识别与时间检测上与依赖时间标注的强监督方法竞争。 研究背景：传统动作识别通常把训练动作实例从长视频中人工裁成短片，再把模型用于裁剪或未裁剪视频；这种精确时间监督不适合扩展到真实的大规模视频。 核心痛点：去掉时间标注后，学习器不能只做类别外观建模，还必须从大量背景片段中自动推断可能动作实例的时间位置；而动作边界又可能没有唯一、稳定的定义。 任务定义：给定未裁剪视频与视频级动作标签，训练阶段不使用任何动作实例的时间信息；测试时输出整段视频的动作类别（WSR），或定位动作发生的时间区间（WSD）。 研究目标：目标是用可微的特征提取、分类与选择组件，把片段级分类分数和片段重要性汇成视频级预测，以该预测反向传播并联合优化网络。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1703.03329">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1703.03329.webp" alt="UntrimmedNets for Weakly Supervised Action Recognition and Detection" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">问题：如何在训练时只有未裁剪视频及视频级动作标签、没有动作实例时间边界的条件下，直接学出既可做弱监督动作识别又可做弱监督动作检测的模型。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">UntrimmedNets for Weakly Supervised Action Recognition and Detection</h1>
+            <div class="detail-meta">2017-03-09 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1703.03329" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1703.03329" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1703.03329</span></div>
+            <p class="detail-summary">问题：如何在训练时只有未裁剪视频及视频级动作标签、没有动作实例时间边界的条件下，直接学出既可做弱监督动作识别又可做弱监督动作检测的模型。 场景：面向 YouTube 等天然未裁剪的长视频；逐个标注、裁剪动作时段昂贵且耗时，而且动作的精确时间范围本身可能主观、标注者之间不一致。 研究问题：仅靠视频标签，分类模块与选择模块能否联合学习“片段是什么动作”和“哪些片段重要”，并让同一端到端模型在 THUMOS14、ActivityNet 的识别与时间检测上与依赖时间标注的强监督方法竞争。 研究背景：传统动作识别通常把训练动作实例从长视频中人工裁成短片，再把模型用于裁剪或未裁剪视频；这种精确时间监督不适合扩展到真实的大规模视频。 核心痛点：去掉时间标注后，学习器不能只做类别外观建模，还必须从大量背景片段中自动推断可能动作实例的时间位置；而动作边界又可能没有唯一、稳定的定义。 任务定义：给定未裁剪视频与视频级动作标签，训练阶段不使用任何动作实例的时间信息；测试时输出整段视频的动作类别（WSR），或定位动作发生的时间区间（WSD）。 研究目标：目标是用可微的特征提取、分类与选择组件，把片段级分类分数和片段重要性汇成视频级预测，以该预测反向传播并联合优化网络。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">17 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：ETH Zurich, Switzerland（论文首页署名机构）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1703.03329/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">问题：如何在训练时只有未裁剪视频及视频级动作标签、没有动作实例时间边界的条件下，直接学出既可做弱监督动作识别又可做弱监督动作检测的模型。</p>
+  <ul class="reading-intro-points"><li>问题：如何在训练时只有未裁剪视频及视频级动作标签、没有动作实例时间边界的条件下，直接学出既可做弱监督动作识别又可做弱监督动作检测的模型。</li><li>场景：面向 YouTube 等天然未裁剪的长视频；逐个标注、裁剪动作时段昂贵且耗时，而且动作的精确时间范围本身可能主观、标注者之间不一致。</li><li>研究问题：仅靠视频标签，分类模块与选择模块能否联合学习“片段是什么动作”和“哪些片段重要”，并让同一端到端模型在 THUMOS14、ActivityNet 的识别与时间检测上与依赖时间标注的强监督方法竞争。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：ETH Zurich, Switzerland（论文首页署名机构）</li><li><strong>机构</strong>：The Chinese University of Hong Kong, Hong Kong（论文首页署名机构）</li><li><strong>实验室 / 团队</strong>：Computer Vision Laboratory, ETH Zurich（论文首页明确署名的实验室）</li><li><strong>作者与归属</strong>：Limin Wang、Luc Van Gool—Computer Vision Laboratory, ETH Zurich, Switzerland。</li><li><strong>作者与归属</strong>：Yuanjun Xiong、Dahua Lin—Department of Information Engineering, The Chinese University of Hong Kong, Hong Kong。</li><li><strong>作者与归属</strong>：顶层 labs 中的 nju-mcg 按目录元数据原样继承，仅表示目录收录归属；论文首页作者单位栏实际列出的是上述 ETH Zurich 与香港中文大学两处。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>问题：如何在训练时只有未裁剪视频及视频级动作标签、没有动作实例时间边界的条件下，直接学出既可做弱监督动作识别又可做弱监督动作检测的模型。</li><li>场景：面向 YouTube 等天然未裁剪的长视频；逐个标注、裁剪动作时段昂贵且耗时，而且动作的精确时间范围本身可能主观、标注者之间不一致。</li><li>研究问题：仅靠视频标签，分类模块与选择模块能否联合学习“片段是什么动作”和“哪些片段重要”，并让同一端到端模型在 THUMOS14、ActivityNet 的识别与时间检测上与依赖时间标注的强监督方法竞争。</li><li><strong>研究背景</strong>：传统动作识别通常把训练动作实例从长视频中人工裁成短片，再把模型用于裁剪或未裁剪视频；这种精确时间监督不适合扩展到真实的大规模视频。</li><li><strong>核心痛点</strong>：去掉时间标注后，学习器不能只做类别外观建模，还必须从大量背景片段中自动推断可能动作实例的时间位置；而动作边界又可能没有唯一、稳定的定义。</li><li><strong>任务定义</strong>：给定未裁剪视频与视频级动作标签，训练阶段不使用任何动作实例的时间信息；测试时输出整段视频的动作类别（WSR），或定位动作发生的时间区间（WSD）。</li><li><strong>研究目标</strong>：目标是用可微的特征提取、分类与选择组件，把片段级分类分数和片段重要性汇成视频级预测，以该预测反向传播并联合优化网络。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 UntrimmedNet：无需动作实例时间标注，直接以未裁剪视频和视频级标签训练同一弱监督框架，服务动作识别与时间检测。</li><li>把长视频先变成均匀采样或基于镜头切换的短片提案，再以可替换的深层网络提取片段表示，使后续分类与选择在可控候选集上学习。</li><li>设计互补的选择机制：硬选择以多实例学习的 class-wise top-k 提案聚合，软选择在全部提案上学习 attention 权重，并分别与分类分数融合为视频预测。</li><li>将特征提取、分类、选择和视频级交叉熵放入统一可微数据流，以标准反向传播端到端优化，并把软选择的注意力直接用于时间检测。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：特征提取模块把每个 clip proposal 编码为视觉表示；分类模块独立判断各提案的动作类别；选择模块挑选或排序更可能含动作的提案；二者输出融合成整段未裁剪视频的预测。</li><li><strong>输入与表示</strong>：输入视频 V 先被表示为一组带起止位置的短片提案 C；每个提案 c 映射为 D 维特征 φ(V;c)。实验中的两流输入由 RGB 空间流和 TVL1 光流时间流组成。</li><li><strong>模型结构</strong>：流水线依次为 clip sampling、预训练特征网络、片段级线性分类器、硬或软选择器、视频级融合。特征网络可采用 Two-Stream CNN 或 Temporal Segment Network，后者用 segment consensus 建模较长时间范围。</li><li><strong>数据流</strong>：先从未裁剪视频采样多个短片；逐提案提特征并得到类别分数；硬分支按每一类别选 top-k 原始分类分数后平均，软分支对提案选择分数做跨提案 softmax 得到注意力；最后用选择权重聚合分类结果为视频预测，再与视频标签计算损失并反传到全部模块。</li><li><strong>关键技术</strong>：均匀采样把视频等分；镜头采样以相邻帧 HOG 差异检测切换，并把长镜头按 K=300 帧切成固定时长提案。硬选择遵循 MIL，软选择采用 attention；探索实验默认改用镜头采样。</li><li><strong>公式与超参数</strong>：分类为 x_c(c)=W_c φ(c)，并在动作类别维做 softmax；软选择为 x_s(c)=w_s^T φ(c)，在提案维做 softmax，视频概率是各提案分类概率按注意力的加权和。硬选择则按类别平均 top-k 原始分数后再归一化；提案数探索实验的训练期 hard selection 令 k 取 N 的二分之一向下取整，其中 N 是每视频采样提案数，需与识别推理聚合的 k=20 区分。训练用视频级交叉熵；多标签先做 L1 归一化，weight decay=0.0005。SGD 的 batch size=256、momentum=0.9；空间流初始学习率 0.001、每 4,000 次迭代降 10 倍并在一万次迭代停止，时间流初始学习率 0.005、每 6,000 次迭代降 10 倍并在一万八千次迭代停止；dropout 为空间流 0.8、时间流 0.7；数据增强包括 cropping augmentation 与 scale jittering。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：THUMOS14：动作识别含 101 类、动作检测含 20 类；本文主要用 1,010 个 validation 视频训练，以 1,574 个 test 视频评估。</li><li><strong>数据集</strong>：ActivityNet release 1.2：含 100 类，train/validation/test 分别有 4,819、2,383、2,480 个视频；评测覆盖 train→validation 与 train+validation→test server 两种设置。</li><li><strong>规模与划分</strong>：THUMOS14 的探索与选择模块实验以 validation 训练、test 测试；主比较则使用 training 与 validation 视频学习 UntrimmedNet，其中 training data UCF101 已经裁剪，作者把整段视频 clip 直接作为 proposal。ActivityNet 分别执行 train→validation 和 train+validation→test server。虽然两套数据提供训练动作时段标注，UntrimmedNet 训练明确不使用这些时段标注。</li><li><strong>模型</strong>：特征骨干检查到 Two Stream CNN 与 Temporal Segment Network；二者采用 Inception+Batch Normalization，并以 ImageNet 预训练模型初始化。空间流输入 1 张 RGB 帧，时间流输入 5 帧堆叠的 TVL1 光流；正文未给出模型参数量。</li><li><strong>硬件</strong>：全文的实现细节、实验、结论与参考文献尾部均未报告训练或推理 GPU/CPU 型号、数量、显存容量或运行时间；仅说明 GPU memory 限制促使作者在每视频提案数与每批视频数之间折中。</li><li><strong>代码</strong>：论文首页脚注明确写明代码和模型可在 <a href="https://github.com/wanglimin/UntrimmedNet" target="_blank" rel="noopener noreferrer">https://github.com/wanglimin/UntrimmedNet</a> 获取；顶层 code_url 仍按输入元数据逐字继承为空。</li><li><strong>训练平台</strong>：软件实现使用 Caffe 的 video extension；实验平台是 THUMOS14 与 ActivityNet 未裁剪视频基准。全文未报告仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：THUMOS14：弱监督动作识别与弱监督时间检测；探索实验按 validation→test，检测按多档 IoU 评估。</li><li><strong>评估基准</strong>：ActivityNet release 1.2：弱监督动作识别，覆盖 train→validation 与 train+validation→test server。</li><li><strong>评估指标</strong>：动作识别采用 mean average precision（mAP，越高越好），表格以百分比报告。</li><li><strong>评估指标</strong>：动作检测报告 IoU α=0.5、0.4、0.3、0.2、0.1 下的 mAP（越高越好）。</li><li><strong>对比方法</strong>：识别对比覆盖 iDT+FV、Two Stream、EMV+RGB、Objects+Motion、C3D、Depth2Action 与 TSN；带星号方法使用强监督训练。</li><li><strong>对比方法</strong>：检测对比覆盖 Oneata、Richard、Shou、Yeung 与 Yuan 等方法；检测表将这些对手标为使用强监督训练。</li><li><strong>关键结果</strong>：THUMOS14 主识别比较使用 training 与 validation 视频学习 UntrimmedNet；其中 training data UCF101 已经裁剪，整段视频 clip 直接作为 proposal。在这一口径下，UntrimmedNet-soft 为 82.2%，对比 TSN 的 78.5%，绝对相差三点七个百分点，而非相对提升百分比；hard 版本为 81.2%（mAP，越高越好）。</li><li><strong>关键结果</strong>：ActivityNet test server 上，UntrimmedNet-hard 为 91.3%，对比强监督 TSN 的 88.8%，高 2.5%；soft 版本为 90.9%（mAP，越高越好）。</li><li><strong>关键结果</strong>：THUMOS14 检测中，UntrimmedNet-soft 在 IoU α=0.5/0.4/0.3/0.2/0.1 时的 mAP 依次为 13.7/21.1/28.2/37.7/44.4；这些弱监督结果低于各阈值下表中最佳强监督数值，但处于可比较范围。</li><li><strong>消融实验</strong>：选择模块消融（THUMOS14 mAP）：TSN 3-segment/21-segment 为 67.7%/68.5%，加入 hard/soft selection 后为 73.6%/74.2%，说明增益不只是增加采样 segment。</li><li><strong>消融实验</strong>：采样消融的 soft-selection mAP 为：shot-based 71.6%，uniform 70.2%；作者随后默认采用 shot-based sampling。</li><li><strong>消融实验</strong>：特征提取消融的 soft-selection mAP 为：Temporal Segment Network 74.2%，Two Stream CNN 71.6%，其后实验采用前者。</li><li><strong>消融实验</strong>：每视频采样提案数比较 5、7、9；soft selection 下 7 和 9 略优于 5，作者为兼顾准确率与效率固定为 7。</li><li><strong>实验条件</strong>：训练监督只有视频级标签，不用动作时间标注。识别测试每 30 帧取 1 张 RGB（或 5 帧光流堆叠），以 top-k（k=20）或 attention 加权汇成视频分数；检测每 15 帧测试一次，以 attention 阈值 0.0001 去背景，再以分类阈值 0.5 生成区间。探索实验在 THUMOS14 上用 validation 训练、test 评估，并同时报告 hard 与 soft selection。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1703.09788/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Towards Automatic Learning of Procedures from Web Instructional Videos</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1703.02716/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">A Pursuit of Temporal Accuracy in General Activity Detection</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

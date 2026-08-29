@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Attacking Optical Flow - 视频领域每日论文卡</title>
+    <meta name="description" content="论文解决的是光流深网的对抗鲁棒性盲区：它把对抗贴片攻击扩展到光流估计，并验证面积小于图像 1% 的局部贴片能否让错误越过贴片区域、破坏整幅运动场。 具体使用场景是自动驾驶相机：攻击者可把贴片放在挡风玻璃、交通标志或车辆上；论文还以 1200 dpi 打印黑盒贴片、在图像中放大到原尺寸的 8 倍后放入真实场景录像。 真正要验证的不是局部像素能否出错，而是编码器—解码器、空间金字塔与经典光流方法为何呈现不同的全局或局部脆弱性，以及 Zero-Flow 特征图诊断能否把差异归结到空间非不变性、粗尺度恢复能力和反卷积放大及棋盘格伪影。 研究背景：光流表示图像序列中每个像素在图像平面上的表观二维位移，以向量场 (u,v) 表示；它服务于视频分析、导航和机器人等任务，并可能进入自动驾驶这类安全关键系统。 核心痛点：传统方法需要大量手工设计且优化开销大，深网虽可实时运行，却缺少对对抗鲁棒性的系统认识。更具体的失败模式是：小贴片在编码器—解码器网络中会经感受野传播到远离贴片的区域，而空间金字塔和经典方法的退化基本局限于贴片附近。 任务定义：输入是相邻两帧图像，网络 F 输出逐像素二维流向量；攻击算子 A 把同一经旋转、缩放的贴片 p 放到两帧的位置 l，得到受扰光流，并在稀疏像素改动约束下让受扰流与原流显著分离。白盒为指定网络学习贴片，黑盒则学习可迁移的通用贴片。 研究目标：研究要在 FlowNetC、FlowNet2、SpyNet、PWC-Net、Back2Future 以及经典 LDOF、Epic Flow 之间比较贴片鲁棒性，并通过 Zero-Flow 与内部特征图分析解释架构差异，而不只报告攻击是否成功。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1910.10053">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1910.10053.webp" alt="Attacking Optical Flow" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文解决的是光流深网的对抗鲁棒性盲区：它把对抗贴片攻击扩展到光流估计，并验证面积小于图像 1% 的局部贴片能否让错误越过贴片区域、破坏整幅运动场。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Attacking Optical Flow</h1>
+            <div class="detail-meta">2019-10-22 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1910.10053" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1910.10053" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1910.10053</span></div>
+            <p class="detail-summary">论文解决的是光流深网的对抗鲁棒性盲区：它把对抗贴片攻击扩展到光流估计，并验证面积小于图像 1% 的局部贴片能否让错误越过贴片区域、破坏整幅运动场。 具体使用场景是自动驾驶相机：攻击者可把贴片放在挡风玻璃、交通标志或车辆上；论文还以 1200 dpi 打印黑盒贴片、在图像中放大到原尺寸的 8 倍后放入真实场景录像。 真正要验证的不是局部像素能否出错，而是编码器—解码器、空间金字塔与经典光流方法为何呈现不同的全局或局部脆弱性，以及 Zero-Flow 特征图诊断能否把差异归结到空间非不变性、粗尺度恢复能力和反卷积放大及棋盘格伪影。 研究背景：光流表示图像序列中每个像素在图像平面上的表观二维位移，以向量场 (u,v) 表示；它服务于视频分析、导航和机器人等任务，并可能进入自动驾驶这类安全关键系统。 核心痛点：传统方法需要大量手工设计且优化开销大，深网虽可实时运行，却缺少对对抗鲁棒性的系统认识。更具体的失败模式是：小贴片在编码器—解码器网络中会经感受野传播到远离贴片的区域，而空间金字塔和经典方法的退化基本局限于贴片附近。 任务定义：输入是相邻两帧图像，网络 F 输出逐像素二维流向量；攻击算子 A 把同一经旋转、缩放的贴片 p 放到两帧的位置 l，得到受扰光流，并在稀疏像素改动约束下让受扰流与原流显著分离。白盒为指定网络学习贴片，黑盒则学习可迁移的通用贴片。 研究目标：研究要在 FlowNetC、FlowNet2、SpyNet、PWC-Net、Back2Future 以及经典 LDOF、Epic Flow 之间比较贴片鲁棒性，并通过 Zero-Flow 与内部特征图分析解释架构差异，而不只报告攻击是否成功。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">19 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Max Planck Institute for Intelligent Systems（论文首页署名机构）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1910.10053/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文解决的是光流深网的对抗鲁棒性盲区：它把对抗贴片攻击扩展到光流估计，并验证面积小于图像 1% 的局部贴片能否让错误越过贴片区域、破坏整幅运动场。</p>
+  <ul class="reading-intro-points"><li>论文解决的是光流深网的对抗鲁棒性盲区：它把对抗贴片攻击扩展到光流估计，并验证面积小于图像 1% 的局部贴片能否让错误越过贴片区域、破坏整幅运动场。</li><li>具体使用场景是自动驾驶相机：攻击者可把贴片放在挡风玻璃、交通标志或车辆上；论文还以 1200 dpi 打印黑盒贴片、在图像中放大到原尺寸的 8 倍后放入真实场景录像。</li><li>真正要验证的不是局部像素能否出错，而是编码器—解码器、空间金字塔与经典光流方法为何呈现不同的全局或局部脆弱性，以及 Zero-Flow 特征图诊断能否把差异归结到空间非不变性、粗尺度恢复能力和反卷积放大及棋盘格伪影。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Max Planck Institute for Intelligent Systems（论文首页署名机构）</li><li><strong>机构</strong>：University of Tübingen（论文首页署名机构）</li><li><strong>实验室 / 团队</strong>：论文首页只列 Max Planck Institute for Intelligent Systems 与 University of Tübingen 两个机构，未单列实验室名称；目录中的团队标签不作为论文署名事实。</li><li><strong>作者与归属</strong>：Anurag Ranjan、Michael J. Black—Max Planck Institute for Intelligent Systems；Joel Janai、Andreas Geiger—Max Planck Institute for Intelligent Systems 与 University of Tübingen。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文解决的是光流深网的对抗鲁棒性盲区：它把对抗贴片攻击扩展到光流估计，并验证面积小于图像 1% 的局部贴片能否让错误越过贴片区域、破坏整幅运动场。</li><li>具体使用场景是自动驾驶相机：攻击者可把贴片放在挡风玻璃、交通标志或车辆上；论文还以 1200 dpi 打印黑盒贴片、在图像中放大到原尺寸的 8 倍后放入真实场景录像。</li><li>真正要验证的不是局部像素能否出错，而是编码器—解码器、空间金字塔与经典光流方法为何呈现不同的全局或局部脆弱性，以及 Zero-Flow 特征图诊断能否把差异归结到空间非不变性、粗尺度恢复能力和反卷积放大及棋盘格伪影。</li><li><strong>研究背景</strong>：光流表示图像序列中每个像素在图像平面上的表观二维位移，以向量场 (u,v) 表示；它服务于视频分析、导航和机器人等任务，并可能进入自动驾驶这类安全关键系统。</li><li><strong>核心痛点</strong>：传统方法需要大量手工设计且优化开销大，深网虽可实时运行，却缺少对对抗鲁棒性的系统认识。更具体的失败模式是：小贴片在编码器—解码器网络中会经感受野传播到远离贴片的区域，而空间金字塔和经典方法的退化基本局限于贴片附近。</li><li><strong>任务定义</strong>：输入是相邻两帧图像，网络 F 输出逐像素二维流向量；攻击算子 A 把同一经旋转、缩放的贴片 p 放到两帧的位置 l，得到受扰光流，并在稀疏像素改动约束下让受扰流与原流显著分离。白盒为指定网络学习贴片，黑盒则学习可迁移的通用贴片。</li><li><strong>研究目标</strong>：研究要在 FlowNetC、FlowNet2、SpyNet、PWC-Net、Back2Future 以及经典 LDOF、Epic Flow 之间比较贴片鲁棒性，并通过 Zero-Flow 与内部特征图分析解释架构差异，而不只报告攻击是否成功。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>把可打印、对位置以及小幅尺度和方向变化不敏感的对抗贴片系统用于光流深网，同时给出逐网络白盒和可迁移黑盒攻击协议。</li><li>利用被攻击网络自己的光流预测作为伪真值，使贴片可在无标签 KITTI Raw 视频上优化；实验由约 32000 帧支撑，而非局限于 200 个带标注训练样本。</li><li>跨编码器—解码器、空间金字塔和经典优化方法做统一评测，揭示前者会产生远距离、大范围错误，而后两类明显更稳健。</li><li>提出 Zero-Flow 测试并结合内部特征图解释攻击，定位到空间非不变、粗尺度大误差可被细尺度补偿，以及反卷积响应放大和棋盘格伪影。</li><li>把联合学习的黑盒贴片打印后放入真实场景，演示 FlowNetC 与 FlowNet2 部署情境中的物理攻击可行性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：核心贴片优化器学习对粘贴位置和旋转、缩放变换稳健的贴片 p，使正常图像对与受扰图像对的光流方向余弦尽量小。白盒分支为每个网络单独求贴片，黑盒分支联合 FlowNet2 与 PWC-Net 求通用贴片；Zero-Flow 分支不训练攻击，而用零真实运动输入诊断内部放大来源。</li><li><strong>输入与表示</strong>：光流网络 F 接收分辨率 H×W 的相邻图像对，输出每像素二维向量 (u,v)；贴片 p 的分辨率为 h×w，变换 δ 来自旋转与缩放集合 T，位置 l 来自图像位置集合 L。静止贴片设定把同一个 p、δ、l 同时施加到两帧，因此贴片区域的真实光流为零；现实运动设定允许两帧的变换和位置不同。</li><li><strong>模型结构</strong>：攻击对象覆盖编码器—解码器 FlowNetC（39 M 参数）与 FlowNet2（162 M）、空间金字塔 SpyNet（1.2 M）、PWC-Net（8.75 M）、Back2Future（12.2 M），并以 LDOF、Epic Flow 作为经典方法对照。白盒逐网络独立学习；黑盒用 FlowNet2 和 PWC-Net 联合训练通用贴片，再迁移到全部方法。</li><li><strong>数据流</strong>：先从视频采样相邻帧、贴片位置和几何变换；攻击算子 A 将变换后的贴片粘到两帧；F 分别计算正常流与受扰流；优化器最小化两者方向余弦并以 SGD 更新贴片。白盒对每个网络重复此流程，黑盒对 FlowNet2 与 PWC-Net 的目标联合优化；现实运动评估再利用相机运动和视差把贴片投影到场景、重投影到下一帧，以单应性和双线性插值完成形变。</li><li><strong>关键技术</strong>：关键技术包括：用网络原始预测充当伪真值，因而可利用任意无标签视频；在位置、旋转和缩放上采样以学习变换稳健贴片；用 KITTI Raw 的相机运动与视差构造静态场景中的真实贴片运动；用重复随机噪声图像构造 Zero-Flow，对相关层、粗细尺度流层、反卷积层和融合层的特征平均范数做诊断。</li><li><strong>公式与超参数</strong>：目标为 p̂ = argmin_p E[((u,v)·(ũ,ṽ))/(||(u,v)||·||(ũ,ṽ)||)]，并定义 (u,v)=F(I_t,I_{t+1})、(ũ,ṽ)=F(A(I_t,p,δ,l),A(I_{t+1},p,δ,l))；最小化余弦相似度推动受扰光流反向。尺度增强为 ±5%，旋转为 ±10°，每个网络学习四档且均小于图像 5% 的贴片：25×25（0.1%）、51×51（0.5%）、102×102（2.1%）、153×153（4.8%）；评估输入为 384×1280。优化设置只明确 PyTorch 与 SGD，未给出学习率、批量大小或迭代轮数。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：KITTI Raw：提供无标签帧用于贴片优化，并在黑盒评估中提供相机运动与视差真值，以模拟静态场景中的贴片运动。</li><li><strong>数据集</strong>：KITTI 2015 光流基准训练集：用于白盒和黑盒攻击下的平均端点误差评估。</li><li><strong>规模与划分</strong>：优化可使用约 32000 帧，而 KITTI 带标注训练样本只有 200 个；评估口径明确为 KITTI 2015 训练集，图像缩放为 384×1280，并在全图分辨率输出光流，未另设验证划分。</li><li><strong>模型</strong>：测试采用未在 KITTI 微调时表现最佳的预训练模型：FlowNetC 39 M、FlowNet2 162 M、SpyNet 1.2 M、PWC-Net 8.75 M、Back2Future 12.2 M；另含无参数规模报告的经典 LDOF 与 Epic Flow。论文未引入新的基础模型。</li><li><strong>硬件</strong>：正文实验设置与补充材料均未报告训练或推理 GPU、CPU 型号、数量、时长或显存；只明确使用 PyTorch 和 SGD，因此不能补写硬件配置。</li><li><strong>代码</strong>：论文明确称代码可从 <a href="http://flowattack.is.tue.mpg.de/" target="_blank" rel="noopener noreferrer">http://flowattack.is.tue.mpg.de/</a> 获取；同一网址也提供真实场景攻击的视频演示。</li><li><strong>训练平台</strong>：优化软件平台为 PyTorch；物理实验把打印贴片放入场景、录制视频，并在 FlowNetC 与 FlowNet2 上观察，但正文与附录均未给出相机、车辆、机器人或仿真器型号。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：KITTI 2015 训练集白盒评测：为每种网络独立学习贴片，报告原始与受攻击图像的 EPE。</li><li><strong>评估基准</strong>：KITTI Raw 现实运动黑盒评测：以相机运动和视差真值让通用贴片按静态场景运动后测试迁移性。</li><li><strong>评估基准</strong>：Zero-Flow 诊断：把同一均匀随机噪声图像复制成两帧，使理论全图光流为零，再比较有无通用贴片的特征图。</li><li><strong>评估基准</strong>：真实场景打印贴片视频：比较相机运动与否时 FlowNetC、FlowNet2 的定性响应。</li><li><strong>评估指标</strong>：平均端点误差 EPE（越低越好）及受攻击后的相对 EPE 退化百分比（增幅越小越稳健）。</li><li><strong>评估指标</strong>：Zero-Flow 特征图平均范数 Mean，用于诊断内部响应强弱而不是光流精度；零运动输入下越接近零越理想。</li><li><strong>对比方法</strong>：模型维度：FlowNetC、FlowNet2 编码器—解码器，对比 SpyNet、PWC-Net、Back2Future 空间金字塔，以及 LDOF、Epic Flow 经典方法。</li><li><strong>对比方法</strong>：攻击维度：逐网络白盒贴片，对比由 FlowNet2 与 PWC-Net 联合学习、再迁移到未参与训练方法的通用黑盒贴片。</li><li><strong>对比方法</strong>：条件维度：四档贴片大小、真实运动与相机相对静止、是否把贴片区域计入 EPE，以及打印贴片的相机运动与静止情形。</li><li><strong>关键结果</strong>：白盒 25×25（0.1%）贴片下，FlowNetC EPE 14.56→29.07（+100%），FlowNet2 11.90→17.04（+43%）；SpyNet 20.26→20.59（+2%）、PWC-Net 11.03→11.37（+3%）、Back2Future 17.49→18.04（+3%），EPE 越低越好。</li><li><strong>关键结果</strong>：白盒 153×153（4.8%）贴片下，FlowNetC 14.56→95.32（+555%）、FlowNet2 11.90→59.58（+400%）；SpyNet 20.26→21.00（+4%）、PWC-Net 11.03→12.52（+13%）、Back2Future 17.49→18.43（+5%），空间金字塔退化明显更小。</li><li><strong>关键结果</strong>：现实运动黑盒通用贴片使 FlowNetC 14.56→86.12（+492 %）、FlowNet2 11.90→36.13（+203 %）；PWC-Net 11.03→11.01（表中 +0 %）、SpyNet 20.26→20.39（+1 %）、Back2Future 17.49→17.44（+0 %）、Epic Flow 4.52→4.66（+3 %）、LDOF 9.20→9.17（+0 %）。EPE 越低越好，+0 % 是取整结果，不表示数值完全不变。</li><li><strong>关键结果</strong>：主文示例中的贴片只占图像 0.53%，却影响约 50% 图像区域；另一现实运动黑盒示例同样显示约 0.5% 的通用贴片可影响最多 50% 区域，说明编码器—解码器误差会远距扩散。</li><li><strong>关键结果</strong>：真实打印实验中，FlowNetC 在有无相机运动时均受到攻击；FlowNet2 在相机运动时攻击更有效。实景图还显示贴片可见时光流显著退化，而被人遮住后影响消失。</li><li><strong>消融实验</strong>：贴片尺寸扫描从 25×25（0.1%）到 153×153（4.8%）：FlowNetC 相对退化由 +100% 升至 +555%，FlowNet2 由 +43% 升至 +400%；SpyNet 始终仅为 +2% 到 +5%，显示攻击强度随尺寸增大主要集中在编码器—解码器。</li><li><strong>消融实验</strong>：相机相对静止的黑盒贴片下，FlowNetC 14.56→77.78（+434 %），FlowNet2 11.90→30.99（+160 %）；PWC-Net 仅 11.03→11.16（+1 %），与现实运动设置的架构差异一致。</li><li><strong>消融实验</strong>：排除贴片区域后，受攻击 EPE 仍接近含贴片区域：FlowNetC 为 80.69 对 86.12，FlowNet2 为 34.18 对 36.13，说明退化并非只来自贴片内像素。</li><li><strong>消融实验</strong>：Zero-Flow 补充图中，FlowNet2 融合模块的 flow0 平均范数在受攻击输入为 1221.9、无贴片输入为 0.0，支持融合部分会剧烈放大退化；Back2Future 的响应整体较小。</li><li><strong>实验条件</strong>：白盒训练把尺度限制在 ±5%、旋转在 ±10°，每个网络学习四种且均小于图像 5% 的圆形贴片；使用未在 KITTI 微调的最佳预训练模型、PyTorch 与 SGD。KITTI 评估逐图随机放置贴片，把输入缩放至 384×1280 并输出全分辨率光流。黑盒现实运动由 KITTI Raw 相机运动与视差经三维重投影、单应性和双线性插值生成；缺姿态序列退化为零运动。物理贴片以 1200 dpi 打印并放大到原尺寸 8 倍。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1911.09435/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">TEINet: Towards an Efficient Architecture for Video Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1905.03820/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Hierarchical Cross-Modal Talking Face Generationwith Dynamic Pixel-Wise Loss</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

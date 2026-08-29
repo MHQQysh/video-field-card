@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FollowMe: Efficient Online Min-Cost Flow Tracking with Bounded Memory and Computation - 视频领域每日论文卡</title>
+    <meta name="description" content="这篇论文解决的是 tracking-by-detection 中的全局数据关联：经典最小费用流虽然能给出全局最优轨迹，却计算昂贵、要求整段视频一次性到齐，而且内存与计算量会随序列长度无界增长，因此无法直接变成长期在线跟踪器。 它面向自动驾驶和监控这类持续输入的视频场景：检测器逐帧给出候选框，跟踪器要在有限资源下不断把新检测接入既有轨迹，同时允许新证据修正近期关联，而不是把长视频切成彼此孤立的批次。 论文真正验证的问题分成三层：能否通过复用旧最短路只做必要计算而保持最优，能否在在线新增帧时仍保持全局最优，以及牺牲多大最优性才能把历史窗口、内存和单帧计算固定下来并达到实时运行。 研究背景：Tracking-by-detection 先在每帧独立检测目标，再把相邻时间的检测链接成数量未知的多条轨迹；网络流 formulation 可同时决定目标数和轨迹，并在给定一元检测代价与相邻帧关联代价时求全局最优。 核心痛点：局部逐帧匹配在遮挡、噪声检测和漏检下容易产生歧义，早期错误无法靠后续帧纠正；已有批处理最小费用流又必须预先拥有全部检测，计算与内存随视频增长，因而不适合持续运行的机器人系统。 任务定义：输入是逐帧检测集合，每个检测包含边界框位置、帧索引、框尺寸、外观和检测分数；输出是互不重叠的轨迹集合，每条轨迹由时间相邻的检测索引组成，目标函数在流守恒约束下最小化进入、退出、检测与链接代价。 研究目标：作者要求求解器同时具备按需计算、在线处理数据流和内存/计算有界三种性质；前两种性质保持精确最优，最后一种允许受控近似，但要在实际跟踪上接近最优。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1407.6251">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1407.6251.webp" alt="FollowMe: Efficient Online Min-Cost Flow Tracking with Bounded Memory and Computation" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">这篇论文解决的是 tracking-by-detection 中的全局数据关联：经典最小费用流虽然能给出全局最优轨迹，却计算昂贵、要求整段视频一次性到齐，而且内存与计算量会随序列长度无界增长，因此无法直接变成长期在线跟踪器。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">FollowMe: Efficient Online Min-Cost Flow Tracking with Bounded Memory and Computation</h1>
+            <div class="detail-meta">2014-07-23 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1407.6251" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1407.6251" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1407.6251</span></div>
+            <p class="detail-summary">这篇论文解决的是 tracking-by-detection 中的全局数据关联：经典最小费用流虽然能给出全局最优轨迹，却计算昂贵、要求整段视频一次性到齐，而且内存与计算量会随序列长度无界增长，因此无法直接变成长期在线跟踪器。 它面向自动驾驶和监控这类持续输入的视频场景：检测器逐帧给出候选框，跟踪器要在有限资源下不断把新检测接入既有轨迹，同时允许新证据修正近期关联，而不是把长视频切成彼此孤立的批次。 论文真正验证的问题分成三层：能否通过复用旧最短路只做必要计算而保持最优，能否在在线新增帧时仍保持全局最优，以及牺牲多大最优性才能把历史窗口、内存和单帧计算固定下来并达到实时运行。 研究背景：Tracking-by-detection 先在每帧独立检测目标，再把相邻时间的检测链接成数量未知的多条轨迹；网络流 formulation 可同时决定目标数和轨迹，并在给定一元检测代价与相邻帧关联代价时求全局最优。 核心痛点：局部逐帧匹配在遮挡、噪声检测和漏检下容易产生歧义，早期错误无法靠后续帧纠正；已有批处理最小费用流又必须预先拥有全部检测，计算与内存随视频增长，因而不适合持续运行的机器人系统。 任务定义：输入是逐帧检测集合，每个检测包含边界框位置、帧索引、框尺寸、外观和检测分数；输出是互不重叠的轨迹集合，每条轨迹由时间相邻的检测索引组成，目标函数在流守恒约束下最小化进入、退出、检测与链接代价。 研究目标：作者要求求解器同时具备按需计算、在线处理数据流和内存/计算有界三种性质；前两种性质保持精确最优，最后一种允许受控近似，但要在实际跟踪上接近最优。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">14 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Karlsruhe Institute of Technology · Philip Lenz 的论文首页署名单位</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1407.6251/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">这篇论文解决的是 tracking-by-detection 中的全局数据关联：经典最小费用流虽然能给出全局最优轨迹，却计算昂贵、要求整段视频一次性到齐，而且内存与计算量会随序列长度无界增长，因此无法直接变成长期在线跟踪器。</p>
+  <ul class="reading-intro-points"><li>这篇论文解决的是 tracking-by-detection 中的全局数据关联：经典最小费用流虽然能给出全局最优轨迹，却计算昂贵、要求整段视频一次性到齐，而且内存与计算量会随序列长度无界增长，因此无法直接变成长期在线跟踪器。</li><li>它面向自动驾驶和监控这类持续输入的视频场景：检测器逐帧给出候选框，跟踪器要在有限资源下不断把新检测接入既有轨迹，同时允许新证据修正近期关联，而不是把长视频切成彼此孤立的批次。</li><li>论文真正验证的问题分成三层：能否通过复用旧最短路只做必要计算而保持最优，能否在在线新增帧时仍保持全局最优，以及牺牲多大最优性才能把历史窗口、内存和单帧计算固定下来并达到实时运行。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Karlsruhe Institute of Technology（Philip Lenz 的论文首页署名单位）</li><li><strong>机构</strong>：MPI Tübingen（Andreas Geiger 的论文首页署名单位）</li><li><strong>机构</strong>：University of Toronto（Raquel Urtasun 的论文首页署名单位）</li><li><strong>实验室 / 团队</strong>：论文首页只列三家机构，未出现具体实验室名称；本站的 autonomous-vision-tuebingen 标签来自目录收录依据，不冒充论文署名。</li><li><strong>作者与归属</strong>：Philip Lenz — Karlsruhe Institute of Technology</li><li><strong>作者与归属</strong>：Andreas Geiger — MPI Tübingen</li><li><strong>作者与归属</strong>：Raquel Urtasun — University of Toronto</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>这篇论文解决的是 tracking-by-detection 中的全局数据关联：经典最小费用流虽然能给出全局最优轨迹，却计算昂贵、要求整段视频一次性到齐，而且内存与计算量会随序列长度无界增长，因此无法直接变成长期在线跟踪器。</li><li>它面向自动驾驶和监控这类持续输入的视频场景：检测器逐帧给出候选框，跟踪器要在有限资源下不断把新检测接入既有轨迹，同时允许新证据修正近期关联，而不是把长视频切成彼此孤立的批次。</li><li>论文真正验证的问题分成三层：能否通过复用旧最短路只做必要计算而保持最优，能否在在线新增帧时仍保持全局最优，以及牺牲多大最优性才能把历史窗口、内存和单帧计算固定下来并达到实时运行。</li><li><strong>研究背景</strong>：Tracking-by-detection 先在每帧独立检测目标，再把相邻时间的检测链接成数量未知的多条轨迹；网络流 formulation 可同时决定目标数和轨迹，并在给定一元检测代价与相邻帧关联代价时求全局最优。</li><li><strong>核心痛点</strong>：局部逐帧匹配在遮挡、噪声检测和漏检下容易产生歧义，早期错误无法靠后续帧纠正；已有批处理最小费用流又必须预先拥有全部检测，计算与内存随视频增长，因而不适合持续运行的机器人系统。</li><li><strong>任务定义</strong>：输入是逐帧检测集合，每个检测包含边界框位置、帧索引、框尺寸、外观和检测分数；输出是互不重叠的轨迹集合，每条轨迹由时间相邻的检测索引组成，目标函数在流守恒约束下最小化进入、退出、检测与链接代价。</li><li><strong>研究目标</strong>：作者要求求解器同时具备按需计算、在线处理数据流和内存/计算有界三种性质；前两种性质保持精确最优，最后一种允许受控近似，但要在实际跟踪上接近最优。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 dSSP：把每轮重新运行完整 Dijkstra 改成动态优先队列，只把前驱失效或被更新的节点及其后继纳入传播，从上一轮残差图复用其余最短路计算，同时保持最小费用流解的最优性。</li><li>提出 odSSP：新一帧检测到达时扩展旧网络，先只在新增边上做有向无环图最短路，再合并缓存的前驱图并动态广播变化，使在线时刻上的解仍是截至当前全部检测的最优解。</li><li>提出 mbodSSP：用固定历史窗裁剪旧节点，但把离窗轨迹的累计前驱代价并入新窗口入口边，并缓存近期前驱图；当缓存缺失候选轨迹时在当前窗口退回 odSSP，从而保持可行关联。</li><li>把精确动态、精确在线与有界近似三类求解器放在同一追踪模型、数据结构和基准下评测，联合展示跟踪精度、运行时间、内存增长以及历史窗大小的影响。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：整体由三个递进求解层组成：dSSP 负责在一个残差网络内增量更新最短路，odSSP 负责接收新帧并复用跨时刻前驱缓存，mbodSSP 再负责裁剪旧图和压缩历史代价，使无限视频转化为固定资源的在线计算。</li><li><strong>输入与表示</strong>：每个检测表示为位置、时间、尺寸、外观与检测置信度的元组；一条轨迹是时间相邻检测的序列，完整假设是互斥轨迹集合。检测节点在流图中拆为入节点和出节点，源/汇边表示轨迹进入与退出，相邻检测间的边表示关联。</li><li><strong>模型结构</strong>：概率模型由检测真伪观测项、轨迹进入/退出项、相邻检测链接项以及轨迹互斥约束组成；取负对数后变成单位容量的最小费用流网络，SSP 反复找负成本源汇最短路、反转路径边形成残差图，直到不存在负成本轨迹。</li><li><strong>数据流</strong>：在 dSSP 中，先对首条轨迹做有向无环图最短路，再反转当前路径；算法前向扫描刚变化的路径节点，更新失效前驱，把发生改变的后继加入优先队列，按距离弹出并继续松弛，队列清空后得到该轮最短路并解码所有反向边为轨迹。在线版接到新检测后只扩展图的末端，再把新节点解与旧缓存合并后执行同一传播。</li><li><strong>关键技术</strong>：关键技巧是前驱图缓存、只传播变化的动态优先队列，以及窗口裁剪时的代价汇总：离开窗口的旧节点被删除前，其累计路径代价被加到下一时刻对应入口边，因此轨迹身份可延续得比窗口更久；若新最优轨迹不在缓存中，则在保留窗口上调用 odSSP 重建有效缓存。</li><li><strong>公式与超参数</strong>：检测分数通过逻辑回归映射为代价 C_i=1/(1+e^{βd_i})；边关联由框重叠、朝向、颜色直方图、互相关、位置和光流重叠等六类相似度组成，并以 C_{u,v}=((1-s)+o)^T w 合成为可正可负的边代价。偏置 o 与尺度 w 在各训练集上用 block coordinate descent 学得并在实验中固定；mbodSSP 的历史长度由 τ 控制。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：KITTI 多目标车辆跟踪基准：使用官网 DPM reference detections，并额外评测作者获得的 Regionlet detections。</li><li><strong>数据集</strong>：PETS2009 监控跟踪基准：评测 S2.L1 序列，采用已有工作提供的检测与真值。</li><li><strong>规模与划分</strong>：正文说明检测分数的逻辑回归参数、关联偏置与尺度均在相应训练集上拟合并在全部实验中固定，但正文与参考文献后的页面没有给出样本总量或数值化训练/测试划分。</li><li><strong>模型</strong>：前端检测并非另训深度模型：PETS 使用既有检测，KITTI 比较 DPM 与 Regionlet 检测；后端模型是 HM、DP、SSP、dSSP、odSSP 和 mbodSSP 等图优化求解器，其中作者实现共享数据结构以便公平比较。</li><li><strong>硬件</strong>：论文只明确运行时间实验采用非优化 Python 实现，正文及参考文献前的实验设置未报告 CPU、GPU、内存主机型号或并行硬件配置。</li><li><strong>代码</strong>：论文承诺代码将在正式发表时公开，但本版正文没有给出代码仓库地址，因此元数据中的 code_url 保持为空。</li><li><strong>训练平台</strong>：应用平台覆盖自动驾驶与视频监控：KITTI 对应移动车载场景，PETS2009 对应监控行人场景；实验是离线基准回放上的在线数据关联评测，不是实车闭环控制试验。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：KITTI-Car：分别用 DPM reference detections 与 Regionlet detections 评测车辆多目标跟踪。</li><li><strong>评估基准</strong>：PETS2009 S2.L1：使用既有检测和真值评测行人多目标跟踪。</li><li><strong>评估指标</strong>：KITTI 表报告 MOTA、MOTP、F1、FAR、MT、ML、IDS 与 Frag；正文把这些指标的定义指向所引评价文献，并未在文内重新说明每一项的优化方向。</li><li><strong>评估指标</strong>：PETS 表报告 MOTA、MOTP、MT、PT、ML、ID-switches 与 Fragmentations，用来同时观察整体准确性、定位精度、轨迹覆盖和身份连续性。</li><li><strong>对比方法</strong>：KITTI 将作者方法与四个当时方法及逐帧 Hungarian baseline 对比，同时比较 regular SSP、非最优 DP、dSSP、odSSP 与 mbodSSP 的时间和内存。</li><li><strong>对比方法</strong>：PETS2009 将 mbodSSP 和 SSP 与三组已有跟踪基线及 EKF 结果对比；该实验沿用 KITTI 的参数。</li><li><strong>关键结果</strong>：在 KITTI 的 DPM 检测下，mbodSSP 的 MOTA 为 0.52、F1 为 0.70、IDS 为 0；最优 SSP 对应 0.54、0.71、7，说明小窗近似的总体精度接近最优且身份切换更少。</li><li><strong>关键结果</strong>：换用 Regionlet 检测后，mbodSSP 与 SSP 的 MOTA 都是 0.67、F1 都是 0.83，显示检测质量提升比在两种流求解器之间切换带来的精度差异更大。</li><li><strong>关键结果</strong>：在 PETS2009 S2.L1 上，mbodSSP/SSP 的 MOTA 分别为 0.89/0.91，MOTP 都为 0.87，ID-switches 分别为 7/23；近似解总体准确率接近精确解，同时身份切换更少。</li><li><strong>关键结果</strong>：全局最优 dSSP 相对常规 Dijkstra 版 SSP 的平均运行速度提高约 3 倍，而且实验曲线显示 mbodSSP 的时间复杂度不随序列长度增长。</li><li><strong>关键结果</strong>：当 τ=10 时，非优化 Python 版 mbodDijkstra 单帧耗时低于 10ms，达到论文所称多数在线应用所需的实时量级。</li><li><strong>消融实验</strong>：历史窗消融直接改变 τ；作者重点指出 τ=10 已能把非优化实现压到 10ms 以下，同时 KITTI 跟踪性能仅有很小损失，验证了固定短窗与近最优精度之间的折中。</li><li><strong>实验条件</strong>：效率对比让全部求解器使用相同 Python 数据结构，并在一条无真值的长 KITTI 序列上测时间与理想化内存；精度表中的 mbodSSP 使用 τ=10，KITTI 的 DPM 实验把检测阈值设为 d_i=-0.3 以避免过早剪枝。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1505.04868/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Action Recognition with Trajectory-Pooled Deep-Convolutional Descriptors</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1405.4506/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Bag of Visual Words and Fusion Methods for Action Recognition: Comprehensive Study and Good Practice</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

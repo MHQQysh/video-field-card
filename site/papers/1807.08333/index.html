@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AutoLoc: Weakly-supervised Temporal Action Localization - 视频领域每日论文卡</title>
+    <meta name="description" content="问题：现有弱监督时序动作定位只学习时间上的类别激活序列（CAS），再以阈值切段；CAS 内部的低谷会把一个动作切碎，阈值过低又会把前后背景并入。AutoLoc 改为直接回归动作片段的中心与时长。 场景：训练集中的未裁剪视频只有视频级动作标签，没有每个实例的起止边界；部署到测试视频时，系统仍须为每个动作实例输出类别、开始时间、结束时间与置信度。 研究问题：能否用 CAS 自动产生足以训练参数化边界预测器的片段级监督，使仅用视频级标签训练的模型摆脱阈值定位，并在标准 TAL 基准上接近甚至超过部分全监督方法？ 研究背景：全监督 TAL 需要为长且含大量背景的未裁剪视频逐实例标注动作类别、开始时间和结束时间，建立新大规模数据集时成本高、耗时长，因此论文转向只依赖视频级标签的弱监督训练。 核心痛点：已有弱监督方法主要训练分类器生成 CAS，测试时再阈值化：高阈值会把含激活低谷的同一实例切成多段，低阈值则会把动作前后的无关背景纳入，因而对 CAS 噪声不稳健。 任务定义：每个训练样本是一段未裁剪视频，训练监督只有该视频包含哪些动作；测试输出是按实例给出的动作类别、起止时间与置信度，正确检测还须类别正确且时间 IoU 超过评测门限。 研究目标：目标是在没有训练边界真值时学习可参数化的直接边界预测器：从 CAS 的片段内外激活反差自动发现片段级监督，以多尺度锚点和边界回归替代阈值切段。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1807.08333">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1807.08333.webp" alt="AutoLoc: Weakly-supervised Temporal Action Localization" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">问题：现有弱监督时序动作定位只学习时间上的类别激活序列（CAS），再以阈值切段；CAS 内部的低谷会把一个动作切碎，阈值过低又会把前后背景并入。AutoLoc 改为直接回归动作片段的中心与时长。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">AutoLoc: Weakly-supervised Temporal Action Localization</h1>
+            <div class="detail-meta">2018-07-22 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1807.08333" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1807.08333" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1807.08333</span></div>
+            <p class="detail-summary">问题：现有弱监督时序动作定位只学习时间上的类别激活序列（CAS），再以阈值切段；CAS 内部的低谷会把一个动作切碎，阈值过低又会把前后背景并入。AutoLoc 改为直接回归动作片段的中心与时长。 场景：训练集中的未裁剪视频只有视频级动作标签，没有每个实例的起止边界；部署到测试视频时，系统仍须为每个动作实例输出类别、开始时间、结束时间与置信度。 研究问题：能否用 CAS 自动产生足以训练参数化边界预测器的片段级监督，使仅用视频级标签训练的模型摆脱阈值定位，并在标准 TAL 基准上接近甚至超过部分全监督方法？ 研究背景：全监督 TAL 需要为长且含大量背景的未裁剪视频逐实例标注动作类别、开始时间和结束时间，建立新大规模数据集时成本高、耗时长，因此论文转向只依赖视频级标签的弱监督训练。 核心痛点：已有弱监督方法主要训练分类器生成 CAS，测试时再阈值化：高阈值会把含激活低谷的同一实例切成多段，低阈值则会把动作前后的无关背景纳入，因而对 CAS 噪声不稳健。 任务定义：每个训练样本是一段未裁剪视频，训练监督只有该视频包含哪些动作；测试输出是按实例给出的动作类别、起止时间与置信度，正确检测还须类别正确且时间 IoU 超过评测门限。 研究目标：目标是在没有训练边界真值时学习可参数化的直接边界预测器：从 CAS 的片段内外激活反差自动发现片段级监督，以多尺度锚点和边界回归替代阈值切段。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Columbia University · New York、NY、USA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1807.08333/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">问题：现有弱监督时序动作定位只学习时间上的类别激活序列（CAS），再以阈值切段；CAS 内部的低谷会把一个动作切碎，阈值过低又会把前后背景并入。AutoLoc 改为直接回归动作片段的中心与时长。</p>
+  <ul class="reading-intro-points"><li>问题：现有弱监督时序动作定位只学习时间上的类别激活序列（CAS），再以阈值切段；CAS 内部的低谷会把一个动作切碎，阈值过低又会把前后背景并入。AutoLoc 改为直接回归动作片段的中心与时长。</li><li>场景：训练集中的未裁剪视频只有视频级动作标签，没有每个实例的起止边界；部署到测试视频时，系统仍须为每个动作实例输出类别、开始时间、结束时间与置信度。</li><li>研究问题：能否用 CAS 自动产生足以训练参数化边界预测器的片段级监督，使仅用视频级标签训练的模型摆脱阈值定位，并在标准 TAL 基准上接近甚至超过部分全监督方法？</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Columbia University（New York, NY, USA）</li><li><strong>机构</strong>：Microsoft Research（Redmond, Washington, USA）</li><li><strong>机构</strong>：Mitsubishi Electric（Japan）</li><li><strong>实验室 / 团队</strong>：论文首页作者信息未署名具体实验室；可核实的论文署名归属层级止于上述三家机构。</li><li><strong>作者与归属</strong>：Zheng Shou、Hang Gao、Shih-Fu Chang—Columbia University</li><li><strong>作者与归属</strong>：Lei Zhang—Microsoft Research</li><li><strong>作者与归属</strong>：Kazuyuki Miyazawa—Mitsubishi Electric</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>问题：现有弱监督时序动作定位只学习时间上的类别激活序列（CAS），再以阈值切段；CAS 内部的低谷会把一个动作切碎，阈值过低又会把前后背景并入。AutoLoc 改为直接回归动作片段的中心与时长。</li><li>场景：训练集中的未裁剪视频只有视频级动作标签，没有每个实例的起止边界；部署到测试视频时，系统仍须为每个动作实例输出类别、开始时间、结束时间与置信度。</li><li>研究问题：能否用 CAS 自动产生足以训练参数化边界预测器的片段级监督，使仅用视频级标签训练的模型摆脱阈值定位，并在标准 TAL 基准上接近甚至超过部分全监督方法？</li><li><strong>研究背景</strong>：全监督 TAL 需要为长且含大量背景的未裁剪视频逐实例标注动作类别、开始时间和结束时间，建立新大规模数据集时成本高、耗时长，因此论文转向只依赖视频级标签的弱监督训练。</li><li><strong>核心痛点</strong>：已有弱监督方法主要训练分类器生成 CAS，测试时再阈值化：高阈值会把含激活低谷的同一实例切成多段，低阈值则会把动作前后的无关背景纳入，因而对 CAS 噪声不稳健。</li><li><strong>任务定义</strong>：每个训练样本是一段未裁剪视频，训练监督只有该视频包含哪些动作；测试输出是按实例给出的动作类别、起止时间与置信度，正确检测还须类别正确且时间 IoU 超过评测门限。</li><li><strong>研究目标</strong>：目标是在没有训练边界真值时学习可参数化的直接边界预测器：从 CAS 的片段内外激活反差自动发现片段级监督，以多尺度锚点和边界回归替代阈值切段。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 AutoLoc：仅用视频级标签训练，却在片段层面直接预测每个动作实例的时间边界，而不是在测试时对 CAS 做阈值切段。</li><li>提出可微的 Outer-Inner-Contrastive（OIC）损失，以预测片段内部与其外部上下文的激活反差自动构造训练边界预测器所需的片段级监督。</li><li>在 THUMOS’14 与 ActivityNet 两个标准基准上验证该框架，弱监督结果显著超过当时的弱监督方法，并与部分使用边界标注训练的全监督方法相当。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：AutoLoc 在共享的逐 snippet 特征上并行滑动两条分支：分类分支的 Activation Generator S 产生每类 CAS；定位分支的 Boundary Predictor B 产生与类别无关的候选边界；OIC 层用真实视频级动作对应的 CAS 为候选片段计分、筛选，并把损失反传给 B。</li><li><strong>输入与表示</strong>：输入视频被切成互不重叠的 15 帧 snippet。预训练的双流 UntrimmedNet/TSN 骨干分别从 RGB 与 Optical Flow 的 Inception-BN global-pool 层取 1024 维特征，拼接为每个 snippet 的 2048 维向量；含 T 个 snippet 的视频形成 2048×T 特征图。</li><li><strong>模型结构</strong>：B 接收 2048×T 特征图，先堆叠 3 个时间卷积层；每层有 128 个滤波器，时间核大小 3、stride 1、padding 1，随后接 Batch Normalization 与 ReLU。末端 pred 时间卷积用 2M 个滤波器，为 M 种锚点各输出中心偏移 t_x 和长度缩放 t_w，且预测与类别无关。</li><li><strong>数据流</strong>：在每个时间位置 s_x 生成长度 w_a 的多尺度锚点；B 输出 t_x、t_w 后计算 c_x=s_x+w_a·t_x 与 w=w_a·exp(t_w)，再得内边界 x_1=c_x-w/2、x_2=c_x+w/2。内边界按比例向两侧扩成外边界，OIC 依据对应类别 CAS 的内外均值差保留候选；最终把 snippet 边界换算为时间，输出类别、置信度和起止时间。</li><li><strong>关键技术</strong>：OIC 让片段内部激活高、紧邻外部激活低；训练时只遍历视频真值动作，测试时遍历所有动作。CAS 激活低于 0.1 的位置整组丢弃，每个位置只留 OIC 最小的锚点，再删除 OIC 大于 -0.3 的片段，并以 IoU 0.4 做 NMS；短片段的外边界至少各外扩一个 snippet，越界时在视频两端补零后裁剪。</li><li><strong>公式与超参数</strong>：核心目标为 L_OIC(φ)=A_o(φ)-A_i(φ)，即外环平均激活减内段平均激活，且论文给出对内外边界可反传的梯度。边界膨胀率 α=0.25；分类注意力门限为 7，CAS/OIC/NMS 的筛选门限依次为 0.1、-0.3、0.4。SGD 初始学习率 0.001，THUMOS’14 每 200 次迭代、ActivityNet 每 500 次迭代降低一个数量级，weight decay 为 0.0005；论文称两数据集的训练过程约 1 个 epoch 后可快速收敛。锚点长度在 THUMOS’14 为 1、2、4、8、16、32，在 ActivityNet 为 16、32、64、128、256、512。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：THUMOS’14：时间定位任务含 20 类动作；使用 validation 的 200 段未裁剪视频训练，在含 213 段视频的 test 上评测。</li><li><strong>数据集</strong>：ActivityNet release 1.2：含 100 类活动；training 有 4,819 段视频，validation 有 2,383 段视频，前者训练、后者测试。</li><li><strong>规模与划分</strong>：主实验严格采用 THUMOS’14 validation→test（200→213 段视频）与 ActivityNet release 1.2 training→validation（4,819→2,383 段视频）；补充材料的 α 网格搜索则分别在各数据集训练划分上训练并同划分评估，不能与主测试结果混用。</li><li><strong>模型</strong>：先预训练 soft 版 UntrimmedNet，并以 TSN 双流 Inception-BN 网络作为 RGB/光流特征骨干；论文的正文模型说明与补充材料均未给出 AutoLoc 的总参数量。</li><li><strong>硬件</strong>：训练使用一块 NVIDIA GeForce GTX TITAN X GPU，软件栈为 CUDA 8.0 与 cuDNN v5；正文实验设置及补充材料未报告 CPU、内存或单次训练时长。</li><li><strong>代码</strong>：论文首页脚注明确给出源码与模型地址：<a href="https://github.com/zhengshou/AutoLoc" target="_blank" rel="noopener noreferrer">https://github.com/zhengshou/AutoLoc</a>。</li><li><strong>训练平台</strong>：实现框架为 Caffe；实验对象是两个离线视频基准，正文实验设置与补充材料未使用或报告仿真器、机器人、实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：THUMOS’14 temporal action localization：validation 训练、test 测试。</li><li><strong>评估基准</strong>：ActivityNet release 1.2 temporal localization：training 训练、validation 测试。</li><li><strong>评估指标</strong>：时间定位 mAP（越高越好）：预测类别须正确且预测片段与真值片段的时间 IoU 超过指定阈值；同一真值不允许重复检测。</li><li><strong>对比方法</strong>：THUMOS’14 同时比较仅视频级监督的 Sun et al.、Hide-and-Seek、Wang et al.，以及使用边界标注的 S-CNN、R-C3D、SSN 等全监督方法。</li><li><strong>对比方法</strong>：ActivityNet release 1.2 的主表比较弱监督 Wang et al. 与 AutoLoc，并列出全监督 SSN 作为参照。</li><li><strong>关键结果</strong>：THUMOS’14 test 在 IoU 0.5 时，AutoLoc 的 mAP 为 21.2%，高于弱监督 Wang et al. 的 13.7%（mAP 越高越好）。</li><li><strong>关键结果</strong>：ActivityNet release 1.2 validation 在 IoU 0.5 时，AutoLoc 与 Wang et al. 的 mAP（单位：%）为 27.3 与 7.4；跨 IoU 0.5–0.95 的 Avg mAP 为 16.0 与 3.6。</li><li><strong>关键结果</strong>：同一 ActivityNet 主表中，全监督 SSN 在 IoU 0.5 与 Avg 上的 mAP（单位：%）为 41.3 和 26.6，而弱监督 AutoLoc 为 27.3 和 16.0，说明这里仍有明显全监督差距。</li><li><strong>消融实验</strong>：ActivityNet validation 上，Avg mAP（单位：%）中枚举片段再用 OIC 选择为 8.5，高于 Wang et al. 的 3.6，但低于完整 AutoLoc 的 16.0。</li><li><strong>消融实验</strong>：把 OIC 换成只奖励内部激活的 Inner Only Loss 后，Avg mAP（单位：%）从 AutoLoc 的 16.0 降至 1.6，表明外部上下文对比是关键。</li><li><strong>消融实验</strong>：逐测试视频直接优化边界的 Avg mAP（单位：%）为 12.6，低于 AutoLoc 的 16.0；它需 25 次前向与 25 次反向迭代，而 AutoLoc 测试只需一次前向。</li><li><strong>消融实验</strong>：补充网格搜索在 THUMOS’14 validation 上选择 α=1/4：IoU 0.6 时 mAP（单位：%）为 17.9，而 α=1/2 与 α=1/8 分别为 16.5 和 16.4。</li><li><strong>消融实验</strong>：ActivityNet training 同划分搜索中，α=1/4 的 Avg mAP（单位：%）为 17.4，α=1/2 与 α=1/8 分别为 17.1 和 17.2；这些是调参结果而非 validation 主结果。</li><li><strong>实验条件</strong>：所有主结果都是离线视频 TAL：训练阶段只用视频级标签，评测阶段才用带边界真值计算 mAP。THUMOS’14 按 validation 训练、test 测试，ActivityNet release 1.2 按 training 训练、validation 测试；不是零样本，也没有机器人闭环或实车评测口径。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1809.05477/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Project AutoVision: Localization and 3D Scene Perception for an Autonomous Vehicle with a Multi-Camera System</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1803.10699/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Weakly-Supervised Action Segmentation with Iterative Soft Boundary Assignment</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

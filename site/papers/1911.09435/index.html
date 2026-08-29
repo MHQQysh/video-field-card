@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TEINet: Towards an Efficient Architecture for Video Recognition - 视频领域每日论文卡</title>
+    <meta name="description" content="论文要解决的是 RGB 视频动作识别中的“时序建模—效率”矛盾：密集三维卷积能学习时空特征，却引入大量参数和计算；TEINet 试图把轻量时序模块直接插入二维 CNN，在保留推理效率的同时补足时序信息。 具体使用场景是只用 RGB 帧完成视频级动作分类：既覆盖以物体交互和运动顺序为主的 Something-Something V1/V2，也覆盖外观线索更强的 Kinetics-400，并把预训练模型迁移到 UCF101 与 HMDB51。 论文真正检验的是：把时序学习拆成“MEM 先按运动显著性增强通道、TIM 再逐通道建模局部时间演化”，是否比单独模块或既有轻量时序操作更有效，并且能在多种数据分布上维持可接受的计算与运行成本。 研究背景：动作识别是视频理解的基础任务：除提取视频语义外，它还能为动作检测与定位提供通用表示；相对静态图像，其核心难点是有效建模随时间变化的信息。 核心痛点：TSN 到最终分类层才聚合时间信息并忽略时间顺序；部分高效二维方案依赖缺少清晰解释的手工设计，可能不是最优时序建模；而把二维卷积密集替换为三维卷积又会显著增加参数和计算。 任务定义：输入是从 RGB 视频采样的帧序列，经二维骨干得到逐帧特征序列；网络为每个 clip 产生动作分类分数，测试时再对同一视频各 clip 的分数做平均，输出视频级动作类别。 研究目标：目标是设计一个可插拔、可学习的时序模块，分别处理通道重要性和局部时间关系，在继续利用二维骨干及其图像预训练权重的同时，以较小额外计算获得有效时空表示。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1911.09435">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1911.09435.webp" alt="TEINet: Towards an Efficient Architecture for Video Recognition" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文要解决的是 RGB 视频动作识别中的“时序建模—效率”矛盾：密集三维卷积能学习时空特征，却引入大量参数和计算；TEINet 试图把轻量时序模块直接插入二维 CNN，在保留推理效率的同时补足时序信息。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">TEINet: Towards an Efficient Architecture for Video Recognition</h1>
+            <div class="detail-meta">2019-11-21 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1911.09435" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1911.09435" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1911.09435</span></div>
+            <p class="detail-summary">论文要解决的是 RGB 视频动作识别中的“时序建模—效率”矛盾：密集三维卷积能学习时空特征，却引入大量参数和计算；TEINet 试图把轻量时序模块直接插入二维 CNN，在保留推理效率的同时补足时序信息。 具体使用场景是只用 RGB 帧完成视频级动作分类：既覆盖以物体交互和运动顺序为主的 Something-Something V1/V2，也覆盖外观线索更强的 Kinetics-400，并把预训练模型迁移到 UCF101 与 HMDB51。 论文真正检验的是：把时序学习拆成“MEM 先按运动显著性增强通道、TIM 再逐通道建模局部时间演化”，是否比单独模块或既有轻量时序操作更有效，并且能在多种数据分布上维持可接受的计算与运行成本。 研究背景：动作识别是视频理解的基础任务：除提取视频语义外，它还能为动作检测与定位提供通用表示；相对静态图像，其核心难点是有效建模随时间变化的信息。 核心痛点：TSN 到最终分类层才聚合时间信息并忽略时间顺序；部分高效二维方案依赖缺少清晰解释的手工设计，可能不是最优时序建模；而把二维卷积密集替换为三维卷积又会显著增加参数和计算。 任务定义：输入是从 RGB 视频采样的帧序列，经二维骨干得到逐帧特征序列；网络为每个 clip 产生动作分类分数，测试时再对同一视频各 clip 的分数做平均，输出视频级动作类别。 研究目标：目标是设计一个可插拔、可学习的时序模块，分别处理通道重要性和局部时间关系，在继续利用二维骨干及其图像预训练权重的同时，以较小额外计算获得有效时空表示。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：南京大学 · Nanjing University、China</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1911.09435/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文要解决的是 RGB 视频动作识别中的“时序建模—效率”矛盾：密集三维卷积能学习时空特征，却引入大量参数和计算；TEINet 试图把轻量时序模块直接插入二维 CNN，在保留推理效率的同时补足时序信息。</p>
+  <ul class="reading-intro-points"><li>论文要解决的是 RGB 视频动作识别中的“时序建模—效率”矛盾：密集三维卷积能学习时空特征，却引入大量参数和计算；TEINet 试图把轻量时序模块直接插入二维 CNN，在保留推理效率的同时补足时序信息。</li><li>具体使用场景是只用 RGB 帧完成视频级动作分类：既覆盖以物体交互和运动顺序为主的 Something-Something V1/V2，也覆盖外观线索更强的 Kinetics-400，并把预训练模型迁移到 UCF101 与 HMDB51。</li><li>论文真正检验的是：把时序学习拆成“MEM 先按运动显著性增强通道、TIM 再逐通道建模局部时间演化”，是否比单独模块或既有轻量时序操作更有效，并且能在多种数据分布上维持可接受的计算与运行成本。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：南京大学（Nanjing University, China）</li><li><strong>机构</strong>：腾讯（Tencent）</li><li><strong>实验室 / 团队</strong>：State Key Lab for Novel Software Technology（论文首页署名实验室；目录标签 nju-mcg 是外部收录归属，不是该署名原文）</li><li><strong>实验室 / 团队</strong>：Youtu Lab</li><li><strong>作者与归属</strong>：Zhaoyang Liu、Limin Wang、Tong Lu—State Key Lab for Novel Software Technology, Nanjing University, China</li><li><strong>作者与归属</strong>：Donghao Luo、Yabiao Wang、Ying Tai、Chengjie Wang、Jilin Li、Feiyue Huang—Youtu Lab, Tencent</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文要解决的是 RGB 视频动作识别中的“时序建模—效率”矛盾：密集三维卷积能学习时空特征，却引入大量参数和计算；TEINet 试图把轻量时序模块直接插入二维 CNN，在保留推理效率的同时补足时序信息。</li><li>具体使用场景是只用 RGB 帧完成视频级动作分类：既覆盖以物体交互和运动顺序为主的 Something-Something V1/V2，也覆盖外观线索更强的 Kinetics-400，并把预训练模型迁移到 UCF101 与 HMDB51。</li><li>论文真正检验的是：把时序学习拆成“MEM 先按运动显著性增强通道、TIM 再逐通道建模局部时间演化”，是否比单独模块或既有轻量时序操作更有效，并且能在多种数据分布上维持可接受的计算与运行成本。</li><li><strong>研究背景</strong>：动作识别是视频理解的基础任务：除提取视频语义外，它还能为动作检测与定位提供通用表示；相对静态图像，其核心难点是有效建模随时间变化的信息。</li><li><strong>核心痛点</strong>：TSN 到最终分类层才聚合时间信息并忽略时间顺序；部分高效二维方案依赖缺少清晰解释的手工设计，可能不是最优时序建模；而把二维卷积密集替换为三维卷积又会显著增加参数和计算。</li><li><strong>任务定义</strong>：输入是从 RGB 视频采样的帧序列，经二维骨干得到逐帧特征序列；网络为每个 clip 产生动作分类分数，测试时再对同一视频各 clip 的分数做平均，输出视频级动作类别。</li><li><strong>研究目标</strong>：目标是设计一个可插拔、可学习的时序模块，分别处理通道重要性和局部时间关系，在继续利用二维骨干及其图像预训练权重的同时，以较小额外计算获得有效时空表示。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 Enhance-and-Interact 范式，把时序特征学习明确解耦为通道级判别性增强与局部时间交互，而不是用统一的重型时空卷积完成。</li><li>设计 MEM：以相邻帧特征差近似运动显著性，经空间压缩和通道注意力增强运动相关特征、抑制背景等无关信息，且不依赖额外监督。</li><li>设计 TIM：把局部时间建模写成每通道独立、参数可学习的时间卷积；它把 TSM 的固定移位核推广为可学习核，从而控制复杂度。</li><li>把 MEM 与 TIM 顺序组成可插入二维 ResNet 的 TEI 块，并用多数据集、模块/插入位置/块数和运行时实验验证精度—效率取舍与迁移能力。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：MEM 是运动感知的通道增强器：提高运动显著特征权重并抑制背景；TIM 是局部时间上下文建模器：逐通道学习相邻时刻的演化；二者顺序组成 TEI，分别承担“增强”和“交互”。</li><li><strong>输入与表示</strong>：输入表示为长度 T 的逐帧特征序列 X，每个时刻的特征包含通道、高、宽三个轴。MEM 先在空间轴做全局平均池化得到逐通道描述；TIM 接收增强后的序列，并把张量从时间轴在前重排为通道轴在前，以便每个通道独立沿时间卷积。</li><li><strong>模型结构</strong>：TEI 被直接插入现有二维 ResNet 块：残差分支中的特征先经过 MEM、再经过 TIM，然后继续原有残差卷积并与捷径相加；以这种块替换普通块即可构成 TEINet，而无需把空间卷积整体膨胀为三维卷积。</li><li><strong>数据流</strong>：对相邻时刻，MEM 先对各自特征做全局平均池化，再用两个独立投影压缩通道并相减，所得近似运动信号经通道恢复与 sigmoid 变成注意力，逐通道乘回当前帧；末帧直接复制以保持时间长度。随后 TIM 重排增强序列，用各通道互不共享的时间核聚合邻近时刻，最后恢复原张量布局并送入后续网络。</li><li><strong>关键技术</strong>：关键点包括：用相邻特征差而非光流近似运动显著性；用全局平均池化和两个独立的 1×1 卷积把计算限制在通道级；用 sigmoid 产生运动感知权重；用可学习的 channel-wise temporal convolution 取代 TSM 的固定前移、后移或不移核，使时间感受野随网络加深而增长。</li><li><strong>公式与超参数</strong>：MEM 计算 s_t=Conv1(x̂_t,Wθ)−Conv2(x̂_{t+1},Wφ)（式 1），把通道从 C 降到 C/r，且 r=8；再令 ŝ_t=σ(Conv3(s_t,Wϕ))（式 2）、u_t=ŝ_t·x_t（式 3），末帧设 u_T=x_T。TIM 把序列重排为 C×T×H×W，并计算 Y_{c,t,x,y}=Σ_i V_{c,i}·Û_{c,t+i,x,y}（式 4）；时间核为 3×1×1。普通三维卷积、时间一维卷积和 TIM 的参数形式分别为 C_out×C_in×t×d×d、C_out×C_in×t、C_out×1×t。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Something-Something V1 与 V2（以日常物体交互、运动关系为主）</li><li><strong>数据集</strong>：Kinetics-400（论文实际采用的 Kinetics 版本）</li><li><strong>数据集</strong>：UCF101 与 HMDB51（小规模迁移评测）</li><li><strong>规模与划分</strong>：Something-Something V1 含 108499 个 clips、V2 含 220847 个 clips，二者均为 174 类；Kinetics-400 有 400 类、每类至少 400 个 clips，片段约 10s；UCF101 约 13k 个视频和 101 类，HMDB51 约 7k 个视频和 51 类，二者报告三个划分的平均准确率。论文只给出这些总规模与评估口径，未给出 Something-Something 或 Kinetics 各训练/验证/测试划分的样本数。</li><li><strong>模型</strong>：骨干是 ImageNet 预训练的 ResNet-50；实验使用每 clip 8 或 16 帧，迁移实验从 Kinetics-400 预训练的 16 帧 TEINet 微调。论文未给出“基础模型参数规模”的独立条目，但表 2 报告完整 TEINet 为 30.4M 参数。</li><li><strong>硬件</strong>：训练在 Tesla M40 GPUs 上进行，mini-batch=64，但论文未报告 GPU 数量；运行时在单张 NVIDIA Tesla P100 上测量，latency batch=1、throughput batch=16。正文实验设置与结论未报告 CPU 型号。</li><li><strong>代码</strong>：全文从首页、方法、实验设置、结论到参考文献尾部均未报告代码地址、仓库或发布状态；因此继承的 code_url 保持空字符串。</li><li><strong>训练平台</strong>：实验平台是离线 RGB 视频数据集上的分类网络；全文方法、实验与结论未报告仿真器、机器人或实车平台，也没有闭环部署实验。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Something-Something V1/V2：运动敏感的大规模动作分类</li><li><strong>评估基准</strong>：Kinetics-400：外观线索更强的动作分类</li><li><strong>评估基准</strong>：UCF101/HMDB51：从 Kinetics-400 预训练模型迁移的小规模评测</li><li><strong>评估指标</strong>：准确率指标为 Top-1 与 Top-5；Something-Something 表还分别给 validation/test Top-1，UCF101/HMDB51 取三个划分平均。准确率均越高越好。</li><li><strong>评估指标</strong>：效率指标包括 Params、FLOPs（Kinetics 按单视图 GFLOPs×views）、latency（ms）与 throughput（vid/s）。按指标定义，参数/FLOPs/latency 越低越好、throughput 越高越好；论文表 2 的说明句把 latency/throughput 方向写反，本文不沿用该笔误。</li><li><strong>对比方法</strong>：轻量时序基线覆盖 TSN、TRN、TSM 及其 ensemble/two-stream 版本，模块对照还包括 MEM-only、TIM-only、SE+TIM。</li><li><strong>对比方法</strong>：重型或混合时空模型覆盖 I3D、NL-I3D、S3D-G、ECO、R(2+1)D、ARTNet、SlowFast、LGD-3D、StNet 等；跨模型比较需同时看预训练、帧数和 views。</li><li><strong>关键结果</strong>：Something-Something V1 上，ImageNet 预训练的 TEINet 单 clip 16 帧取得 validation 准确率 49.9%；表中同帧数 TSM 行使用 ImgNet+K400 预训练，为 44.8%，论文将这项绝对百分点差记作提高 5.1%；TEINet 计算量为 66G，TSM 为 65G。</li><li><strong>关键结果</strong>：Something-Something V2 上，TEINet 的 16 帧×10 clips 为 64.7% validation/63.0% test；融合 16 帧与 8 帧模型后为 66.5%/64.6%，并比 TSM-2Stream 的 validation 64.0% 高 2.5%（原文记法，对应绝对百分点差）。</li><li><strong>关键结果</strong>：Kinetics-400 上，TEINet 16 帧在 66×30 GFLOPs×views 下达到 76.2% Top-1、92.5% Top-5；TSM 16 帧为 65×30、74.7%/91.4%，准确率越高越好。</li><li><strong>关键结果</strong>：用 Kinetics-400 预训练的 16 帧模型迁移时，TEINet 在 UCF101/HMDB51 三个划分平均准确率为 96.7%/72.1%；这组结果是竞争性结果，而非两列最优。</li><li><strong>关键结果</strong>：Something-Something V1 的 8 帧、单模型效率表中，TEINet 为 30.4M 参数、33G FLOPs、36.5ms latency、46.9 vid/s、47.4% 准确率；同帧数 TSM 为 24.3M、33G、17.4ms、77.4 vid/s、43.4%，显示精度提升伴随运行时开销。</li><li><strong>消融实验</strong>：中心裁剪、单 clip 消融中，MEM-only 为 33.5% validation Top-1，TIM-only 为 46.1%，MEM+TIM 为 47.4%；MEM+TIM 还比 SE+TIM 高 1.3%（原文记法，对应绝对百分点差），说明两模块互补且运动感知增强优于普通 SE 替代。</li><li><strong>消融实验</strong>：插入位置/块数消融中，res4–5 共 9 个 TEI 块得到 46.7% validation Top-1，而 res2–5 共 16 块为 47.4%；多 7 个块只增 0.7%（原文记法，对应绝对百分点差），作者因效率推荐 res4–5，但后续主实验默认在所有 stage 插入。</li><li><strong>实验条件</strong>：网络输入为 224×224；训练统一用 SGD。Kinetics 训练 100 epochs，初始学习率 0.01，并在 50/75/90 epochs 按十倍衰减；Something-Something 训练 50 epochs，并在 30/40/45 epochs 按十倍衰减；momentum=0.9、weight decay=1e-4、mini-batch=64，训练硬件为 Tesla M40。常规测试把短边缩放到 256、每帧 3 crops、每视频 10 clips 后平均分类分数；消融改为 center crop+one clip。运行时用单张 Tesla P100，不计数据加载，batch=1 测 latency、batch=16 测 throughput。UCF101/HMDB51 迁移使用 Kinetics-400 预训练、16 帧、10 clips×3 crops。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2001.04608/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Actions as Moving Points</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1910.10053/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Attacking Optical Flow</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

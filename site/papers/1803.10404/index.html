@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lip Movements Generation at a Glance - 视频领域每日论文卡</title>
+    <meta name="description" content="问题：给定任意语音和目标身份的一张嘴部图像，生成该身份说出这段语音的连续嘴唇视频；模型必须同时保留身份、生成逼真清晰画面，并让口型时序与语音对应。 场景：可把某人的语音驱动到另一位目标人物的一张嘴图上；输入语音和目标图像本身可未出现在训练集中。真实世界实验还测试了 LRW 模型对身份图与语音均未见、GRID 模型留出源说话者的条件，可用于隐私保护下增强语音理解或辅助听障者。 研究问题：能否把语音—口型相关性显式纳入一次生成多帧的网络，并比较相关损失、感知损失与三流对抗判别器，判断哪些设计真正改善口型准确性、画质、锐度和时序一致性。 研究背景：跨模态生成希望依据一种模态的信息合成另一种模态；本文把它具体化为由语音驱动目标身份的连续嘴部视觉序列，并强调语音变化与口型变化之间的跨身份对应关系。 核心痛点：既有说话脸方法多从目标人物的大量历史帧中检索嘴部纹理，因此依赖可观的视频库和复杂后处理；与本文任务最接近的 Chung 方法每次只从短语音生成单帧，逐帧拼接绕开了序列平滑性、一致性与音画时间相关性。 任务定义：输入是任意语音 s 与目标说话者的一张嘴部图像 p_r，输出是该身份说出语音的合成嘴部视频 v̂；训练时身份图像从同一真值视频随机取帧，测试时语音和身份图像都可以来自训练集之外。 研究目标：研究目标不是单纯重建清晰嘴图，而是寻找合适的音频—视觉融合与训练目标，使生成序列同时满足身份纹理保持、照片真实感、帧间平滑以及口型运动和语音变化的同步。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1803.10404">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1803.10404.webp" alt="Lip Movements Generation at a Glance" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">问题：给定任意语音和目标身份的一张嘴部图像，生成该身份说出这段语音的连续嘴唇视频；模型必须同时保留身份、生成逼真清晰画面，并让口型时序与语音对应。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Lip Movements Generation at a Glance</h1>
+            <div class="detail-meta">2018-03-28 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1803.10404" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1803.10404" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1803.10404</span></div>
+            <p class="detail-summary">问题：给定任意语音和目标身份的一张嘴部图像，生成该身份说出这段语音的连续嘴唇视频；模型必须同时保留身份、生成逼真清晰画面，并让口型时序与语音对应。 场景：可把某人的语音驱动到另一位目标人物的一张嘴图上；输入语音和目标图像本身可未出现在训练集中。真实世界实验还测试了 LRW 模型对身份图与语音均未见、GRID 模型留出源说话者的条件，可用于隐私保护下增强语音理解或辅助听障者。 研究问题：能否把语音—口型相关性显式纳入一次生成多帧的网络，并比较相关损失、感知损失与三流对抗判别器，判断哪些设计真正改善口型准确性、画质、锐度和时序一致性。 研究背景：跨模态生成希望依据一种模态的信息合成另一种模态；本文把它具体化为由语音驱动目标身份的连续嘴部视觉序列，并强调语音变化与口型变化之间的跨身份对应关系。 核心痛点：既有说话脸方法多从目标人物的大量历史帧中检索嘴部纹理，因此依赖可观的视频库和复杂后处理；与本文任务最接近的 Chung 方法每次只从短语音生成单帧，逐帧拼接绕开了序列平滑性、一致性与音画时间相关性。 任务定义：输入是任意语音 s 与目标说话者的一张嘴部图像 p_r，输出是该身份说出语音的合成嘴部视频 v̂；训练时身份图像从同一真值视频随机取帧，测试时语音和身份图像都可以来自训练集之外。 研究目标：研究目标不是单纯重建清晰嘴图，而是寻找合适的音频—视觉融合与训练目标，使生成序列同时满足身份纹理保持、照片真实感、帧间平滑以及口型运动和语音变化的同步。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">17 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Rochester</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1803.10404/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">问题：给定任意语音和目标身份的一张嘴部图像，生成该身份说出这段语音的连续嘴唇视频；模型必须同时保留身份、生成逼真清晰画面，并让口型时序与语音对应。</p>
+  <ul class="reading-intro-points"><li>问题：给定任意语音和目标身份的一张嘴部图像，生成该身份说出这段语音的连续嘴唇视频；模型必须同时保留身份、生成逼真清晰画面，并让口型时序与语音对应。</li><li>场景：可把某人的语音驱动到另一位目标人物的一张嘴图上；输入语音和目标图像本身可未出现在训练集中。真实世界实验还测试了 LRW 模型对身份图与语音均未见、GRID 模型留出源说话者的条件，可用于隐私保护下增强语音理解或辅助听障者。</li><li>研究问题：能否把语音—口型相关性显式纳入一次生成多帧的网络，并比较相关损失、感知损失与三流对抗判别器，判断哪些设计真正改善口型准确性、画质、锐度和时序一致性。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Rochester</li><li><strong>机构</strong>：Wuhan University</li><li><strong>实验室 / 团队</strong>：论文首页只署名院系与大学，未列具体实验室；目录元数据中的 rochester-video 是收录标签，不作为论文署名机构。</li><li><strong>作者与归属</strong>：Lele Chen、Chenliang Xu—University of Rochester Department of Computer Science；Zhiheng Li—Wuhan University School of Computer Science；Ross K. Maddox—University of Rochester Department of Biomedical Engineering；Zhiyao Duan—University of Rochester Department of Electrical and Computer Engineering。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>问题：给定任意语音和目标身份的一张嘴部图像，生成该身份说出这段语音的连续嘴唇视频；模型必须同时保留身份、生成逼真清晰画面，并让口型时序与语音对应。</li><li>场景：可把某人的语音驱动到另一位目标人物的一张嘴图上；输入语音和目标图像本身可未出现在训练集中。真实世界实验还测试了 LRW 模型对身份图与语音均未见、GRID 模型留出源说话者的条件，可用于隐私保护下增强语音理解或辅助听障者。</li><li>研究问题：能否把语音—口型相关性显式纳入一次生成多帧的网络，并比较相关损失、感知损失与三流对抗判别器，判断哪些设计真正改善口型准确性、画质、锐度和时序一致性。</li><li><strong>研究背景</strong>：跨模态生成希望依据一种模态的信息合成另一种模态；本文把它具体化为由语音驱动目标身份的连续嘴部视觉序列，并强调语音变化与口型变化之间的跨身份对应关系。</li><li><strong>核心痛点</strong>：既有说话脸方法多从目标人物的大量历史帧中检索嘴部纹理，因此依赖可观的视频库和复杂后处理；与本文任务最接近的 Chung 方法每次只从短语音生成单帧，逐帧拼接绕开了序列平滑性、一致性与音画时间相关性。</li><li><strong>任务定义</strong>：输入是任意语音 s 与目标说话者的一张嘴部图像 p_r，输出是该身份说出语音的合成嘴部视频 v̂；训练时身份图像从同一真值视频随机取帧，测试时语音和身份图像都可以来自训练集之外。</li><li><strong>研究目标</strong>：研究目标不是单纯重建清晰嘴图，而是寻找合适的音频—视觉融合与训练目标，使生成序列同时满足身份纹理保持、照片真实感、帧间平滑以及口型运动和语音变化的同步。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出复制—拼接的音频/身份融合与三维解码器，一次输出十六帧嘴部视频，而不是逐帧独立生成。</li><li>提出音频特征时间导数与相邻帧光流之间的余弦相关损失，并以可学习的卷积相关网络吸收不同视频中不一致的音画时延。</li><li>构建联合相关、像素重建、感知和对抗目标的端到端系统；三流判别器同时查看语音、视频和光流，并把错配的真实视频—语音对作为负例。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：音频编码器提取语音时间—频率特征，身份编码器提供目标嘴部纹理；融合模块把两种表示转成时空视频特征，三维残差解码器生成帧序列；相关网络约束音画变化，三流判别器分别检查语音条件、外观时序和显式光流运动。</li><li><strong>输入与表示</strong>：每个样本由一段 0.64 秒语音与一张目标嘴图组成。论文按 41.1 kHz 抽取音频，以 hop 512、FFT 窗 1024、Mel bands 128 得到 64×128 的 LMS；嘴部裁剪为 64×64 RGB，最终对应 16×3×64×64 的帧序列。</li><li><strong>模型结构</strong>：音频与身份编码器都把各自表示压到 16×16 布局并在通道维拼接；Appendix A 的解码器先用 9 个 3D residual blocks 保持 16×16×16，再用 2 个 transposed convolutions 上采样至 16×64×64，接 7×7×7 convolution 与 Tanh 输出视频。</li><li><strong>数据流</strong>：原始波形先转 LMS 并编码为 f_s，身份图像编码为 f_p；每个时间步的音频特征沿频率维复制，身份空间模板沿时间维复制，在 H=W=F 的布局上按通道拼接成 f_v。解码器把 f_v 展开成 v̂；v̂ 的相邻帧光流与 f_s 的时间导数进入相关网络，同时 v̂、语音及光流进入判别器。</li><li><strong>关键技术</strong>：相关分支不直接相关原始特征，而是编码 f_s 的相邻时间导数与视频相邻帧的光流；音频和光流编码器的时间感受野分别为 9 与 13，使卷积从数据中吸收可变时延。判别器另用预训练后微调的 FlowNet 显式建模运动，并以错配音视频训练其条件敏感性。</li><li><strong>公式与超参数</strong>：相关目标为 l_corr=1−cos(φ_s(f′_s),φ_v(F(v)))，分母加 ε=10⁻⁸ 防止除零。总目标 L=l_corr+λ1l_pix+λ2l_perc+λ3l_gen，λ1、λ2、λ3 分别为 0.5、1.0、1.0；l_pix 是像素差，l_perc 是冻结自编码器特征的平方二范数，l_gen=−log D([s,v̂])。判别器错配项 λp=λu=0.5；Adam 学习率为 10⁻⁴，weight decay 为 5×10⁻⁴。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：GRID：33 位说话者，每位 1000 个短视频，实验视频为实验室录制。</li><li><strong>数据集</strong>：LRW：500 个词，由数百位说话者在新闻场景中说出，属于 in-the-wild 视频。</li><li><strong>数据集</strong>：LDC：14 位说话者，每位朗读 238 个词和 166 个句子，实验视频为实验室录制。</li><li><strong>规模与划分</strong>：GRID 为 Train 211k (37.5h)、Val. 23k (4.2h)、Test 7k (1.3h)；LRW 为 Train 841k (159.8h)、无 Val.、Test 40k (7.8h)；LDC 为 Train 36k (6.4h)、Val. 4k (0.7h)、Test 6.6k (1.2h)。验证集是已见说话者但未见句子，测试集是未见说话者且未见句子。</li><li><strong>模型</strong>：核心生成与判别网络从头训练；FlowNet 先在 FlyingChairs 预训练再微调，感知特征来自另行从头训练后冻结编码器的自编码器。正文及 Appendix A 给出逐层结构，但未报告总参数量或基础模型参数规模。</li><li><strong>硬件</strong>：全部模型在单张 NVIDIA GTX 1080Ti 上训练和测试；论文报告测试时生成单帧耗时 0.015 秒，但未给出 CPU、内存或训练总时长。</li><li><strong>代码</strong>：论文未给出代码仓库或代码发布状态；全文提供的是 YouTube 演示视频链接 <a href="https://youtu.be/7IX_sIL5v0c" target="_blank" rel="noopener noreferrer">https://youtu.be/7IX_sIL5v0c</a>。</li><li><strong>训练平台</strong>：这是离线音视频生成管线：Dlib/HOG landmark 用于嘴部裁剪和 LMD，FlowNet 用于光流；正文实验设置与 Appendix A 均不涉及仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：GRID：实验室录制语句，测试集说话者和句子均未在训练中出现。</li><li><strong>评估基准</strong>：LDC：实验室录制的美式英语词句，按未见说话者与未见句子测试。</li><li><strong>评估基准</strong>：LRW：新闻中的野外唇读词视频，以低分辨率嘴部区域检验跨身份泛化。</li><li><strong>评估指标</strong>：LMD：用 Dlib 检测合成与真值嘴唇各 20 个 landmark，对齐中心后求对应点欧氏距离并按时间长度和点数归一化，越低越好。</li><li><strong>评估指标</strong>：PSNR：衡量合成帧的像素级画质，越高越好。</li><li><strong>评估指标</strong>：SSIM：衡量合成帧与真值的结构相似性，越高越好。</li><li><strong>评估指标</strong>：CPBD：无参考感知锐度指标，越高越好。</li><li><strong>对比方法</strong>：Vondrick 视频 GAN 被扩展为接收同样目标图像和语音条件的 conditional GAN。</li><li><strong>对比方法</strong>：Chung 图像生成器以重建损失逐帧生成；主结果表中的所有比较模型均按数据集分别从头训练。</li><li><strong>关键结果</strong>：GRID 测试集：Full model 的 LMD=1.18、SSIM=0.73、PSNR=29.89、CPBD=0.175（表中未标单位）；其中 LMD、PSNR、CPBD 最优，SSIM 低于 Chung 的 0.74。</li><li><strong>关键结果</strong>：LDC 测试集：Full model 的 LMD=1.82、SSIM=0.57、PSNR=28.87、CPBD=0.172（表中未标单位）；其中 LMD、PSNR、CPBD 最优，SSIM 低于 Vondrick 的 0.75。</li><li><strong>关键结果</strong>：LRW 测试集：Full model 的 LMD=1.92、SSIM=0.53、PSNR=28.65、CPBD=0.075（表中未标单位）；其中 LMD、SSIM、PSNR 最优，CPBD 低于 Chung 的 0.083。</li><li><strong>关键结果</strong>：真实世界未配对测试使用训练集外的三张名人身份图和 GRID 音频；LRW 训练模型对身份图与音频均未见，GRID 训练模型则留出了源说话者。生成序列能延续输入中的嘴部旋转与胡须，但 GRID 模型身份保持失败；作者把 LRW 更好的泛化归因于其身份数为数百，而 GRID 仅 33。</li><li><strong>关键结果</strong>：已报告失败模式：LRW 测试的最后两个定性样例有时不能保持肤色，作者推测源于 LRW 数据分布不平衡；模型也难以仅凭单张图像捕捉每个人的嘴唇形变量。</li><li><strong>消融实验</strong>：GRID 上去掉相关损失的 (d) 到完整模型 (e)：LMD 1.31→1.18、SSIM 0.70→0.73、PSNR 29.40→29.98、CPBD 0.209→0.175；前三项支持相关约束，锐度指标反而下降。</li><li><strong>消融实验</strong>：导数相关 (e) 对非导数相关 (f)：LMD 1.18 对 1.96、SSIM 0.73 对 0.52、PSNR 29.98 对 28.6、CPBD 0.175 对 0.218；导数先验改善前三项，但不改善 CPBD。</li><li><strong>消融实验</strong>：光流三流 (e) 对帧差三流 (i)：LMD 1.18 对 1.40、SSIM 0.73 对 0.66、PSNR 29.98 对 29.51、CPBD 0.175 对 0.210。前三项更好，CPBD 未改善；因此正文称 (e) 有 higher CPBD 与表值冲突，仅较低 LMD 支持其口型更准确的结论。</li><li><strong>消融实验</strong>：加入感知损失的 (d) 相对 (c)：LMD 1.33→1.31、SSIM 0.66→0.70、CPBD 0.182→0.209 改善，PSNR 29.66→29.40 下降；即口型距离、结构相似和锐度改善，但峰值信噪比没有改善。</li><li><strong>消融实验</strong>：GAN 损失消融：不含 l_gen 的 (b) 的 CPBD 为 0.006；含 l_gen 的 (a)/(c) 分别为 0.176/0.182，按 CPBD 越高越好支持锐度提升，但 LMD、SSIM、PSNR 并非同步改善。</li><li><strong>消融实验</strong>：两流判别器 (g) 到光流三流完整模型 (e)：LMD 1.39→1.18、SSIM 0.68→0.73、PSNR 29.59→29.98，三项改善；CPBD 0.187→0.175，按越高越好则未改善。</li><li><strong>实验条件</strong>：主结果表的模型都从头训练且每次只在一个数据集上训练和测试；验证集为已见说话者/未见句子，测试集为未见说话者/未见句子。系统以 25 fps 的 16 帧、0.64 秒窗口取样，滑窗重叠 8 帧，并在单张 NVIDIA GTX 1080Ti 上运行。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1803.10699/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Weakly-Supervised Action Segmentation with Iterative Soft Boundary Assignment</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1803.09803/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Generating Talking Face Landmarks from Speech</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

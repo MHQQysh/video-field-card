@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CDC: Convolutional-De-Convolutional Networks for Precise Temporal Action Localization in Untrimmed Videos - 视频领域每日论文卡</title>
+    <meta name="description" content="要解决的是未裁剪长视频中的精确时间动作定位：系统既要判断每个动作属于什么类别，也要找出每个实例的开始与结束，而不能把边界锁死在预先生成的粗粒度片段上。 适用于一个视频含多个动作实例并夹杂复杂背景的离线分析，例如 THUMOS’14 中的逐帧标注与片段定位，以及 ActivityNet 中高层活动的时间定位；输出可用来修细已有 proposal 的边界。 论文真正检验的是：在 C3D 已能抽取时空语义却压缩时间分辨率后，能否用联合“空间卷积下采样＋时间反卷积上采样”的 CDC 滤波器恢复逐帧预测，并比插值、分离卷积/反卷积和循环模型得到更准的标签与边界。 研究背景：时间动作定位不只做视频级识别；面对含多实例和复杂背景的未裁剪视频，它同时要求动作类别与实例起止时间。论文仍利用高召回 proposal 抑制直接聚合逐帧结果时的噪声，但把定位模型的重心转向稠密帧级置信度。 核心痛点：滑窗或候选片段分类器只能给预定边界打分，边界无法由模型本身调整；单帧分类器忽略跨帧结构，RNN 虽建模时间依赖却不显式建模原始视频的时空信息，而 C3D 从 conv1a 到 conv5b 又把时间长度压缩八倍，损失精细边界所需的粒度。 任务定义：输入是原始视频段及其候选片段；网络需要为每一帧输出 K 个动作类别与一个背景类的置信度，再把帧级分数转成每个检测实例的类别、细化后起止帧和区间置信分。 研究目标：目标是在保留三维卷积所获高层时空语义的同时，把网络输出的时间长度恢复到输入长度并把空间维压成单点，从而用连续的帧级分数修正 proposal 的粗边界。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1703.01515">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1703.01515.webp" alt="CDC: Convolutional-De-Convolutional Networks for Precise Temporal Action Localization in Untrimmed Videos" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">要解决的是未裁剪长视频中的精确时间动作定位：系统既要判断每个动作属于什么类别，也要找出每个实例的开始与结束，而不能把边界锁死在预先生成的粗粒度片段上。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">CDC: Convolutional-De-Convolutional Networks for Precise Temporal Action Localization in Untrimmed Videos</h1>
+            <div class="detail-meta">2017-03-04 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1703.01515" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1703.01515" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1703.01515</span></div>
+            <p class="detail-summary">要解决的是未裁剪长视频中的精确时间动作定位：系统既要判断每个动作属于什么类别，也要找出每个实例的开始与结束，而不能把边界锁死在预先生成的粗粒度片段上。 适用于一个视频含多个动作实例并夹杂复杂背景的离线分析，例如 THUMOS’14 中的逐帧标注与片段定位，以及 ActivityNet 中高层活动的时间定位；输出可用来修细已有 proposal 的边界。 论文真正检验的是：在 C3D 已能抽取时空语义却压缩时间分辨率后，能否用联合“空间卷积下采样＋时间反卷积上采样”的 CDC 滤波器恢复逐帧预测，并比插值、分离卷积/反卷积和循环模型得到更准的标签与边界。 研究背景：时间动作定位不只做视频级识别；面对含多实例和复杂背景的未裁剪视频，它同时要求动作类别与实例起止时间。论文仍利用高召回 proposal 抑制直接聚合逐帧结果时的噪声，但把定位模型的重心转向稠密帧级置信度。 核心痛点：滑窗或候选片段分类器只能给预定边界打分，边界无法由模型本身调整；单帧分类器忽略跨帧结构，RNN 虽建模时间依赖却不显式建模原始视频的时空信息，而 C3D 从 conv1a 到 conv5b 又把时间长度压缩八倍，损失精细边界所需的粒度。 任务定义：输入是原始视频段及其候选片段；网络需要为每一帧输出 K 个动作类别与一个背景类的置信度，再把帧级分数转成每个检测实例的类别、细化后起止帧和区间置信分。 研究目标：目标是在保留三维卷积所获高层时空语义的同时，把网络输出的时间长度恢复到输入长度并把空间维压成单点，从而用连续的帧级分数修正 proposal 的粗边界。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Columbia University · New York、NY、USA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1703.01515/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">要解决的是未裁剪长视频中的精确时间动作定位：系统既要判断每个动作属于什么类别，也要找出每个实例的开始与结束，而不能把边界锁死在预先生成的粗粒度片段上。</p>
+  <ul class="reading-intro-points"><li>要解决的是未裁剪长视频中的精确时间动作定位：系统既要判断每个动作属于什么类别，也要找出每个实例的开始与结束，而不能把边界锁死在预先生成的粗粒度片段上。</li><li>适用于一个视频含多个动作实例并夹杂复杂背景的离线分析，例如 THUMOS’14 中的逐帧标注与片段定位，以及 ActivityNet 中高层活动的时间定位；输出可用来修细已有 proposal 的边界。</li><li>论文真正检验的是：在 C3D 已能抽取时空语义却压缩时间分辨率后，能否用联合“空间卷积下采样＋时间反卷积上采样”的 CDC 滤波器恢复逐帧预测，并比插值、分离卷积/反卷积和循环模型得到更准的标签与边界。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Columbia University（New York, NY, USA）</li><li><strong>机构</strong>：Mitsubishi Electric（Japan）</li><li><strong>实验室 / 团队</strong>：论文首页只署名 Columbia University 与 Mitsubishi Electric，没有署名具体实验室；元数据中的 nus-show-lab 是目录收录依据，不是本文作者栏中的署名机构。</li><li><strong>作者与归属</strong>：Zheng Shou、Jonathan Chan、Alireza Zareian、Shih-Fu Chang — Columbia University</li><li><strong>作者与归属</strong>：Kazuyuki Miyazawa — Mitsubishi Electric</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>要解决的是未裁剪长视频中的精确时间动作定位：系统既要判断每个动作属于什么类别，也要找出每个实例的开始与结束，而不能把边界锁死在预先生成的粗粒度片段上。</li><li>适用于一个视频含多个动作实例并夹杂复杂背景的离线分析，例如 THUMOS’14 中的逐帧标注与片段定位，以及 ActivityNet 中高层活动的时间定位；输出可用来修细已有 proposal 的边界。</li><li>论文真正检验的是：在 C3D 已能抽取时空语义却压缩时间分辨率后，能否用联合“空间卷积下采样＋时间反卷积上采样”的 CDC 滤波器恢复逐帧预测，并比插值、分离卷积/反卷积和循环模型得到更准的标签与边界。</li><li><strong>研究背景</strong>：时间动作定位不只做视频级识别；面对含多实例和复杂背景的未裁剪视频，它同时要求动作类别与实例起止时间。论文仍利用高召回 proposal 抑制直接聚合逐帧结果时的噪声，但把定位模型的重心转向稠密帧级置信度。</li><li><strong>核心痛点</strong>：滑窗或候选片段分类器只能给预定边界打分，边界无法由模型本身调整；单帧分类器忽略跨帧结构，RNN 虽建模时间依赖却不显式建模原始视频的时空信息，而 C3D 从 conv1a 到 conv5b 又把时间长度压缩八倍，损失精细边界所需的粒度。</li><li><strong>任务定义</strong>：输入是原始视频段及其候选片段；网络需要为每一帧输出 K 个动作类别与一个背景类的置信度，再把帧级分数转成每个检测实例的类别、细化后起止帧和区间置信分。</li><li><strong>研究目标</strong>：目标是在保留三维卷积所获高层时空语义的同时，把网络输出的时间长度恢复到输入长度并把空间维压成单点，从而用连续的帧级分数修正 proposal 的粗边界。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出联合 CDC 滤波器，在同一个可学习算子中做空间卷积下采样和时间反卷积上采样，使每个时间输出同时承载动作语义与细粒度动态。</li><li>在 C3D 前端之上堆叠 CDC 层形成可端到端训练的定位网络，从原始视频直接生成逐帧类别分数，并用这些分数细化候选片段的时间边界。</li><li>在逐帧标注与时间动作定位两类实验中系统比较帧模型、循环模型、插值、分离卷积/反卷积和既有定位器，验证联合滤波与细时间粒度对标签和边界精度的作用。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：3D ConvNets 前端从原始帧抽取高层时空语义；CDC6 把空间特征压成单点并开始恢复时间分辨率，CDC7、CDC8 继续逐级时间上采样；逐帧 softmax 再把每个时间位置变为动作或背景置信度，供 proposal 分类与边界细化。</li><li><strong>输入与表示</strong>：网络输入为 RGB 视频段 X，张量形状为 (3, L, 112, 112)，其中 L 是帧数；C3D 前端的 pool5 输出 (512, L/8, 4, 4)，通道承载抽象特征，时间轴已被压缩而空间仍为 4×4，训练监督则是逐帧类别标签。</li><li><strong>模型结构</strong>：前端采用 C3D 的 conv1a–conv5b 与只在高宽池化的 pool5。其后 CDC6 输出 (4096, L/4, 1, 1)，核、步幅、填充分别为 (4, 4, 4)、(2, 1, 1)、(1, 0, 0)；CDC7 与 CDC8 使用 (4, 1, 1) 核、(2, 1, 1) 步幅和 (1, 0, 0) 填充，最终输出 (K+1, L, 1, 1)。</li><li><strong>数据流</strong>：训练时把视频按不重叠的 32 帧窗口切分，只保留至少含一个动作帧的窗口，并用逐帧标签优化。测试时把每个 proposal 两端各扩展原长度的 1/8，只计算与扩展候选相交的窗口；类别取帧平均置信度最大的类。若不是背景，则对该类分数做高斯核密度估计，以 β=μ−σ 为阈值从两端向内收缩，最后把细化区间的帧平均分作为检测分数。</li><li><strong>关键技术</strong>：单个 CDC 滤波器把一组独立空间卷积核沿时间耦合：每个时间输出有专属卷积核、共享输入感受野，同时整体表现为时间一维反卷积。与先卷积再反卷积相比，它不迫使多个时间输出共享同一份高层语义；预训练全连接滤波器被复制到对应 CDC 滤波器作为初始化，以缓解联合滤波器参数更多带来的训练困难。</li><li><strong>公式与超参数</strong>：前向计算为 Y[c]=Σ_aΣ_b F[c,a,b]X[a,b]，即时间索引 c 汇聚同一空间感受野；帧级 softmax 后，以 L_loss=−(按训练片段数 N 归一化)Σ_nΣ_t log P_n^(z_n)[t] 汇总所有帧的分类损失。优化使用 SGD：CDC8 学习率 0.0001，其余层 0.00001，momentum 0.9、weight decay 0.005；CDC6、CDC7 的 dropout 为 0.5，THUMOS’14 上约 4 个 epoch、半天内收敛。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：THUMOS’14：二十类动作；用 2,755 个裁剪训练视频与 1,010 个未裁剪验证视频（3,007 个动作实例）训练，测试使用 213 个非纯背景视频（3,358 个实例）。</li><li><strong>数据集</strong>：ActivityNet Challenge 2016：200 类活动，约 10K 个训练视频（15K 实例）与 5K 个验证视频（7.6K 实例），每个视频平均 1.65 个时间标注实例。</li><li><strong>规模与划分</strong>：THUMOS 数据把裁剪训练视频与未裁剪验证视频共同用于学习，并在非纯背景测试视频上评测；ActivityNet 主实验用训练视频学习、验证视频评测，附录还在测试集比较只用训练集与合并训练、验证集两种训练口径。</li><li><strong>模型</strong>：骨干采用 Sports-1M 预训练的 C3D，前段可直接初始化，FC6、FC7 分别适配为 CDC6、CDC7，CDC8 因类别通道不同而随机初始化。论文未给出参数总数，但报告典型 CDC 网络约一 GB 存储。</li><li><strong>硬件</strong>：实现细节明确给出单张十二 GB NVIDIA Titan X：窗口长度网格搜索后选 32 帧、batch size 为 8；致谢另称研究使用的 Tesla K40 由 NVIDIA 捐赠，但没有把它与某个具体训练阶段一一对应。正文实验与附录均未报告多 GPU 配置。</li><li><strong>代码</strong>：论文给出源码与训练模型地址 <a href="https://bitbucket.org/columbiadvmm/cdc；实现基于" target="_blank" rel="noopener noreferrer">https://bitbucket.org/columbiadvmm/cdc；实现基于</a> Caffe 和 C3D。顶层 code_url 仍按输入元数据逐字保留为空，不把正文 URL 擅自写回元数据字段。</li><li><strong>训练平台</strong>：研究对象与运行载体是未裁剪视频和 Caffe/C3D 视频网络，不涉及仿真器、机器人或实车平台；方法、实验与附录均未报告机器人或实车部署。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：THUMOS’14：覆盖二十类动作，分别评测逐帧动作标注和时间动作定位。</li><li><strong>评估基准</strong>：ActivityNet Challenge 2016：覆盖二百类高层活动，评测验证集与测试集上的时间活动定位。</li><li><strong>评估指标</strong>：逐帧任务把每一类的全部测试帧按该类置信度排序，计算 AP，再跨类别取 mAP；两者均为越高越好。</li><li><strong>评估指标</strong>：时间定位以预测片段为排序单位；类别正确且与真值的 temporal IoU 大于阈值才算正确，同一真值不接受重复检测，最终计算 mAP（越高越好）。THUMOS’14 报告 IoU 0.3–0.7，ActivityNet 报告 0.5、0.75、0.95 及 Average-mAP。</li><li><strong>对比方法</strong>：逐帧实验比较 Single-frame CNN、Two-stream CNN、LSTM、MultiLSTM、C3D + LinearInterp、分离的 Conv &amp; De-conv、固定三维卷积前端的 CDC 与完整 CDC。</li><li><strong>对比方法</strong>：THUMOS 时间定位与 Karaman、Wang、Heilbron、Escorcia、Oneata、Richard and Gall、Yeung、Yuan 及 S-CNN 比较；在同一 S-CNN proposals 下还比较插值、分离卷积/反卷积与固定前端版本。</li><li><strong>对比方法</strong>：ActivityNet 将 Wang and Tao 的挑战赛第一名片段在 CDC 细化前后对照，附录又加入 Singh and Cuzzolin、Singh 等公开基线。</li><li><strong>对比方法</strong>：附录还在 S-CNN 与 ResC3D+S-CNN 两种 proposal 方法上评测 CDC，用于检验细化效果是否依赖单一候选生成器。</li><li><strong>关键结果</strong>：THUMOS’14 逐帧 mAP：CDC 为 44.4，高于 Conv &amp; De-conv 的 41.7、MultiLSTM 的 41.3 与 C3D + LinearInterp 的 37.0（越高越好）。</li><li><strong>关键结果</strong>：THUMOS’14 时间定位 mAP 在 IoU=0.3、0.4、0.5、0.6、0.7 时分别为 40.1、29.4、23.3、13.1、7.9；同阈值下 S-CNN 为 36.3、28.7、19.0、10.3、5.3。</li><li><strong>关键结果</strong>：ActivityNet 验证集上，用 CDC 细化 Wang and Tao 片段后，mAP 在 IoU=0.5 从 45.1 到 45.3，在 0.75 从 4.1 到 26.0，在 0.95 从 0.0 到 0.2，Average-mAP 从 16.4 到 23.8（越高越好）。</li><li><strong>关键结果</strong>：在单张十二 GB NVIDIA Titan X 上，CDC 网络约 500 FPS，可在一秒内处理 25 FPS、时长二十秒的视频片段；这是网络本身速度，不包含 proposal 与后处理组成的完整定位流水线。</li><li><strong>关键结果</strong>：ActivityNet 测试集的 mAP（列为 IoU=0.5、0.75、0.95、Average-mAP，越高越好）：CDC (train) 为 43.1、25.6、0.2、22.9；CDC (train+val) 为 43.0、25.7、0.2、22.9，后者合并训练集和验证集训练。</li><li><strong>消融实验</strong>：固定 3D ConvNets 时，THUMOS’14 逐帧 mAP 为 37.4；端到端训练后为 44.4，说明让前端随 CDC 层共同微调有益。</li><li><strong>消融实验</strong>：把 CDC6 换成分离的 conv6 + deconv6 时逐帧 mAP 为 41.7，联合 CDC 为 44.4，说明优势不只是做了时间上采样。</li><li><strong>消融实验</strong>：边界扩展比例 α 从 1/8 到 1/4 时，IoU=0.5 的 THUMOS’14 mAP 保持在 23.1–23.6，说明合理扩展范围内较稳定。</li><li><strong>消融实验</strong>：时间输出从每八帧一个标签逐级提升到每帧一个标签时，THUMOS’14、IoU=0.5 的定位 mAP 随时间粒度提高而上升。</li><li><strong>消融实验</strong>：在 ResC3D+S-CNN proposals 上，IoU=0.5 的 THUMOS’14 mAP 由无 CDC 的 22.5 升至使用 CDC 的 24.7；使用 CDC 时，在 IoU=0.3、0.4、0.5、0.6、0.7 下依次为 41.3、30.7、24.7、14.3、8.8（越高越好）。</li><li><strong>实验条件</strong>：THUMOS’14 定位使用公开的 S-CNN proposal、标准 NMS，并统一把候选两侧各扩展原长度的 1/8；训练与推理按不重叠的 32 帧窗口处理。模型由 Sports-1M 预训练 C3D 初始化，再在目标数据上端到端训练，并非零样本。ActivityNet 主实验用训练集训练、验证集评测，候选片段来自 Wang and Tao。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1703.02716/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">A Pursuit of Temporal Accuracy in General Activity Detection</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1608.00859/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Temporal Segment Networks: Towards Good Practices for Deep Action Recognition</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

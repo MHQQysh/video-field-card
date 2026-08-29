@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bag of Visual Words and Fusion Methods for Action Recognition: Comprehensive Study and Good Practice - 视频领域每日论文卡</title>
+    <meta name="description" content="这篇论文解决的不是再发明一个孤立的动作特征，而是把视频动作识别的 BoVW 工程链拆开审计：局部特征、预处理、码本、编码、池化与归一化的选择会相互抵消，过去分散在不同场景里的经验无法直接拼成可靠系统。 具体使用场景是从现实世界动作视频中判断正在发生的动作类别：系统把外观、光流和运动边界等局部描述子汇成视频级表示，再交给线性 SVM；论文在 HMDB51、UCF50 与 UCF101 上检验从稀疏 STIPs 到密集 iDTs 的不同组合。 论文真正验证的问题是：在逐项比较局部特征、预处理、编码、池化归一化和融合层级时，哪些选择能提高动作分类准确率；以及能否把不同描述子与不同编码统计的互补性合成 hybrid representation。效率不是主结果，作者另以随机抽取的 50 段 UCF101 视频总编码时间作辅助比较。 研究背景：局部时空特征驱动的 BoVW 曾是现实视频动作识别的主流：它不要求先检测人体或逐帧跟踪身体部位，而把动作体积看成刚性时空对象，以局部外观、运动与运动边界描述子构成视频级表示。 核心痛点：动作类内差异来自运动速度、视角变化与背景杂乱，视频数据又高维且质量偏低；更关键的是，既有工作分别优化特征、编码或池化，如何选择 BoVW 每一步仍不明确，而多描述子融合方法多在不同场景中提出、尚缺动作识别下的系统比较，所以某一步的不当选择可能抵消其他步骤的收益。 任务定义：输入是一段视频中抽取的局部描述子集合；经预处理、码本学习、逐描述子编码、池化与归一化得到一个全局视频表示，再用 one-vs-all 线性 SVM 输出得分最高的动作类别。 研究目标：在同一批公开动作分类数据与协议上，对稀疏 STIPs、密集 iDTs、不同编码家族、池化归一化组合及描述子级/表示级/分数级融合做受控比较，归纳可复用实践，并据此构造互补的混合表示。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1405.4506">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1405.4506.webp" alt="Bag of Visual Words and Fusion Methods for Action Recognition: Comprehensive Study and Good Practice" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">这篇论文解决的不是再发明一个孤立的动作特征，而是把视频动作识别的 BoVW 工程链拆开审计：局部特征、预处理、码本、编码、池化与归一化的选择会相互抵消，过去分散在不同场景里的经验无法直接拼成可靠系统。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Bag of Visual Words and Fusion Methods for Action Recognition: Comprehensive Study and Good Practice</h1>
+            <div class="detail-meta">2014-05-18 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1405.4506" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1405.4506" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1405.4506</span></div>
+            <p class="detail-summary">这篇论文解决的不是再发明一个孤立的动作特征，而是把视频动作识别的 BoVW 工程链拆开审计：局部特征、预处理、码本、编码、池化与归一化的选择会相互抵消，过去分散在不同场景里的经验无法直接拼成可靠系统。 具体使用场景是从现实世界动作视频中判断正在发生的动作类别：系统把外观、光流和运动边界等局部描述子汇成视频级表示，再交给线性 SVM；论文在 HMDB51、UCF50 与 UCF101 上检验从稀疏 STIPs 到密集 iDTs 的不同组合。 论文真正验证的问题是：在逐项比较局部特征、预处理、编码、池化归一化和融合层级时，哪些选择能提高动作分类准确率；以及能否把不同描述子与不同编码统计的互补性合成 hybrid representation。效率不是主结果，作者另以随机抽取的 50 段 UCF101 视频总编码时间作辅助比较。 研究背景：局部时空特征驱动的 BoVW 曾是现实视频动作识别的主流：它不要求先检测人体或逐帧跟踪身体部位，而把动作体积看成刚性时空对象，以局部外观、运动与运动边界描述子构成视频级表示。 核心痛点：动作类内差异来自运动速度、视角变化与背景杂乱，视频数据又高维且质量偏低；更关键的是，既有工作分别优化特征、编码或池化，如何选择 BoVW 每一步仍不明确，而多描述子融合方法多在不同场景中提出、尚缺动作识别下的系统比较，所以某一步的不当选择可能抵消其他步骤的收益。 任务定义：输入是一段视频中抽取的局部描述子集合；经预处理、码本学习、逐描述子编码、池化与归一化得到一个全局视频表示，再用 one-vs-all 线性 SVM 输出得分最高的动作类别。 研究目标：在同一批公开动作分类数据与协议上，对稀疏 STIPs、密集 iDTs、不同编码家族、池化归一化组合及描述子级/表示级/分数级融合做受控比较，归纳可复用实践，并据此构造互补的混合表示。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：西南交通大学信息科学与技术学院（Xiaojiang Peng 的论文首页单位）。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1405.4506/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">这篇论文解决的不是再发明一个孤立的动作特征，而是把视频动作识别的 BoVW 工程链拆开审计：局部特征、预处理、码本、编码、池化与归一化的选择会相互抵消，过去分散在不同场景里的经验无法直接拼成可靠系统。</p>
+  <ul class="reading-intro-points"><li>这篇论文解决的不是再发明一个孤立的动作特征，而是把视频动作识别的 BoVW 工程链拆开审计：局部特征、预处理、码本、编码、池化与归一化的选择会相互抵消，过去分散在不同场景里的经验无法直接拼成可靠系统。</li><li>具体使用场景是从现实世界动作视频中判断正在发生的动作类别：系统把外观、光流和运动边界等局部描述子汇成视频级表示，再交给线性 SVM；论文在 HMDB51、UCF50 与 UCF101 上检验从稀疏 STIPs 到密集 iDTs 的不同组合。</li><li>论文真正验证的问题是：在逐项比较局部特征、预处理、编码、池化归一化和融合层级时，哪些选择能提高动作分类准确率；以及能否把不同描述子与不同编码统计的互补性合成 hybrid representation。效率不是主结果，作者另以随机抽取的 50 段 UCF101 视频总编码时间作辅助比较。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：西南交通大学信息科学与技术学院（Xiaojiang Peng 的论文首页单位）。</li><li><strong>机构</strong>：香港中文大学信息工程系（Limin Wang 的论文首页单位）。</li><li><strong>机构</strong>：南洋理工大学电气与电子工程学院（Xingxing Wang 的论文首页单位）。</li><li><strong>机构</strong>：中国科学院深圳先进技术研究院（Yu Qiao 的论文首页单位）。</li><li><strong>实验室 / 团队</strong>：论文首页只给出四位作者的院校或研究机构，未署名具体实验室；站点目录标签 nju-mcg 是收录归属证据，不能改写成本文发表时的署名单位。</li><li><strong>作者与归属</strong>：Xiaojiang Peng—School of Information Sciences and Technology, Southwest Jiaotong University, Chengdu, China。</li><li><strong>作者与归属</strong>：Limin Wang—Department of Information Engineering, The Chinese University of Hong Kong, Hong Kong SAR, China。</li><li><strong>作者与归属</strong>：Xingxing Wang—School of Electrical and Electronic Engineering, Nanyang Technological University, Singapore。</li><li><strong>作者与归属</strong>：Yu Qiao—Shenzhen Institutes of Advanced Technology, Chinese Academy of Sciences, Shenzhen, China。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>这篇论文解决的不是再发明一个孤立的动作特征，而是把视频动作识别的 BoVW 工程链拆开审计：局部特征、预处理、码本、编码、池化与归一化的选择会相互抵消，过去分散在不同场景里的经验无法直接拼成可靠系统。</li><li>具体使用场景是从现实世界动作视频中判断正在发生的动作类别：系统把外观、光流和运动边界等局部描述子汇成视频级表示，再交给线性 SVM；论文在 HMDB51、UCF50 与 UCF101 上检验从稀疏 STIPs 到密集 iDTs 的不同组合。</li><li>论文真正验证的问题是：在逐项比较局部特征、预处理、编码、池化归一化和融合层级时，哪些选择能提高动作分类准确率；以及能否把不同描述子与不同编码统计的互补性合成 hybrid representation。效率不是主结果，作者另以随机抽取的 50 段 UCF101 视频总编码时间作辅助比较。</li><li><strong>研究背景</strong>：局部时空特征驱动的 BoVW 曾是现实视频动作识别的主流：它不要求先检测人体或逐帧跟踪身体部位，而把动作体积看成刚性时空对象，以局部外观、运动与运动边界描述子构成视频级表示。</li><li><strong>核心痛点</strong>：动作类内差异来自运动速度、视角变化与背景杂乱，视频数据又高维且质量偏低；更关键的是，既有工作分别优化特征、编码或池化，如何选择 BoVW 每一步仍不明确，而多描述子融合方法多在不同场景中提出、尚缺动作识别下的系统比较，所以某一步的不当选择可能抵消其他步骤的收益。</li><li><strong>任务定义</strong>：输入是一段视频中抽取的局部描述子集合；经预处理、码本学习、逐描述子编码、池化与归一化得到一个全局视频表示，再用 one-vs-all 线性 SVM 输出得分最高的动作类别。</li><li><strong>研究目标</strong>：在同一批公开动作分类数据与协议上，对稀疏 STIPs、密集 iDTs、不同编码家族、池化归一化组合及描述子级/表示级/分数级融合做受控比较，归纳可复用实践，并据此构造互补的混合表示。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>把 BoVW 的完整链条置于同一动作识别实验中，覆盖两类局部特征、十种实际评估的编码方法、八种池化归一化策略，并指出预处理、编码和归一化都可能决定最终结果。</li><li>从 hard/soft assignment、global/local assignment 与零阶到高阶统计三个维度解释编码方法关系，并用统一潜变量生成模型说明 VQ、SA、VLAD、FV 与 sparse coding 的联系。</li><li>系统比较描述子级、表示级与分数级融合，发现融合选择取决于描述子在 cuboid 层和视频层的相关性；对 iDTs，各类编码在三个数据集上都以表示级融合最好。</li><li>提出 hybrid representation：对 iDTs 的 HOG、HOF、MBHx、MBHy 分别产生 FV 与软化 SVC 输出，再在表示层组合，从而同时利用多描述子和不同统计阶数的互补性。</li><li>把上述经验落实为可复现实验基线，在三套公开动作识别数据上给出统一分类协议、运行时间分析和相对既有最好结果的精确提升，而不只报告单一最终准确率。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：流水线由局部特征抽取、PCA-whitening 预处理、k-means 或 GMM 码本生成、局部编码、池化归一化五个环节组成；前四步把时空 cuboid 变为稳定的码字统计，最后的视频级向量进入线性分类器。</li><li><strong>输入与表示</strong>：输入表示覆盖两种采样范式：STIPs 用 3D-Harris 找高运动显著性的稀疏点并计算 HOG/HOF；iDTs 通过像素轨迹和相机运动校正密集采样，提供 trajectory shape、HOG、HOF、MBHx、MBHy，分别刻画形状、外观运动与运动边界。</li><li><strong>模型结构</strong>：编码层分为 voting、reconstruction 与 super-vector 三族：前两族产生码字权重或重构系数，super-vector 额外聚合相对码字中心的高阶统计；池化后可在 cuboid 的描述子级、视频表示级或分类器分数级融合，最终采用 one-vs-all 线性 SVM 决策。</li><li><strong>数据流</strong>：逐视频先抽取多路局部描述子并做 PCA 去相关与 whitening；用训练描述子学习 k-means/GMM，把每个局部向量编码到码字空间；在时间和空间样本上求和或取最大并归一化；若用表示级融合则先独立走完各路 BoVW 再拼接，hybrid 路径进一步拼接 FV 与 SVC-k，最后由最高 SVM 分数给出类别。</li><li><strong>关键技术</strong>：关键经验包括：soft assignment 降低硬量化的信息损失，局部近邻约束减少高维空间中远码字带来的噪声，super-vector 保留码字归属及一阶/二阶统计；sum pooling 配合 power 与最终 l2-normalization 抑制 feature burst，密集 iDTs 还通过 intra-normalization 按码字块平衡背景响应。</li><li><strong>公式与超参数</strong>：预处理写成 x=ΛU^T f，把原描述子投影到主成分并按协方差特征值 whitening；实验中 SA-k 取 β=1、k=5，近似 LLC 取 k=5，SVC 的平衡系数 α=0.1；融合实验的 super-vector 码本/GMM 大小取 512，其他编码取 8, 000，power normalization 的 α=0.5。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：HMDB51：现实场景动作视频，按官方训练/测试划分求平均分类准确率。</li><li><strong>数据集</strong>：UCF50：同组视频背景相似，按 Leave One Group Out 交叉验证报告平均准确率。</li><li><strong>数据集</strong>：UCF101：UCF50 的扩展，按 THUMOS 挑战发布的训练/测试划分评估。</li><li><strong>规模与划分</strong>：三套数据合计 26,704 段视频；HMDB51 含 51 类、6,766 段视频和三个官方划分；UCF50 含 50 类、6,618 段视频，每类分为 25 组；UCF101 含 101 类、13,320 段视频，固定 25 FPS、320×240，并使用三个划分。</li><li><strong>模型</strong>：论文实际实现的算法组件是 STIPs/iDTs 手工局部时空特征、k-means 或 GMM 码本、VQ/SA-k/LLC/FV/VLAD/SVC 等 BoVW 编码器，以及 LIBSVM 线性 SVM；多类分类采用 one-vs-all 训练并选择最高分标签。</li><li><strong>硬件</strong>：作者说明全部 Matlab 代码运行在配有 2x Intel Xeon 5560 2.8GHz CPU 和 32G RAM 的 workstation；论文未报告 GPU 训练或推理。</li><li><strong>代码</strong>：正文脚注给出所采用的 STIPs 与 improved trajectories 外部实现网页，计算成本段说明本文比较代码均以 Matlab 实现；逐页检查完整论文的正文、脚注、致谢与参考文献，未发现这篇综合研究自身统一代码仓库的发布声明，因此元数据中的 code_url 保持空值。</li><li><strong>训练平台</strong>：论文实际报告的平台边界是 HMDB51、UCF50、UCF101 三个离线视频分类数据集的训练/测试协议，以及 CPU 工作站上的 Matlab 编码实验；逐页检查完整论文未见仿真器、机器人或实车部署实验。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：HMDB51：高类内变化的真实世界动作分类基准。</li><li><strong>评估基准</strong>：UCF50：面向网页视频动作分类并采用分组交叉验证的基准。</li><li><strong>评估基准</strong>：UCF101：更大类别规模、按 THUMOS 协议划分的动作分类基准。</li><li><strong>评估指标</strong>：核心指标是分类 accuracy（越高越好）：HMDB51 对三个官方训练/测试划分求平均，UCF50 用 LOGO cross validation 求平均，UCF101 对 THUMOS&#x27;13 的三个训练/测试划分求 mean average accuracy；效率实验另报告随机抽取 50 段 UCF101 视频的总编码时间（越低越快）。</li><li><strong>对比方法</strong>：最终结果表的百分数列中，hybrid representation 相对当时表内最好结果分别为：HMDB51 从 57.2 提至 61.1，UCF50 从 91.1 提至 92.3，UCF101 从 85.9 提至 87.9；正文报告对应提升为 3.9%、1.2%、2.0%。</li><li><strong>关键结果</strong>：HMDB51 上 hybrid representation 的平均分类准确率为 61.1%，论文报告比此前最好结果高 3.9%。</li><li><strong>关键结果</strong>：UCF50 上 hybrid representation 的平均分类准确率为 92.3%，论文报告比此前最好结果高 1.2%。</li><li><strong>关键结果</strong>：UCF101 上 hybrid representation 的 mean average accuracy 为 87.9%，论文报告比此前最好结果高 2.0%。</li><li><strong>消融实验</strong>：Figure 5 是本文内部的预处理对照：在 UCF101、STIPs、descriptor-level HOG+HOF、sum pooling 与 power l2-normalization 条件下，分别绘制 FV/LLC/VQ 的 PCA+Whiten 与 No PCA+Whiten 曲线。正文另报告本系统 VQ 为 56.1%，并与外部数据集论文 [40] 的 43.9% 比较；43.9% 不是本文内部 no-PCA 分支，不能当作 56.1% 的同次消融对照。</li><li><strong>消融实验</strong>：码本规模扫描表明 super-vector 方法在 256 个 GMM 分量后趋于饱和，其他编码约在 8, 000 个码字后饱和；STIPs 继续增大还出现过拟合波动。</li><li><strong>消融实验</strong>：最终融合对照表的 Accuracy (%) 列显示，HMDB51 的 iDT+FV 在描述子级、表示级、分数级融合下分别为 58.37、60.22、59.62，说明表示级融合在该设置下最好。</li><li><strong>消融实验</strong>：池化归一化对照的结论是 sum pooling + power l2-normalization 总体最佳；intra-normalization 对密集 iDTs 有额外收益，但对稀疏 STIPs 可能削弱与动作相关码字。</li><li><strong>实验条件</strong>：最终系统使用 iDTs 的 HOG、HOF、MBHx、MBHy，多路分别计算 FV 与 SVC-k；对表示做 power 操作和 intra l2-normalization，再采用 representation-level fusion。结果属于离线、监督训练的视频级分类，不是时序定位、在线推理或零样本评测。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1407.6251/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">FollowMe: Efficient Online Min-Cost Flow Tracking with Bounded Memory and Computation</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1311.3318/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">A Study of Actor and Action Semantic Retention in Video Supervoxel Segmentation</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

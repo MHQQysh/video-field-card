@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Knowledge Integration Networks for Action Recognition - 视频领域每日论文卡</title>
+    <meta name="description" content="要解决的问题是：只靠视频级动作标签让网络隐式学习，难以主动利用人体区域与场景上下文；KINet 希望借助教师伪标签显式学习这两类知识，同时避免为大规模动作视频增加昂贵的逐像素人工标注。 适用场景是只有视频级标签的离线动作分类：模型从整段视频稀疏采样；当低分辨率或运动模糊使关键物体不清晰时，人体外观、姿态与场景仍可提供辨别线索。 论文真正检验的是：伪标签监督下可学习的辅助分支是否比冻结外部网络更适配动作主任务，以及中层 CBI 与高层 AKG 能否把人体、场景知识转化为可跨数据集迁移的准确率增益。 研究背景：人体动作是高层语义概念，可能由人物穿着、人体姿态和场景共同界定；在低清或运动模糊视频里，单一物体线索可能缺失，因此上下文能补足动作表征。 核心痛点：已有做法要么仅用视频级标签让 CNN 隐式学习，要么依赖 A2D 式逐像素演员与动作标注；前者不显式建模上下文，后者标注昂贵且多数大规模动作分类集并不提供。另一些方法直接调用独立训练并冻结的外部语义网络，又限制了辅助表示对动作主任务的适配。 任务定义：输入是一段视频；TSN 动作主分支在整段视频上稀疏采样片段并形成视频级动作预测。训练时另外预测人体分割和场景类别，二者由教师伪标签监督；高层图推理后只使用动作节点完成最终分类。 研究目标：目标是在无需额外人工人体或场景标注的情况下，把中层卷积特征与高层语义关系两个层次的外部知识编码进端到端动作识别器，并考察准确率、骨干适配性与跨数据集迁移能力。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2002.07471">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2002.07471.webp" alt="Knowledge Integration Networks for Action Recognition" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">要解决的问题是：只靠视频级动作标签让网络隐式学习，难以主动利用人体区域与场景上下文；KINet 希望借助教师伪标签显式学习这两类知识，同时避免为大规模动作视频增加昂贵的逐像素人工标注。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Knowledge Integration Networks for Action Recognition</h1>
+            <div class="detail-meta">2020-02-18 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2002.07471" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2002.07471" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2002.07471</span></div>
+            <p class="detail-summary">要解决的问题是：只靠视频级动作标签让网络隐式学习，难以主动利用人体区域与场景上下文；KINet 希望借助教师伪标签显式学习这两类知识，同时避免为大规模动作视频增加昂贵的逐像素人工标注。 适用场景是只有视频级标签的离线动作分类：模型从整段视频稀疏采样；当低分辨率或运动模糊使关键物体不清晰时，人体外观、姿态与场景仍可提供辨别线索。 论文真正检验的是：伪标签监督下可学习的辅助分支是否比冻结外部网络更适配动作主任务，以及中层 CBI 与高层 AKG 能否把人体、场景知识转化为可跨数据集迁移的准确率增益。 研究背景：人体动作是高层语义概念，可能由人物穿着、人体姿态和场景共同界定；在低清或运动模糊视频里，单一物体线索可能缺失，因此上下文能补足动作表征。 核心痛点：已有做法要么仅用视频级标签让 CNN 隐式学习，要么依赖 A2D 式逐像素演员与动作标注；前者不显式建模上下文，后者标注昂贵且多数大规模动作分类集并不提供。另一些方法直接调用独立训练并冻结的外部语义网络，又限制了辅助表示对动作主任务的适配。 任务定义：输入是一段视频；TSN 动作主分支在整段视频上稀疏采样片段并形成视频级动作预测。训练时另外预测人体分割和场景类别，二者由教师伪标签监督；高层图推理后只使用动作节点完成最终分类。 研究目标：目标是在无需额外人工人体或场景标注的情况下，把中层卷积特征与高层语义关系两个层次的外部知识编码进端到端动作识别器，并考察准确率、骨干适配性与跨数据集迁移能力。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">19 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Malong Technologies（深圳，中国）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2002.07471/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">要解决的问题是：只靠视频级动作标签让网络隐式学习，难以主动利用人体区域与场景上下文；KINet 希望借助教师伪标签显式学习这两类知识，同时避免为大规模动作视频增加昂贵的逐像素人工标注。</p>
+  <ul class="reading-intro-points"><li>要解决的问题是：只靠视频级动作标签让网络隐式学习，难以主动利用人体区域与场景上下文；KINet 希望借助教师伪标签显式学习这两类知识，同时避免为大规模动作视频增加昂贵的逐像素人工标注。</li><li>适用场景是只有视频级标签的离线动作分类：模型从整段视频稀疏采样；当低分辨率或运动模糊使关键物体不清晰时，人体外观、姿态与场景仍可提供辨别线索。</li><li>论文真正检验的是：伪标签监督下可学习的辅助分支是否比冻结外部网络更适配动作主任务，以及中层 CBI 与高层 AKG 能否把人体、场景知识转化为可跨数据集迁移的准确率增益。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Malong Technologies（深圳，中国）</li><li><strong>机构</strong>：Shenzhen Malong Artificial Intelligence Research Center（深圳，中国）</li><li><strong>机构</strong>：南京大学 State Key Lab for Novel Software Technology（南京，中国）</li><li><strong>实验室 / 团队</strong>：State Key Lab for Novel Software Technology（南京大学，论文首页署名）</li><li><strong>作者与归属</strong>：Shiwen Zhang、Sheng Guo、Weilin Huang、Matthew R. Scott—Malong Technologies 与 Shenzhen Malong Artificial Intelligence Research Center。</li><li><strong>作者与归属</strong>：Limin Wang—南京大学 State Key Lab for Novel Software Technology。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>要解决的问题是：只靠视频级动作标签让网络隐式学习，难以主动利用人体区域与场景上下文；KINet 希望借助教师伪标签显式学习这两类知识，同时避免为大规模动作视频增加昂贵的逐像素人工标注。</li><li>适用场景是只有视频级标签的离线动作分类：模型从整段视频稀疏采样；当低分辨率或运动模糊使关键物体不清晰时，人体外观、姿态与场景仍可提供辨别线索。</li><li>论文真正检验的是：伪标签监督下可学习的辅助分支是否比冻结外部网络更适配动作主任务，以及中层 CBI 与高层 AKG 能否把人体、场景知识转化为可跨数据集迁移的准确率增益。</li><li><strong>研究背景</strong>：人体动作是高层语义概念，可能由人物穿着、人体姿态和场景共同界定；在低清或运动模糊视频里，单一物体线索可能缺失，因此上下文能补足动作表征。</li><li><strong>核心痛点</strong>：已有做法要么仅用视频级标签让 CNN 隐式学习，要么依赖 A2D 式逐像素演员与动作标注；前者不显式建模上下文，后者标注昂贵且多数大规模动作分类集并不提供。另一些方法直接调用独立训练并冻结的外部语义网络，又限制了辅助表示对动作主任务的适配。</li><li><strong>任务定义</strong>：输入是一段视频；TSN 动作主分支在整段视频上稀疏采样片段并形成视频级动作预测。训练时另外预测人体分割和场景类别，二者由教师伪标签监督；高层图推理后只使用动作节点完成最终分类。</li><li><strong>研究目标</strong>：目标是在无需额外人工人体或场景标注的情况下，把中层卷积特征与高层语义关系两个层次的外部知识编码进端到端动作识别器，并考察准确率、骨干适配性与跨数据集迁移能力。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出三分支 KINet：动作主分支与人体解析、场景识别辅助分支在两个预训练教师的伪标签监督下协同训练，从而显式学习上下文而不要求动作数据集增加人工密集标注。</li><li>提出 CBI，把辅助分支的中层特征作为动作特征的门控调制，经残差式交互、通道拼接与压缩直接注入动作分支。</li><li>提出 AKG，在各时段的动作、人体和场景高层向量上建图，用带掩码的关系边和图卷积聚合语义，最终只取动作节点用于分类。</li><li>通过组件消融、参数量与多骨干比较验证方法，并把 Kinetics-400 表示迁移到 UCF-101；双流 KINet 的 top-1 准确率分别为 77.8% 与 97.8%。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：动作主分支负责最终视频分类；人体辅助分支学习合并后的人体前景分割，场景辅助分支学习场景类别。预训练的人体解析与场景识别教师产生伪标签，CBI 负责中层交互，AKG 负责高层关系融合。作者还尝试通过蒸馏加入物体分支，但出现性能下降和不稳定结果，且未报告具体数值；作者推测可能因低分辨率或运动模糊使精确物体难辨，以及检测或分割类别有限、动作涉及物体更多且噪声 proposal 难以蒸馏。</li><li><strong>输入与表示</strong>：输入表示沿用 TSN：训练时将整段视频均匀分成 Nseg = 3 个片段，每段随机取一帧；动作分支可用 RGB 单流。主表双流配置以 KINet 作为 RGB 流、以普通 TSN 作为光流流，对应两项准确率 77.8 / 93.1；三个分支分别做全局平均池化后，各自产生 Nseg 个 d 维向量。</li><li><strong>模型结构</strong>：低层骨干由三项任务共享，高层分成互不共享参数的动作、人体、场景分支；CBI 位于中层，高层经全局平均池化后构成 N = 3 × Nseg 个节点的 AKG。图卷积输出与输入同形，最终只保留动作节点用于预测。</li><li><strong>数据流</strong>：视频帧先送入人体解析与场景教师得到伪标签；KINet 共享低层特征后分为三路，辅助路由伪标签计算损失并在 CBI 处调制动作特征；三路高层向量经全局平均池化进入 AKG 关系推理，取动作节点形成视频分类，训练时联合优化三项任务。推理只服务动作识别时，可移除人体解析 decoder 与场景识别全连接 classifier；论文明确移除的是这两个辅助输出头。</li><li><strong>关键技术</strong>：CBI 对辅助特征与动作特征做逐元素乘法，接残差式 BN 与 ReLU，再把三路特征按通道拼接并用 1 × 1 卷积恢复通道数。AKG 仅保留与动作节点相连的边并屏蔽 human-scene 边；候选关系含点积、嵌入点积和 ReLU 拼接，经 softmax 归一化后用单层 GCN 推理，后续实验选择点积。</li><li><strong>公式与超参数</strong>：关系分数可取点积 f(x_a,x_b)=x_a^T x_b、嵌入点积或 ReLU 拼接；边权经 softmax 归一化，图卷积为 Z=σ(I_mask⊙GXW)，正文只堆叠 1 层。联合损失为 L=λ_action L_action+λ_human L_human+λ_scene L_scene，主任务权重为 1，两项辅助任务各为 0.01。训练时 Nseg = 3；Kinetics 初始学习率为 0.01，在第 20、40、60 个 epoch 各降 10 倍，总计 70 个 epoch，权重衰减为 10 的负 5 次方、动量为 0.9；UCF-101 微调 80 个 epoch。推理均匀采样 25 个 segment，每帧做 10 个 crop，共 250 张图，并以 Nseg = 3 的滑窗平均。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：LIP 用于训练人体解析教师；其 19 个人体部位标签被合并为单一人体分割目标，以减轻低分辨率伪标签噪声。</li><li><strong>数据集</strong>：Places365 用于训练场景教师，论文说明它包含 365 个场景类别。</li><li><strong>数据集</strong>：Kinetics-400 是主训练与验证动作集，含 400 类、约 240k 个训练视频和 20k 个验证视频。</li><li><strong>数据集</strong>：UCF-101 用于迁移评估，含 101 类、共 13,320 段视频；ImageNet 只用于初始化网络权重。</li><li><strong>规模与划分</strong>：Kinetics-400 采用约 240k 与 20k 的训练/验证划分；UCF-101 按 3 个训练/测试划分分别评估后取平均。LIP 的人体监督从 19 类部位合并为单前景，Places365 保留 365 类场景伪标签。</li><li><strong>模型</strong>：动作主干采用 TSN 二维网络，主结果覆盖 ResNet50、BN-Inception 与 Inception V3；人体教师是 PSPNet（DenseNet-121 骨干），场景教师是 ResNet152，框架以 ImageNet 预训练权重初始化。</li><li><strong>硬件</strong>：论文的 Implementation Details、消融、主结果和迁移实验均未报告训练或推理 GPU/CPU 型号、设备数量及运行时；正文只给出优化设置与参数量，不能据此补推硬件。</li><li><strong>代码</strong>：论文首页脚注、方法、Implementation Details、结论及参考文献尾部均未给出代码仓库 URL 或明确发布状态；因此元数据中的 code_url 保持为空。</li><li><strong>训练平台</strong>：正文未报告软件框架、操作系统、云平台、仿真器或机器人与实车执行平台；论文只描述动作识别数据集、训练设置与视频级预测流程，数据集不作为运行平台记录。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Kinetics-400：大规模动作识别基准，报告 RGB 单流与双流 KINet。</li><li><strong>评估基准</strong>：UCF-101：将 Kinetics 预训练表示微调后，按标准 3 个训练/测试划分取平均。</li><li><strong>评估指标</strong>：视频级 top-1 准确率，数值越高越好。</li><li><strong>评估指标</strong>：Kinetics-400 还报告视频级 top-5 准确率，数值越高越好。</li><li><strong>对比方法</strong>：组件与参数消融以 TSN-ResNet50 为基线，比较多任务蒸馏、CBI 布置、AKG 关系函数、完整 KINet，以及更深的 TSN-ResNet200。</li><li><strong>对比方法</strong>：Kinetics-400 主表同时列出二维、三维与双流方法，以区分骨干及输入流设置。</li><li><strong>对比方法</strong>：UCF-101 表比较双流 TSN、双流 I3D、StNet-RGB 和双流 KINet；另以固定与可学习辅助分支检验联合微调。</li><li><strong>关键结果</strong>：Kinetics-400 表中准确率单位为 %：RGB KINet-ResNet50 的 top-1 / top-5 为 72.4 / 90.3；TSN-ResNet50 为 69.5 / 88.9；完整 KINet 的 top-1 绝对增益为 +2.9 个百分点。</li><li><strong>关键结果</strong>：同一 Kinetics 表中，双流 KINet（Inception V3）为 77.8 / 93.1，SlowFast 为 79.8 / 93.9（依次为 top-1 / top-5，单位：%）；因此该表中的 KINet 并非最高 top-1。</li><li><strong>关键结果</strong>：UCF-101 上，双流 KINet 的 top-1 为 97.8；双流 TSN（Inception V3）为 97.3，双流 I3D 为 98.0（单位：%）。</li><li><strong>关键结果</strong>：在 playing basketball 激活图的定性可视化中，作者观察到 KINet-ResNet50 相比 TSN-ResNet50 呈现更清晰的人体与场景概念；这是可视化观察，不是新增定量指标。</li><li><strong>消融实验</strong>：知识蒸馏多任务消融中，human、scene、二者同时的 top-1 分别为 70.3、70.0、70.6，增益分别为 +0.8、+0.5、+1.1；基线为 69.5（单位：%）。</li><li><strong>消融实验</strong>：CBI 布置中，在 res4 和 res5 各放一个 CBI 时为 71.8、增益 +2.3；只在 res4 放一个或两个 CBI 时分别为 71.1 和 71.2（单位：%），作者选择前者兼顾精度与效率。</li><li><strong>消融实验</strong>：AKG 点积、嵌入点积、ReLU 拼接分别为 71.7 / 71.6 / 71.2，增益为 +2.2 / +2.1 / +1.7（单位：%）；后续实验选择点积。</li><li><strong>消融实验</strong>：固定辅助分支为 70.5，可学习辅助分支为 72.4，基线为 69.5（单位：%）；结果支持伪标签联合微调比直接冻结教师更适合动作识别。</li><li><strong>消融实验</strong>：KINet-ResNet50 有 56.9M 参数、准确率 72.4；TSN-ResNet200 有 64.5M 参数、准确率 70.7（准确率单位：%），说明增益不能仅归因于更多参数。</li><li><strong>消融实验</strong>：Kinetics-400 多骨干 top-1（越高越好）中，ResNet50 从 69.5 提升到 72.4（+2.9），BN-Inception 从 69.1 提升到 71.8（+2.7），Inception V3 从 72.5 提升到 74.1（+1.6），三种骨干均有增益。</li><li><strong>实验条件</strong>：Kinetics 训练以 ImageNet 权重初始化，每帧先缩放为 256 × 340，再做多尺度裁剪增强；Nseg = 3，使用 SGD，初始学习率为 0.01，在第 20、40、60 个 epoch 各降 10 倍，总计 70 个 epoch，权重衰减为 10 的负 5 次方、动量为 0.9。UCF-101 从 Kinetics 权重微调时，除第一个 batch-normalization 层外其余均冻结，训练 80 个 epoch，并平均 3 个划分。测试均匀采样 25 个 segment，每帧做 10 个 crop，共 250 张图，以 Nseg = 3 的滑窗平均；均为有监督离线视频分类，不是零样本、闭环或实机评测。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2002.11616/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Zooming Slow-Mo: Fast and Accurate One-Stage Space-Time Video Super-Resolution</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2002.07442/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">V4D:4D Convolutional Neural Networks for Video-level Representation Learning</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

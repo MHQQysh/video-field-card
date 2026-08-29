@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TricorNet: A Hybrid Temporal Convolutional and Recurrent Network for Video Action Segmentation - 视频领域每日论文卡</title>
+    <meta name="description" content="这篇论文解决未裁剪视频的逐帧动作分割：既要找出动作在时间轴上的边界，又要给每段赋予预定义类别；它针对纯局部时间卷积难以记住远距离动作先后关系的问题，用混合编码—解码网络同时建模局部运动变化与长程依赖。 它面向带流程顺序的长视频，例如做热狗或沙拉的细粒度步骤、第一视角日常活动以及台架手术缝合；输入是每帧的视觉特征，输出是与原视频等长的逐帧动作标签序列，未标注帧可归入背景类。 论文真正检验的是：把时间卷积放在编码端、把层级双向 LSTM 放在解码端，是否能在视觉相似或遮挡时借助动作顺序减少过分割与错标，并同时改善帧准确率、段级编辑分数和重叠 F1；三个结构变体用于检验循环单元放置层级的影响。 研究背景：动作分割是高层视频理解问题：把时间上未裁剪的视频切成连续片段并逐段赋予预定义动作标签，其结果还可供 video-to-text 和动作定位使用。 核心痛点：常见流程先逐帧抽取 CNN 特征，再用一维序列模型预测，容易像处理文本那样忽略动作内部的局部运动变化；纯编码—解码时间卷积虽能捕捉局部模式，却受固定大小局部感受野限制，难以表达相隔较远的动作依赖，而且同一动作在不同人和语境下持续时间会变化。 任务定义：给定长度可变的视频序列，每个时刻输入一个帧级特征向量 X_t；目标为每帧预测 c 类之一的 one-hot 标签 Y_t，对没有预定义动作标签的帧另设背景类，最终得到时间边界与逐帧类别序列。 研究目标：构造一个既保留时间卷积对局部动作变化的编码能力、又让循环网络记忆长程动作顺序的统一模型，并检验这种分工能否在不同动作粒度的数据集上带来更平滑、更准确的分段。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1705.07818">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1705.07818.webp" alt="TricorNet: A Hybrid Temporal Convolutional and Recurrent Network for Video Action Segmentation" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">这篇论文解决未裁剪视频的逐帧动作分割：既要找出动作在时间轴上的边界，又要给每段赋予预定义类别；它针对纯局部时间卷积难以记住远距离动作先后关系的问题，用混合编码—解码网络同时建模局部运动变化与长程依赖。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">TricorNet: A Hybrid Temporal Convolutional and Recurrent Network for Video Action Segmentation</h1>
+            <div class="detail-meta">2017-05-22 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1705.07818" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1705.07818" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1705.07818</span></div>
+            <p class="detail-summary">这篇论文解决未裁剪视频的逐帧动作分割：既要找出动作在时间轴上的边界，又要给每段赋予预定义类别；它针对纯局部时间卷积难以记住远距离动作先后关系的问题，用混合编码—解码网络同时建模局部运动变化与长程依赖。 它面向带流程顺序的长视频，例如做热狗或沙拉的细粒度步骤、第一视角日常活动以及台架手术缝合；输入是每帧的视觉特征，输出是与原视频等长的逐帧动作标签序列，未标注帧可归入背景类。 论文真正检验的是：把时间卷积放在编码端、把层级双向 LSTM 放在解码端，是否能在视觉相似或遮挡时借助动作顺序减少过分割与错标，并同时改善帧准确率、段级编辑分数和重叠 F1；三个结构变体用于检验循环单元放置层级的影响。 研究背景：动作分割是高层视频理解问题：把时间上未裁剪的视频切成连续片段并逐段赋予预定义动作标签，其结果还可供 video-to-text 和动作定位使用。 核心痛点：常见流程先逐帧抽取 CNN 特征，再用一维序列模型预测，容易像处理文本那样忽略动作内部的局部运动变化；纯编码—解码时间卷积虽能捕捉局部模式，却受固定大小局部感受野限制，难以表达相隔较远的动作依赖，而且同一动作在不同人和语境下持续时间会变化。 任务定义：给定长度可变的视频序列，每个时刻输入一个帧级特征向量 X_t；目标为每帧预测 c 类之一的 one-hot 标签 Y_t，对没有预定义动作标签的帧另设背景类，最终得到时间边界与逐帧类别序列。 研究目标：构造一个既保留时间卷积对局部动作变化的编码能力、又让循环网络记忆长程动作顺序的统一模型，并检验这种分工能否在不同动作粒度的数据集上带来更平滑、更准确的分段。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：University of Rochester（论文首页对两位作者的明确署名单位）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1705.07818/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">这篇论文解决未裁剪视频的逐帧动作分割：既要找出动作在时间轴上的边界，又要给每段赋予预定义类别；它针对纯局部时间卷积难以记住远距离动作先后关系的问题，用混合编码—解码网络同时建模局部运动变化与长程依赖。</p>
+  <ul class="reading-intro-points"><li>这篇论文解决未裁剪视频的逐帧动作分割：既要找出动作在时间轴上的边界，又要给每段赋予预定义类别；它针对纯局部时间卷积难以记住远距离动作先后关系的问题，用混合编码—解码网络同时建模局部运动变化与长程依赖。</li><li>它面向带流程顺序的长视频，例如做热狗或沙拉的细粒度步骤、第一视角日常活动以及台架手术缝合；输入是每帧的视觉特征，输出是与原视频等长的逐帧动作标签序列，未标注帧可归入背景类。</li><li>论文真正检验的是：把时间卷积放在编码端、把层级双向 LSTM 放在解码端，是否能在视觉相似或遮挡时借助动作顺序减少过分割与错标，并同时改善帧准确率、段级编辑分数和重叠 F1；三个结构变体用于检验循环单元放置层级的影响。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：University of Rochester（论文首页对两位作者的明确署名单位）</li><li><strong>实验室 / 团队</strong>：论文首页作者栏只列 University of Rochester，未署名具体实验室；目录字段 rochester-video 因而仅作为团队收录标签，不冒充论文署名事实。</li><li><strong>作者与归属</strong>：Li Ding — University of Rochester，Rochester, NY 14627</li><li><strong>作者与归属</strong>：Chenliang Xu — University of Rochester，Rochester, NY 14627</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>这篇论文解决未裁剪视频的逐帧动作分割：既要找出动作在时间轴上的边界，又要给每段赋予预定义类别；它针对纯局部时间卷积难以记住远距离动作先后关系的问题，用混合编码—解码网络同时建模局部运动变化与长程依赖。</li><li>它面向带流程顺序的长视频，例如做热狗或沙拉的细粒度步骤、第一视角日常活动以及台架手术缝合；输入是每帧的视觉特征，输出是与原视频等长的逐帧动作标签序列，未标注帧可归入背景类。</li><li>论文真正检验的是：把时间卷积放在编码端、把层级双向 LSTM 放在解码端，是否能在视觉相似或遮挡时借助动作顺序减少过分割与错标，并同时改善帧准确率、段级编辑分数和重叠 F1；三个结构变体用于检验循环单元放置层级的影响。</li><li><strong>研究背景</strong>：动作分割是高层视频理解问题：把时间上未裁剪的视频切成连续片段并逐段赋予预定义动作标签，其结果还可供 video-to-text 和动作定位使用。</li><li><strong>核心痛点</strong>：常见流程先逐帧抽取 CNN 特征，再用一维序列模型预测，容易像处理文本那样忽略动作内部的局部运动变化；纯编码—解码时间卷积虽能捕捉局部模式，却受固定大小局部感受野限制，难以表达相隔较远的动作依赖，而且同一动作在不同人和语境下持续时间会变化。</li><li><strong>任务定义</strong>：给定长度可变的视频序列，每个时刻输入一个帧级特征向量 X_t；目标为每帧预测 c 类之一的 one-hot 标签 Y_t，对没有预定义动作标签的帧另设背景类，最终得到时间边界与逐帧类别序列。</li><li><strong>研究目标</strong>：构造一个既保留时间卷积对局部动作变化的编码能力、又让循环网络记忆长程动作顺序的统一模型，并检验这种分工能否在不同动作粒度的数据集上带来更平滑、更准确的分段。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 TricorNet 混合编码—解码架构：层级一维时间卷积负责局部运动编码，层级双向 LSTM 解码并记忆长程动作依赖。</li><li>把编码后的压缩表示逐层上采样，经双向隐状态恢复到原序列长度，再以逐时刻 softmax 输出动作概率，从而同时处理可变时长动作与逐帧标注。</li><li>设计完整 TricorNet、只在中间压缩层使用双向 LSTM 的 high 变体，以及只在解码末层使用双向 LSTM 的 low 变体，用于比较依赖建模所在层级。</li><li>在三个公开动作分割数据集上用帧准确率、段级编辑分数和重叠 F1 做定量比较，并通过视觉相似和遮挡案例分析长程动作顺序如何减少错标。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：编码器用多层一维时间卷积和时间最大池化，把相邻帧的局部运动变化压缩成多尺度表示；中间层承接最深编码；解码器用上采样恢复时间分辨率，并以层级双向 LSTM 从两个时间方向建模动作依赖，末端 softmax 完成逐帧分类。</li><li><strong>输入与表示</strong>：输入 E^(0)=(X_1,…,X_T) 是一段视频按时刻排列的帧级 CNN 特征，T 可随视频变化；监督标签 Y_t 是 c 维稀疏 one-hot 向量，未归入预定义动作的帧使用额外背景标签。</li><li><strong>模型结构</strong>：编码器和解码器各有 K 个对应层级，全部实验固定 K=2。每个编码层由一维时间卷积、Normalized ReLU 与时间最大池化组成；每个解码层由上采样和双向 LSTM 组成。最后一层双向状态拼接为 D∈R^(T×2H_K)，再线性映射到 c 类并逐时刻 softmax。</li><li><strong>数据流</strong>：帧特征序列先进入首个时间卷积层，经过激活和池化后逐层缩短时间轴；最深编码 E^(K) 作为 L_mid 输入解码器。解码端每层先把条目重复以完成上采样，再由前向与后向 LSTM 生成拼接隐状态；最终恢复长度 T，取每个 D_t 经 W_d D_t+b_d 和 softmax 得到该帧类别分布 Ŷ_t。</li><li><strong>关键技术</strong>：标准 TricorNet 在每个解码层使用双向 LSTM；high 仅在高度压缩的中间层建模粗粒度依赖，low 仅在最后解码层建模细节依赖。训练使用 categorical cross-entropy、随机梯度下降配合 ADAM 更新，并在卷积层间用 spatial dropout、双向 LSTM 层间用 dropout；卷积激活采用按层最大激活归一化的 ReLU。</li><li><strong>公式与超参数</strong>：编码更新为 E^(i)=f(W_E^(i)∗E^(i-1)+b_E^(i))，其中 ∗ 是一维时间卷积；LSTM 依次计算输入门、遗忘门、输出门、候选状态、记忆单元与隐状态，双向输出拼接；分类为 Ŷ_t=softmax(W_dD_t+b_d)。固定 K=2、池化宽度 2，第 i 层卷积滤波器数为 32+32i，上采样把每个条目重复两次，Normalized ReLU 的 ε 为 10 的负五次方。最佳卷积长度与每方向隐状态数分别为 Salads 30/64、GTEA 20/64、JIGSAWS 15/64。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：University of Dundee 50 Salads：25 人各做两次沙拉制作，视频长 5–10 分钟；采用 mid-level 的 17 类动作、spatial CNN 视频特征和五个交叉验证划分，未使用同步加速度计数据。</li><li><strong>数据集</strong>：Georgia Tech Egocentric Activities（GTEA）：七种日常活动由四人执行，合计 28 个约一分钟视频；每段约 20 个细粒度动作实例，使用 spatial CNN 特征及提供的交叉验证划分。</li><li><strong>数据集</strong>：JHU-ISI Gesture and Skill Assessment Working Set（JIGSAWS）：39 个视频记录八名外科医生，每人约五段、每段约 20 个动作实例，共 10 类；论文只用约两分钟的 suturing 任务，并沿用外部特征和交叉验证划分。</li><li><strong>规模与划分</strong>：Salads 使用资料提供方给出的五个交叉验证划分；GTEA 同样沿用所提供的交叉验证划分；JIGSAWS 的特征和交叉验证划分来自外部工作。论文没有进一步列出每折训练、验证、测试样本数，也未说明单独验证集。</li><li><strong>模型</strong>：TricorNet 接收现成帧级特征而非从原始帧端到端学习：Salads 与 GTEA 使用 spatial CNN 输出，JIGSAWS 使用外部工作提供的特征；时序网络只用目标数据集训练集从头训练。正文与实验设置均未给出基础模型参数规模、TricorNet 总参数量或预训练权重配置。</li><li><strong>硬件</strong>：论文的 Implementation Details、Experimental Results、结论与局限均未报告训练或推理所用 CPU/GPU 型号与数量，也未给出显存、训练时长、推理时延或吞吐量。</li><li><strong>代码</strong>：论文只报告模型由 Keras 和 TensorFlow 实现，没有给出 TricorNet 的代码仓库地址或发布状态；致谢所说的共享源码与帧级特征明确属于 Colin Lea 的先前工作，不能视为本文作者代码已发布。</li><li><strong>训练平台</strong>：实验完全基于三个离线视频数据集：Salads 原数据含加速度计和 RGB-D，但本文只用视频特征；GTEA 是第一视角日常活动；JIGSAWS 是台架上的外科任务。正文未使用或报告仿真器、机器人执行平台或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：University of Dundee 50 Salads 的 mid-level 细粒度动作标注，采用五折交叉验证。</li><li><strong>评估基准</strong>：GTEA 第一视角日常活动，使用已有 spatial CNN 特征与交叉验证划分。</li><li><strong>评估基准</strong>：JIGSAWS 的 suturing 子任务，使用外部提供的特征与交叉验证划分。</li><li><strong>评估指标</strong>：Frame-wise accuracy：逐帧正确率，越高越好；论文提醒它可能掩盖严重过分割。</li><li><strong>评估指标</strong>：Segmental edit score：对预测与真值动作段序列做段级比较并惩罚过分割，分数越高越好。</li><li><strong>评估指标</strong>：Segmental overlap F1：按 IoU 重叠准则在 k=10、25、50 三个阈值计算，越高越好。</li><li><strong>对比方法</strong>：Salads 对比 Spatial CNN、IDT+LM、ST-CNN、单独 Bi-LSTM、Dilated TCN 与 ED-TCN。</li><li><strong>对比方法</strong>：GTEA 对比 Spatial CNN、ST-CNN、单独 Bi-LSTM、EgoNet+TDD、Dilated TCN 与 ED-TCN。</li><li><strong>对比方法</strong>：JIGSAWS 对比 MSM-CRF、Spatial CNN、ST-CNN 与 TCN，并同时比较 TricorNet 的 high、low 结构。</li><li><strong>关键结果</strong>：Salads（mid-level）上，TricorNet 的 Acc./Edit/F1@10、25、50 为 67.5/62.8/70.1、67.2、56.6，均高于 ED-TCN 的 64.7/59.8/68.0、63.9、52.6（各项均为越高越好）。</li><li><strong>关键结果</strong>：GTEA 上，TricorNet(low) 的 Acc. 为 64.7，F1@10、25、50 为 77.3、73.4、62.9；标准 TricorNet 为 64.8 与 76.0、71.1、59.2，而最高帧准确率是 EgoNet+TDD 的 68.5。因此 low 变体取得最佳 F1，标准模型的帧准确率则具竞争力。</li><li><strong>关键结果</strong>：JIGSAWS 上，TricorNet 达到 Acc. 82.9、Edit 86.8，高于此前 TCN 的 81.4、83.1，也高于 low 变体的 82.2、84.9（两项均为越高越好）。</li><li><strong>消融实验</strong>：结构变体是论文的主要消融：high 只在最压缩的中间层放双向 LSTM，low 只在解码器末层放双向 LSTM，标准模型则在每个解码层都使用它。</li><li><strong>消融实验</strong>：Salads 上，标准模型的 Acc./Edit/F1 为 67.5/62.8/70.1、67.2、56.6，全面高于 high 的 65.5/59.3/66.4、62.7、53.3 和 low 的 65.4/59.0/67.0、63.2、52.1，说明该数据上分层循环解码最有效。</li><li><strong>消融实验</strong>：GTEA 上，low 的三个 F1 为 77.3、73.4、62.9，高于标准模型的 76.0、71.1、59.2 和 high 的 75.2、71.3、58.0；这与作者让 low 聚焦细粒度低层依赖的设计动机一致。</li><li><strong>消融实验</strong>：JIGSAWS 上，high、low、标准模型的 Acc./Edit 依次为 79.4/83.3、82.2/84.9、82.9/86.8，完整分层解码仍最好。</li><li><strong>消融实验</strong>：层数探索显示三套数据的最佳结果都取 K=2；继续加深会过拟合或陷入局部最优，作者把这与数据集训练数据有限联系起来。</li><li><strong>实验条件</strong>：三种 TricorNet 变体只使用目标数据集训练集从头训练；各层参数随机初始化，无动作标签的帧增加背景类。结果采用各数据集调得的最佳卷积长度（Salads 30、GTEA 20、JIGSAWS 15）和每方向 64 个 LSTM 隐状态。Salads 在同一参数设置下重复实验通常波动约 1%；论文未报告重复次数、均值与标准差或显著性检验。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1707.06750/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Temporal Convolution Based Action Proposal: Submission to ActivityNet 2017</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1705.02953/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Temporal Segment Networks for Action Recognition in Videos</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

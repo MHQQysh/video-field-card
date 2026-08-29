@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TAM: Temporal Adaptive Module for Video Recognition - 视频领域每日论文卡</title>
+    <meta name="description" content="它解决的是固定时序卷积对所有视频共享同一卷积核、难以覆盖相机运动和速度变化等多样时序动态的问题；TAM 根据当前视频特征生成视频专属时序核，同时尽量保持二维卷积网络的计算效率。 具体用于离线 RGB 视频动作分类：可把 TAM 插入现有二维 CNN 构成 TANet，在 Kinetics-400 的外观与动作识别，以及 Something-Something V1/V2 的细粒度、运动主导对象交互场景中建模短期与长期时序关系。 论文真正检验的是：把视频专属动态核拆成位置敏感的局部重要性图和位置不变的全局聚合权重，是否比固定池化或卷积、时序移位、自注意力等模块更准确，并在相近计算预算下保持模块化和跨主干可迁移性。 研究背景：视频的时序动态会随相机运动、动作速度和活动类型而显著变化；视频理解因此需要既能灵活捕获复杂时序结构、又能控制高维视频计算开销的时序模块。 核心痛点：标准时序卷积对不同视频共享固定权重，难以适应视频间变化；只分配逐时刻权重的时序注意力没有显式时序交互，可能忽略长程依赖；直接使用三维卷积又缺少针对视频时序属性的专门设计，并可能带来较高计算成本。 任务定义：给定视频片段的特征张量 X∈R^{C×T×H×W}，TAM 只沿时间维建模并输出同形状特征 Y；把 TAM 嵌入二维 CNN 后，网络对每帧产生分类分数，再对所有帧分数做平均得到片段级动作类别预测。 研究目标：目标是设计兼具高效率和强灵活性的自适应时序算子：让局部分支选择短期判别特征，让全局分支依据整段视频生成聚合核，并验证该设计能以接近二维 CNN 的计算量改进多种动作识别主干。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="2005.06803">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/2005.06803.webp" alt="TAM: Temporal Adaptive Module for Video Recognition" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">它解决的是固定时序卷积对所有视频共享同一卷积核、难以覆盖相机运动和速度变化等多样时序动态的问题；TAM 根据当前视频特征生成视频专属时序核，同时尽量保持二维卷积网络的计算效率。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">TAM: Temporal Adaptive Module for Video Recognition</h1>
+            <div class="detail-meta">2020-05-14 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/2005.06803" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/2005.06803" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">2005.06803</span></div>
+            <p class="detail-summary">它解决的是固定时序卷积对所有视频共享同一卷积核、难以覆盖相机运动和速度变化等多样时序动态的问题；TAM 根据当前视频特征生成视频专属时序核，同时尽量保持二维卷积网络的计算效率。 具体用于离线 RGB 视频动作分类：可把 TAM 插入现有二维 CNN 构成 TANet，在 Kinetics-400 的外观与动作识别，以及 Something-Something V1/V2 的细粒度、运动主导对象交互场景中建模短期与长期时序关系。 论文真正检验的是：把视频专属动态核拆成位置敏感的局部重要性图和位置不变的全局聚合权重，是否比固定池化或卷积、时序移位、自注意力等模块更准确，并在相近计算预算下保持模块化和跨主干可迁移性。 研究背景：视频的时序动态会随相机运动、动作速度和活动类型而显著变化；视频理解因此需要既能灵活捕获复杂时序结构、又能控制高维视频计算开销的时序模块。 核心痛点：标准时序卷积对不同视频共享固定权重，难以适应视频间变化；只分配逐时刻权重的时序注意力没有显式时序交互，可能忽略长程依赖；直接使用三维卷积又缺少针对视频时序属性的专门设计，并可能带来较高计算成本。 任务定义：给定视频片段的特征张量 X∈R^{C×T×H×W}，TAM 只沿时间维建模并输出同形状特征 Y；把 TAM 嵌入二维 CNN 后，网络对每帧产生分类分数，再对所有帧分数做平均得到片段级动作类别预测。 研究目标：目标是设计兼具高效率和强灵活性的自适应时序算子：让局部分支选择短期判别特征，让全局分支依据整段视频生成聚合核，并验证该设计能以接近二维 CNN 的计算量改进多种动作识别主干。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">18 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Nanjing University（南京大学，中国）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/2005.06803/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">它解决的是固定时序卷积对所有视频共享同一卷积核、难以覆盖相机运动和速度变化等多样时序动态的问题；TAM 根据当前视频特征生成视频专属时序核，同时尽量保持二维卷积网络的计算效率。</p>
+  <ul class="reading-intro-points"><li>它解决的是固定时序卷积对所有视频共享同一卷积核、难以覆盖相机运动和速度变化等多样时序动态的问题；TAM 根据当前视频特征生成视频专属时序核，同时尽量保持二维卷积网络的计算效率。</li><li>具体用于离线 RGB 视频动作分类：可把 TAM 插入现有二维 CNN 构成 TANet，在 Kinetics-400 的外观与动作识别，以及 Something-Something V1/V2 的细粒度、运动主导对象交互场景中建模短期与长期时序关系。</li><li>论文真正检验的是：把视频专属动态核拆成位置敏感的局部重要性图和位置不变的全局聚合权重，是否比固定池化或卷积、时序移位、自注意力等模块更准确，并在相近计算预算下保持模块化和跨主干可迁移性。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Nanjing University（南京大学，中国）</li><li><strong>机构</strong>：SenseTime Research（商汤研究院）</li><li><strong>实验室 / 团队</strong>：State Key Lab for Novel Software Technology（南京大学新型软件技术国家重点实验室）</li><li><strong>作者与归属</strong>：Zhaoyang Liu—南京大学新型软件技术国家重点实验室、SenseTime Research；Limin Wang 与 Tong Lu—南京大学新型软件技术国家重点实验室；Wayne Wu 与 Chen Qian—SenseTime Research。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>它解决的是固定时序卷积对所有视频共享同一卷积核、难以覆盖相机运动和速度变化等多样时序动态的问题；TAM 根据当前视频特征生成视频专属时序核，同时尽量保持二维卷积网络的计算效率。</li><li>具体用于离线 RGB 视频动作分类：可把 TAM 插入现有二维 CNN 构成 TANet，在 Kinetics-400 的外观与动作识别，以及 Something-Something V1/V2 的细粒度、运动主导对象交互场景中建模短期与长期时序关系。</li><li>论文真正检验的是：把视频专属动态核拆成位置敏感的局部重要性图和位置不变的全局聚合权重，是否比固定池化或卷积、时序移位、自注意力等模块更准确，并在相近计算预算下保持模块化和跨主干可迁移性。</li><li><strong>研究背景</strong>：视频的时序动态会随相机运动、动作速度和活动类型而显著变化；视频理解因此需要既能灵活捕获复杂时序结构、又能控制高维视频计算开销的时序模块。</li><li><strong>核心痛点</strong>：标准时序卷积对不同视频共享固定权重，难以适应视频间变化；只分配逐时刻权重的时序注意力没有显式时序交互，可能忽略长程依赖；直接使用三维卷积又缺少针对视频时序属性的专门设计，并可能带来较高计算成本。</li><li><strong>任务定义</strong>：给定视频片段的特征张量 X∈R^{C×T×H×W}，TAM 只沿时间维建模并输出同形状特征 Y；把 TAM 嵌入二维 CNN 后，网络对每帧产生分类分数，再对所有帧分数做平均得到片段级动作类别预测。</li><li><strong>研究目标</strong>：目标是设计兼具高效率和强灵活性的自适应时序算子：让局部分支选择短期判别特征，让全局分支依据整段视频生成聚合核，并验证该设计能以接近二维 CNN 的计算量改进多种动作识别主干。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出两级自适应 TAM，把视频专属时序核解耦为位置敏感的局部重要性图和位置不变但随视频变化的全局聚合核，分别处理短期显著性与长期结构。</li><li>给出高效实现：先做全局空间平均池化，再以通道独立方式建模；局部分支用时序 Conv1D 产生逐位置权重，全局分支用全连接层生成归一化时序核。</li><li>把 TAM 作为模块插入 ResNet bottleneck 构成 TA-Block 与 TANet，可复用二维 ResNet 权重、保持通道数，并在分类头前不做时序下采样。</li><li>总体评测覆盖 Kinetics-400、Something-Something V1/V2；探索性消融仅在 Kinetics-400 上进行，检查参数、感受野、插入位置、模块数量、分支互补性与跨主干迁移，并在补充材料中可视化局部权重和全局动态核。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：TAM 是 TA-Block 内的纯时序算子，默认放在 ResNet bottleneck 的第一层 Conv2D 之后；用 TA-Block 替换各阶段的 ResNet-Block 形成 TANet，空间模式仍由二维卷积负责。</li><li><strong>输入与表示</strong>：输入为 X∈R^{C×T×H×W}，其中 C、T、H、W 分别表示通道、时间、高和宽。先对 H×W 做全局平均得到 X̂∈R^{C×T}；局部分支由它生成 V∈R^{C×T}，全局分支生成每个通道的时序核 Θ_c∈R^K。</li><li><strong>模型结构</strong>：局部分支由两层时序 Conv1D、BN、ReLU 与 sigmoid 组成，先降通道再输出随时间位置变化的重要性图；全局分支由两层全连接层、ReLU 和 softmax 组成，在整段压缩时序信号上生成通道独立、位置不变的正聚合权重。</li><li><strong>数据流</strong>：首先把 X 空间池化为 X̂；随后局部分支把重要性图 V 在空间维复制，与 X 逐元素相乘得到增强特征 Z；同时全局分支由 X̂ 生成 Θ；最后按通道用 Θ 对 Z 做时序卷积，得到 Y，并在网络末端平均各帧分类分数形成视频片段预测。</li><li><strong>关键技术</strong>：关键是把位置敏感激励与位置不变聚合分开学习：局部窗口负责短期判别性，全局感受野负责长期依赖；通道独立的动态卷积避免显式建模通道相关性，softmax 保证聚合权重为正，堆叠 TAM 扩展长程建模能力。</li><li><strong>公式与超参数</strong>：核心计算为 X̂_{c,t}=1/(H×W)∑_{i,j}X_{c,t,j,i}，Z=F_rescale(V)⊙X，Θ_c=softmax(F(W_2,δ(F(W_1,φ(X)_c))))，Y_{c,t,j,i}=∑_kΘ_{c,k}·Z_{c,t+k,j,i}。局部分支核长 K=3、首层把通道从 C 降为 C/β；消融后默认 α=2、β=4。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Kinetics-400：覆盖四百类人类动作，剪辑约十秒。</li><li><strong>数据集</strong>：Something-Something V1：细粒度、运动主导的对象交互动作集。</li><li><strong>数据集</strong>：Something-Something V2：V1 的扩展版本，任务类别保持不变。</li><li><strong>规模与划分</strong>：Kinetics-400 约 300k 段视频，约 240k 用于训练、约 20k 用于验证；Something-Something V1 约 86k/12k 训练/验证视频，V2 约 169k/25k，两个版本均为 174 类。</li><li><strong>模型</strong>：消融与公平时序模块比较采用 ResNet-50 主干，模型以 ImageNet 预训练权重初始化；公平比较中的 TANet 共有 25.59M 参数。论文还把 TAM 装到 ShuffleNet V2、MobileNet V2、Inception V3 与 I3D-ResNet-50 上检验跨主干可迁移性。</li><li><strong>硬件</strong>：正文 Implementation Details、结果表与补充材料均未报告训练或推理所用 GPU、CPU 或加速器型号与数量；实现细节仅给出 batch size 64。复杂度口径分开看：公平模块表报告单视图 FLOPs 与参数量，公开方法表以单视图 GFLOPs×测试视图数表示模型复杂度。</li><li><strong>代码</strong>：论文首页声明代码可用，并给出 <a href="https://github.com/liu-zhy/temporal-adaptive-module；目录元数据中的" target="_blank" rel="noopener noreferrer">https://github.com/liu-zhy/temporal-adaptive-module；目录元数据中的</a> code_url 仍按输入记录原样保留为空。</li><li><strong>训练平台</strong>：实验平台是现成视频数据集上的离线动作分类训练与评测；正文实验和补充材料未使用或报告仿真器、机器人、实车与闭环控制平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Kinetics-400 验证集：用于消融、时序模块公平对比与公开方法比较。</li><li><strong>评估基准</strong>：Something-Something V1 验证集：以单片段、中心裁剪口径比较细粒度动作识别。</li><li><strong>评估基准</strong>：Something-Something V2 验证集：同时报告单视图与多片段、多裁剪口径。</li><li><strong>评估指标</strong>：Top-1 与 Top-5 分类准确率均以百分比报告，越高越好；FLOPs/GFLOPs（单视图及视图数）与参数量用于比较计算开销，准确率相近时数值越低越高效。</li><li><strong>对比方法</strong>：公平时序模块对比覆盖逐帧 C2D、时序池化、固定时序卷积、通道级时序卷积、膨胀三维卷积、TSM、TEINet 与 Non-local block；另以单独局部/全局分支、Global branch+SE 和 TANet-R 检验互补性。</li><li><strong>对比方法</strong>：公开方法比较覆盖 TSN、ARTNet、I3D、SlowFast、X3D、CorrNet、ip-CSN、TRN、GST、ECO 与 bLVNet-TAM 等，并按各表规定的训练输入和测试视图报告复杂度与准确率。</li><li><strong>关键结果</strong>：同训练与推理协议下，8-frame ResNet50 TANet 以 43.02G 单视图 FLOPs、25.59M 参数取得首位准确率 76.3%、前五准确率 92.6%；C2D 的首位准确率为 70.2%，比 TANet 低六点一个百分点（准确率越高越好）。</li><li><strong>关键结果</strong>：Kinetics 公开方法表中，TANet-152 以 16×224×224 输入和 242×12 GFLOPs×视图取得首位准确率 79.3%、前五准确率 94.1%，是表内 TANet 变体的最高准确率。</li><li><strong>关键结果</strong>：Something-Something V1 的单片段中心裁剪表中，TANetEn 使用 8f+16f、99G FLOPs，取得首位准确率 50.6% 与前五准确率 79.3%；同表 TSMEn 为 49.7% 与 78.5%。</li><li><strong>关键结果</strong>：Something-Something V2 上，16f TANet 在 2 clips×3 crops 下取得首位准确率 64.6%、前五准确率 89.5%；8f+16f 的 TANetEn 在相同视图口径下为 66.0% 与 90.1%。</li><li><strong>消融实验</strong>：参数消融中，8-frame、α=2、β=4 得到首位准确率 76.28%、前五准确率 92.60%，高于表内其他 α/β 组合，因而成为默认设置。</li><li><strong>消融实验</strong>：感受野消融中，8-frame 时 K=3 的 76.28%/92.60% 高于 K=5 的 75.62%/92.14%；16-frame 时 K=5 的 77.19%/93.17% 高于 K=3 的 76.87%/92.88%，但后续实验统一取 K=3。</li><li><strong>消融实验</strong>：插入位置上，第一层 Conv2D 后的 TANet-b 为 76.28%/92.60%，高于 TANet-d 的 75.20%/91.78%；模块数量从 res5 的 3 个增至 res2-5 的 16 个时，首位准确率从 74.12% 升至 76.28%。</li><li><strong>消融实验</strong>：分支消融的首位/前五准确率分别为：Global branch 75.6%/91.9%，Local branch 73.3%/90.7%，Global branch+SE 75.9%/92.1%，TANet-R 76.0%/92.2%，完整 TANet 76.3%/92.6%。</li><li><strong>消融实验</strong>：跨主干消融的 Top-1 准确率（越高越好）为：ShuffleNet V2 62.1%→67.3%（表中 ΔAcc. +5.2%）、MobileNet V2 64.1%→71.6%（+7.5%）、Inception V3 71.4%→75.6%（+4.2%）、ResNet-50 70.2%→76.3%（+6.1%）、I3D-ResNet-50 76.6%→77.2%（+0.6%）；均为不带 TAM→带 TAM，I3D-ResNet-50 使用 32 帧，其余主干使用 8 帧。</li><li><strong>实验条件</strong>：训练均从 ImageNet 权重初始化；Kinetics 模型输入 8 或 16 帧，从连续 64 帧中采样并训练 100 epochs，Something-Something 训练 50 epochs。测试时 Kinetics 的 8-frame 模型取 10 clips、16-frame 模型取 4 clips，均用 3 crops；V1 用单 clip 中心 crop，V2 同时报 1 clip×1 crop 与 2 clips×3 crops。所有实验均为有监督离线闭集动作分类，不是零样本、闭环或实车评测。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/2006.07034/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Benchmarking Unsupervised Object Representations for Video Sequences</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/2005.03201/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">What comprises a good talking-head video generation?: A Survey and Benchmark</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

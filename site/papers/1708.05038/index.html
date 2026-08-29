@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ConvNet Architecture Search for Spatiotemporal Feature Learning - 视频领域每日论文卡</title>
+    <meta name="description" content="论文要解决的是视频网络不能照搬图像网络的问题：逐帧二维外观表示看不到运动模式，而视频卷积网络又有更高的计算与显存成本，因此需要系统寻找既能联合建模外观和运动、又可实际训练与迁移的时空架构。 具体使用场景是先在 UCF101 上以相近参数量做受控架构搜索，由观察得到 Res3D，再在 Sports-1M 上预训练；所得片段表征随后用于 UCF101/HMDB51 动作识别、ASLAN 动作相似性判断和 THUMOS 未剪辑视频时序定位。 论文真正检验的是：在容量可比时，帧采样跨度、空间分辨率、二维/三维卷积组合和网络深度分别如何影响精度与成本；这些在小型 UCF101 上得到的排序，能否在 HMDB51 复现并转化为大规模预训练和多任务迁移收益。 研究背景：ImageNet 预训练的二维 ConvNet 已能迁移到多种图像任务，但视频还需要专门的时空表示，把仅凭外观无法捕捉的运动模式纳入特征；已有 C3D 证明大规模三维卷积预训练可形成通用视频特征。 核心痛点：视频 ConvNet 的计算和显存开销高，已有报告中在 UCF101 上训练约 3–4 天、在 Sports-1M 上约两个月；同时缺少公认的架构搜索基准，UCF101 容易过拟合，而且采样、预处理、卷积类型、深度与时间维建模方式都会显著改变结果。 任务定义：输入是按时间采样的视频片段，可写成时间长度、帧高和帧宽组成的 L×H×W 张量；网络通过三维卷积学习联合外观与运动的片段表示，既输出视频类别预测，也可把中间特征聚合后迁移到动作识别、相似性判断和时序动作定位。 研究目标：目标是在参数量尽量相同的条件下逐维搜索视频残差网络，减少“模型更大”这一混杂因素；再把搜索观察汇总成高效的深层三维残差网络 Res3D，并检验其在 Sports-1M 预训练后能否跨不同视频任务优于 C3D。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1708.05038">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1708.05038.webp" alt="ConvNet Architecture Search for Spatiotemporal Feature Learning" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">论文要解决的是视频网络不能照搬图像网络的问题：逐帧二维外观表示看不到运动模式，而视频卷积网络又有更高的计算与显存成本，因此需要系统寻找既能联合建模外观和运动、又可实际训练与迁移的时空架构。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">ConvNet Architecture Search for Spatiotemporal Feature Learning</h1>
+            <div class="detail-meta">2017-08-16 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1708.05038" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1708.05038" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1708.05038</span></div>
+            <p class="detail-summary">论文要解决的是视频网络不能照搬图像网络的问题：逐帧二维外观表示看不到运动模式，而视频卷积网络又有更高的计算与显存成本，因此需要系统寻找既能联合建模外观和运动、又可实际训练与迁移的时空架构。 具体使用场景是先在 UCF101 上以相近参数量做受控架构搜索，由观察得到 Res3D，再在 Sports-1M 上预训练；所得片段表征随后用于 UCF101/HMDB51 动作识别、ASLAN 动作相似性判断和 THUMOS 未剪辑视频时序定位。 论文真正检验的是：在容量可比时，帧采样跨度、空间分辨率、二维/三维卷积组合和网络深度分别如何影响精度与成本；这些在小型 UCF101 上得到的排序，能否在 HMDB51 复现并转化为大规模预训练和多任务迁移收益。 研究背景：ImageNet 预训练的二维 ConvNet 已能迁移到多种图像任务，但视频还需要专门的时空表示，把仅凭外观无法捕捉的运动模式纳入特征；已有 C3D 证明大规模三维卷积预训练可形成通用视频特征。 核心痛点：视频 ConvNet 的计算和显存开销高，已有报告中在 UCF101 上训练约 3–4 天、在 Sports-1M 上约两个月；同时缺少公认的架构搜索基准，UCF101 容易过拟合，而且采样、预处理、卷积类型、深度与时间维建模方式都会显著改变结果。 任务定义：输入是按时间采样的视频片段，可写成时间长度、帧高和帧宽组成的 L×H×W 张量；网络通过三维卷积学习联合外观与运动的片段表示，既输出视频类别预测，也可把中间特征聚合后迁移到动作识别、相似性判断和时序动作定位。 研究目标：目标是在参数量尽量相同的条件下逐维搜索视频残差网络，减少“模型更大”这一混杂因素；再把搜索观察汇总成高效的深层三维残差网络 Res3D，并检验其在 Sports-1M 预训练后能否跨不同视频任务优于 C3D。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">19 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：Facebook（论文首页作者单位）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1708.05038/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">论文要解决的是视频网络不能照搬图像网络的问题：逐帧二维外观表示看不到运动模式，而视频卷积网络又有更高的计算与显存成本，因此需要系统寻找既能联合建模外观和运动、又可实际训练与迁移的时空架构。</p>
+  <ul class="reading-intro-points"><li>论文要解决的是视频网络不能照搬图像网络的问题：逐帧二维外观表示看不到运动模式，而视频卷积网络又有更高的计算与显存成本，因此需要系统寻找既能联合建模外观和运动、又可实际训练与迁移的时空架构。</li><li>具体使用场景是先在 UCF101 上以相近参数量做受控架构搜索，由观察得到 Res3D，再在 Sports-1M 上预训练；所得片段表征随后用于 UCF101/HMDB51 动作识别、ASLAN 动作相似性判断和 THUMOS 未剪辑视频时序定位。</li><li>论文真正检验的是：在容量可比时，帧采样跨度、空间分辨率、二维/三维卷积组合和网络深度分别如何影响精度与成本；这些在小型 UCF101 上得到的排序，能否在 HMDB51 复现并转化为大规模预训练和多任务迁移收益。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：Facebook（论文首页作者单位）</li><li><strong>机构</strong>：Columbia University（论文首页作者单位）</li><li><strong>实验室 / 团队</strong>：Applied Machine Learning（论文首页明确署名的 Facebook 团队）</li><li><strong>作者与归属</strong>：Du Tran、Jamie Ray、Manohar Paluri—Applied Machine Learning, Facebook</li><li><strong>作者与归属</strong>：Zheng Shou、Shih-Fu Chang—Columbia University</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>论文要解决的是视频网络不能照搬图像网络的问题：逐帧二维外观表示看不到运动模式，而视频卷积网络又有更高的计算与显存成本，因此需要系统寻找既能联合建模外观和运动、又可实际训练与迁移的时空架构。</li><li>具体使用场景是先在 UCF101 上以相近参数量做受控架构搜索，由观察得到 Res3D，再在 Sports-1M 上预训练；所得片段表征随后用于 UCF101/HMDB51 动作识别、ASLAN 动作相似性判断和 THUMOS 未剪辑视频时序定位。</li><li>论文真正检验的是：在容量可比时，帧采样跨度、空间分辨率、二维/三维卷积组合和网络深度分别如何影响精度与成本；这些在小型 UCF101 上得到的排序，能否在 HMDB51 复现并转化为大规模预训练和多任务迁移收益。</li><li><strong>研究背景</strong>：ImageNet 预训练的二维 ConvNet 已能迁移到多种图像任务，但视频还需要专门的时空表示，把仅凭外观无法捕捉的运动模式纳入特征；已有 C3D 证明大规模三维卷积预训练可形成通用视频特征。</li><li><strong>核心痛点</strong>：视频 ConvNet 的计算和显存开销高，已有报告中在 UCF101 上训练约 3–4 天、在 Sports-1M 上约两个月；同时缺少公认的架构搜索基准，UCF101 容易过拟合，而且采样、预处理、卷积类型、深度与时间维建模方式都会显著改变结果。</li><li><strong>任务定义</strong>：输入是按时间采样的视频片段，可写成时间长度、帧高和帧宽组成的 L×H×W 张量；网络通过三维卷积学习联合外观与运动的片段表示，既输出视频类别预测，也可把中间特征聚合后迁移到动作识别、相似性判断和时序动作定位。</li><li><strong>研究目标</strong>：目标是在参数量尽量相同的条件下逐维搜索视频残差网络，减少“模型更大”这一混杂因素；再把搜索观察汇总成高效的深层三维残差网络 Res3D，并检验其在 Sports-1M 预训练后能否跨不同视频任务优于 C3D。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>在 UCF101 split 1 上建立容量受控的残差网络搜索，分别考察帧采样跨度、输入分辨率、二维/三维卷积混合方式和深度，并在附录用 HMDB51 验证主要架构排序。</li><li>提出作者称为首个深层三维残差网络的 Res3D：采用完整三维卷积的残差架构，并在大规模 Sports-1M 上训练为可迁移的时空特征提取器。</li><li>把同一预训练表征系统评估到 Sports-1M 分类、UCF101/HMDB51 动作识别、ASLAN 动作相似性和 THUMOS 时序定位，证明改进并非局限于搜索集。</li><li>在精度之外量化表示效率：Res3D 相比 C3D 约快两倍、参数规模约小两倍，并在低维 PCA 表示下仍保持更高的 UCF101 准确率。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：SR18 是低成本搜索基线，用来一次只改变采样、分辨率、卷积类型或深度；Res3D 则吸收这些观察，作为在 Sports-1M 上训练的最终时空编码器，其 res5b 等中间激活可作为下游片段特征，也能替换 S-CNN 中原有的 C3D 主干。</li><li><strong>输入与表示</strong>：搜索基线接收 4×112×112 的片段以降低成本；最终 Res3D 接收 8×112×112 的片段，按时间步长 2 采样。动作识别时抽取各片段的 res5b 特征，跨视频平均池化后做 L2 归一化，形成供线性 SVM 使用的视频级向量。</li><li><strong>模型结构</strong>：Res3D 采用完整三维卷积的 18 层残差网络，按 conv1 至 conv5 分组堆叠残差块，卷积核同时覆盖时间与空间；组间通过带步长的卷积下采样，末端平均池化后接分类层，虚线残差支路在尺寸变化处同步下采样。</li><li><strong>数据流</strong>：训练时先从每个 Sports-1M 视频随机取五个、每个长 2 秒的片段，缩放到 128×171，再做随机时空抖动并裁成 8×112×112；片段经 Res3D 得到类别分数或中间特征。迁移识别时对片段特征平均并归一化后分类；迁移定位时以 Res3D 替换 C3D，并端到端微调 S-CNN 的提议、分类和定位网络。</li><li><strong>关键技术</strong>：搜索的关键控制是调整网络宽度 k，使不同候选保持近似参数量；卷积消融既比较从不同层开始改用二维卷积的 MC 系列，也把三维卷积分解为空间二维卷积再接时间一维卷积的分解式候选。受控结果支持全层三维卷积，而残差连接使较深视频网络可训练。</li><li><strong>公式与超参数</strong>：张量记号为 L×H×W；对 n 输入通道、m 输出通道、空间核宽 d 的三维卷积，2.5D 块用 i = ceil(3mnd²/(nd²+3m)) 选择中间通道，使分解前后参数量近似。UCF101 搜索用 SGD、mini-batch 20、初始学习率 0.01，每 20k 次迭代衰减 10 倍，90K 次结束（约 15 epochs）；Sports-1M 训练使用 2 块 GPU、batch 40（每卡 20），初始学习率 0.01，每 250k 次减半，3M 次结束。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Sports-1M：约 1.1M 个视频、487 个细粒度体育类别，提供公开训练/测试划分；预训练时每个训练视频随机抽取五个、每个 2 秒的片段。</li><li><strong>数据集</strong>：UCF101 与 HMDB51：前者有 13,320 个视频和 101 类动作，后者约 7,000 个视频和 51 类动作；两者均有 3 个训练/测试划分。</li><li><strong>数据集</strong>：ASLAN：3,631 个视频、432 个动作类别，按公开 10-fold 交叉验证协议判断一对视频是否为同一动作。</li><li><strong>数据集</strong>：THUMOS：训练使用 2,755 个已剪辑训练视频和 1,010 个未剪辑验证视频，测试使用 213 个含动作的测试视频；任务覆盖 20 个动作类别。</li><li><strong>规模与划分</strong>：架构搜索固定使用 UCF101 train/test split 1；附录复现实验使用 HMDB51 split 1。最终动作识别在两套数据的 3 个官方划分上做 3-fold 交叉验证，ASLAN 用 10-fold；THUMOS 测试集含 3,358 个动作实例，训练所用未剪辑验证集含 3,007 个实例。</li><li><strong>模型</strong>：核心模型包括搜索基线 SR18、最终 Res3D 和逐帧 2D-Resnet18；主要预训练表征对照是 C3D 的 fc6。Res3D 下游采用 res5b 或 pool5 激活，论文报告 res5b 略好；时序定位使用以 Res3D 替换 C3D 主干的 S-CNN。</li><li><strong>硬件</strong>：论文明确报告 Sports-1M 训练使用 2 块 GPU、每块处理 20 个样本；架构搜索还受到 GPU 显存可容纳输入与足够大 batch 的限制。正文实验设置及附录均未给出 GPU 的具体型号。</li><li><strong>代码</strong>：论文在讨论末尾明确给出源代码和预训练模型地址 <a href="http://github.com/facebook/C3D；元数据记录的独立" target="_blank" rel="noopener noreferrer">http://github.com/facebook/C3D；元数据记录的独立</a> project_url 与 code_url 仍为空，未把论文外部页面补写为顶层链接。</li><li><strong>训练平台</strong>：实验平台均为离线视频数据集上的分类、相似性判断与未剪辑视频时序定位；方法、实验与附录只报告 ConvNet/S-CNN 与 GPU 训练条件，没有仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Sports-1M 视频分类：单模型、无长时建模，报告单片段与视频级 top-1/top-5。</li><li><strong>评估基准</strong>：UCF101/HMDB51 动作识别：只用 RGB 输入，比较线性 SVM 特征与端到端微调，并按 3-fold 交叉验证汇总。</li><li><strong>评估基准</strong>：ASLAN 动作相似性：对视频对做同/不同动作二分类，采用公开 10-fold 交叉验证。</li><li><strong>评估基准</strong>：THUMOS 时序动作定位：在长未剪辑视频中预测类别及起止时间，并改变 IoU 阈值评测。</li><li><strong>评估指标</strong>：分类与识别采用 accuracy、clip/video top-1 和 video top-5，均为越高越好。</li><li><strong>评估指标</strong>：ASLAN 报告 Accuracy 与 AUC，均为越高越好。</li><li><strong>评估指标</strong>：THUMOS 报告 mAP；只有类别正确且时间 IoU 大于给定阈值才算正确，mAP 越高越好。</li><li><strong>对比方法</strong>：主对照 C3D 与 Res3D 同属三维时空特征；另用逐帧 2D-Resnet 检验运动建模收益，并在 Sports-1M 表中比较 DeepVideo、AlexNet、GoogleNet 及带 LSTM/卷积池化的长时模型。</li><li><strong>对比方法</strong>：UCF101/HMDB51 的 RGB-only 对照包括 Slow Fusion、Spatial Stream、C3D、Conv Pooling、Conv Fusion、Spatial Stream-Resnet、TSNs 与 I3D；带光流或 iDT 的结果被明确视为不同输入口径。</li><li><strong>对比方法</strong>：THUMOS 的直接可比基线是 C3D + S-CNN：保持 S-CNN 流程不变，仅把底层特征网络换为 Res3D；表中还列出 iDT、RNN/LSTM 和其他检测器。</li><li><strong>关键结果</strong>：Sports-1M 上按表中 clip@1、video@1、video@5 口径（单位：%），Res3D 为 48.8/65.6/87.8，C3D 为 46.1/61.1/85.2，三项均越高越好。</li><li><strong>关键结果</strong>：UCF101/HMDB51 上（单位：%），Res3D 的最佳结果为 85.8/54.9，C3D 的较强结果为 82.3/51.6，论文据此报告高出 3.5%/3.3%；动作识别表的 C3D fine-tuned 行在 HMDB51 上另为 50.3，不能把 3.3% 误称为同为微调行的差值。</li><li><strong>关键结果</strong>：低维表示实验中（准确率单位：%），Res3D 在 10 维时为 56.7，C3D 为 52.8；Res3D 仅用 300 维已达 82.9%，超过 C3D 完整 4,096 维表示，越高越好。</li><li><strong>关键结果</strong>：ASLAN 上（Accuracy 单位：%），Res3D 的 Accuracy/AUC 为 78.8/86.6，C3D 为 78.3/86.5，两项均越高越好，优势较小但一致。</li><li><strong>关键结果</strong>：THUMOS 在 IoU 阈值 0.3/0.4/0.5/0.6/0.7 下，Res3D + S-CNN 的 mAP 为 40.6/32.6/22.5/12.3/6.4，C3D + S-CNN 为 36.3/28.7/19.0/10.3/5.3，各阈值均越高越好。</li><li><strong>消融实验</strong>：采样消融的 UCF101 准确率（单位：%）中，时间步长 2 和 4 为 46.3 和 46.1；步长 1 为 43.8，步长 8/16/32 降至 38.8/38.1/36.9，说明过稀采样会损害时序连贯性。</li><li><strong>消融实验</strong>：分辨率消融中，resize 128（crop 112）取得 46.1（准确率单位：%）且为 10.3 GFLOPs；resize 64（crop 56）为 37.6，resize 256（crop 224）为 44.0 且为 42.9 GFLOPs，因而中等分辨率兼顾精度和成本。</li><li><strong>消融实验</strong>：卷积类型消融在约三千二百四十万至三千三百二十万参数范围内比较 MC、分解式候选与全三维网络：准确率（单位：%）中，全三维为 46.1，分解式候选为 44.6，MC 系列为 43.3–45.1，支持让三维卷积贯穿所有层。</li><li><strong>消融实验</strong>：深度消融保持约 33M 参数：D10/D16/D18/D26/D34 的准确率（单位：%）为 45.3/46.8/46.1/46.3/45.8；论文选择 18 层是因为它在精度、10.3 GFLOPs 和显存之间折中，附录 HMDB51 的相对排序总体一致。</li><li><strong>实验条件</strong>：搜索阶段使用 UCF101 split 1、相近参数量候选和 clip accuracy；Sports-1M 视频级预测平均 10 个中心裁剪片段且不使用长时建模。UCF101/HMDB51 最终识别采用 3-fold，ASLAN 采用 10-fold；THUMOS 的 S-CNN 三个子网络端到端微调 16 epochs，除末层学习率 0.01 外其余层为 0.001。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1711.09125/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">Appearance-and-Relation Networks for Video Classification</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1707.06750/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">Temporal Convolution Based Action Proposal: Submission to ActivityNet 2017</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>

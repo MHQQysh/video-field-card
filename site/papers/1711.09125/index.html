@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Appearance-and-Relation Networks for Video Classification - 视频领域每日论文卡</title>
+    <meta name="description" content="这篇论文要解决的是：如何直接从 RGB 视频中学习短时空表示，同时把单帧静态外观与跨帧时间关系分开、显式建模，避免普通 3D 卷积把两类信息联合且隐式地混在一个操作中。 具体使用场景是视频动作分类：先在大规模 Kinetics 上从零训练 RGB 模型，再把学到的时空表示微调到较小的 UCF101 与 HMDB51；方法还可嵌入 TSN 以补充长时建模。 论文真正检验的问题是：SMART 的双分支与平方池化关系建模是否比普通时空卷积更有效，堆叠 SMART 是否能形成分层时空表示，以及这种表示能否与 TSN 互补并迁移到新数据集。 研究背景：视频可视为静态图像序列随时间演化；作者把单帧静态外观与跨帧时间关系视为视频分类的两种关键视觉线索，因此有效架构应同时捕捉二者。 核心痛点：双流 CNN 需要训练两套网络并预先计算光流；3D CNN 虽能直接从堆叠 RGB 体积学习，性能仍弱于双流，其从 2D 卷积直接扩展到 3D 是否能有效建模外观和关系也不明确；2D CNN 叠加时间模型偏向粗粒度长时结构，缺少局部时空窗口内的细粒度关系表示能力。 任务定义：输入是连续 RGB 帧组成的视频体积；输出是视频动作类别。短时模块要分别提取单帧空间结构与多帧时间变换关系，再把两支特征压缩成供分类头使用的联合表示。 研究目标：设计可替换 C3D-ResNet18 中时空卷积的通用 SMART 块，通过堆叠获得多尺度、分层的外观—关系表示，并检验它在 Kinetics 及向 UCF101、HMDB51 迁移时的有效性。" />
+
+    <script>
+      (function() {
+        try {
+          var themePreference = window.localStorage.getItem('color-theme') || 'system';
+          var systemUsesDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolvedTheme = themePreference === 'system'
+            ? (systemUsesDarkTheme ? 'dark' : 'light')
+            : themePreference;
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.dataset.themePreference = themePreference;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+          document.documentElement.dataset.themePreference = 'system';
+        }
+      })();
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111827'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-size='24' font-family='Arial, sans-serif' fill='white'%3EAD%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/style.css" />
+  </head>
+  <body class="detail-page" data-paper-id="1711.09125">
+    <div class="page-noise"></div>
+    <div class="page-blur page-blur-a"></div>
+    <div class="page-blur page-blur-b"></div>
+
+    <header class="header detail-page-header">
+      <div class="container">
+        <div class="detail-page-topbar">
+          <a class="back-link" href="../../index.html">返回列表</a>
+          <div class="detail-topbar-actions">
+            <span class="detail-site-name">视频领域每日论文卡</span>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="当前主题：设备，点击切换主题" title="当前主题：设备">
+  <span class="theme-toggle-icons" aria-hidden="true">
+    <svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none">
+      <path d="M20 15.2A8.1 8.1 0 0 1 8.8 4a8.2 8.2 0 1 0 11.2 11.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+    <svg class="theme-toggle-icon theme-toggle-icon-system" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="theme-toggle-label" data-theme-toggle-label>设备</span>
+</button>
+          </div>
+        </div>
+
+        <div class="detail-hero-grid">
+          <div class="detail-hero-cover"><figure class="paper-figure-card paper-figure-card-detail">
+  <img class="paper-figure-image" src="../../assets/paper-images/1711.09125.webp" alt="Appearance-and-Relation Networks for Video Classification" loading="lazy" onclick="window.openPaperFigureImage && window.openPaperFigureImage(this)" />
+  <figcaption class="paper-figure-caption">这篇论文要解决的是：如何直接从 RGB 视频中学习短时空表示，同时把单帧静态外观与跨帧时间关系分开、显式建模，避免普通 3D 卷积把两类信息联合且隐式地混在一个操作中。</figcaption>
+</figure></div>
+          <div class="detail-hero-copy">
+            <p class="eyebrow">论文详情</p>
+            <h1 class="detail-page-title">Appearance-and-Relation Networks for Video Classification</h1>
+            <div class="detail-meta">2017-11-24 · <a data-analytics-event="paper_source_click" href="https://www.alphaxiv.org/pdf/1711.09125" target="_blank" rel="noopener noreferrer">原文</a> · <a data-analytics-event="paper_translation_click" href="https://hjfy.top/arxiv/1711.09125" target="_blank" rel="noopener noreferrer">翻译</a> · <span class="meta-pill">1711.09125</span></div>
+            <p class="detail-summary">这篇论文要解决的是：如何直接从 RGB 视频中学习短时空表示，同时把单帧静态外观与跨帧时间关系分开、显式建模，避免普通 3D 卷积把两类信息联合且隐式地混在一个操作中。 具体使用场景是视频动作分类：先在大规模 Kinetics 上从零训练 RGB 模型，再把学到的时空表示微调到较小的 UCF101 与 HMDB51；方法还可嵌入 TSN 以补充长时建模。 论文真正检验的问题是：SMART 的双分支与平方池化关系建模是否比普通时空卷积更有效，堆叠 SMART 是否能形成分层时空表示，以及这种表示能否与 TSN 互补并迁移到新数据集。 研究背景：视频可视为静态图像序列随时间演化；作者把单帧静态外观与跨帧时间关系视为视频分类的两种关键视觉线索，因此有效架构应同时捕捉二者。 核心痛点：双流 CNN 需要训练两套网络并预先计算光流；3D CNN 虽能直接从堆叠 RGB 体积学习，性能仍弱于双流，其从 2D 卷积直接扩展到 3D 是否能有效建模外观和关系也不明确；2D CNN 叠加时间模型偏向粗粒度长时结构，缺少局部时空窗口内的细粒度关系表示能力。 任务定义：输入是连续 RGB 帧组成的视频体积；输出是视频动作类别。短时模块要分别提取单帧空间结构与多帧时间变换关系，再把两支特征压缩成供分类头使用的联合表示。 研究目标：设计可替换 C3D-ResNet18 中时空卷积的通用 SMART 块，通过堆叠获得多尺度、分层的外观—关系表示，并检验它在 Kinetics 及向 UCF101、HMDB51 迁移时的有效性。</p>
+            <div class="detail-micro-meta">
+              <span class="meta-pill">16 分钟读完</span>
+              <span class="meta-pill">6 张阅读卡</span>
+              <span class="meta-pill">机构：南京大学新型软件技术国家重点实验室 · State Key Laboratory for Novel Software Technology</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container detail-layout">
+      <div class="detail-shell">
+        <article id="detail-body" class="reading-flow"><section class="reading-card reading-card-intro">
+  <div class="reading-card-topline">
+    <span class="reading-badge">一眼看懂</span>
+    <a class="cover-preview-link" data-analytics-event="paper_cover_open" href="../../covers/1711.09125/">封面预览</a>
+  </div>
+  <p class="reading-intro-hook">这篇论文要解决的是：如何直接从 RGB 视频中学习短时空表示，同时把单帧静态外观与跨帧时间关系分开、显式建模，避免普通 3D 卷积把两类信息联合且隐式地混在一个操作中。</p>
+  <ul class="reading-intro-points"><li>这篇论文要解决的是：如何直接从 RGB 视频中学习短时空表示，同时把单帧静态外观与跨帧时间关系分开、显式建模，避免普通 3D 卷积把两类信息联合且隐式地混在一个操作中。</li><li>具体使用场景是视频动作分类：先在大规模 Kinetics 上从零训练 RGB 模型，再把学到的时空表示微调到较小的 UCF101 与 HMDB51；方法还可嵌入 TSN 以补充长时建模。</li><li>论文真正检验的问题是：SMART 的双分支与平方池化关系建模是否比普通时空卷积更有效，堆叠 SMART 是否能形成分层时空表示，以及这种表示能否与 TSN 互补并迁移到新数据集。</li></ul>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 01</span>
+    <span class="reading-step-note">研究单位</span>
+  </div>
+  <h2>研究单位</h2>
+  <div class="reading-card-content"><ul><li><strong>机构</strong>：南京大学新型软件技术国家重点实验室（State Key Laboratory for Novel Software Technology）</li><li><strong>机构</strong>：苏黎世联邦理工学院计算机视觉实验室（Computer Vision Laboratory, ETH Zurich）</li><li><strong>机构</strong>：Google Research</li><li><strong>实验室 / 团队</strong>：论文首页署名实验室：State Key Laboratory for Novel Software Technology</li><li><strong>实验室 / 团队</strong>：论文首页署名实验室：Computer Vision Laboratory；顶层 nju-mcg 是目录收录标签，不是首页出现的机构名</li><li><strong>作者与归属</strong>：Limin Wang—南京大学新型软件技术国家重点实验室、ETH Zurich 计算机视觉实验室</li><li><strong>作者与归属</strong>：Wei Li—Google Research</li><li><strong>作者与归属</strong>：Wen Li—ETH Zurich 计算机视觉实验室</li><li><strong>作者与归属</strong>：Luc Van Gool—ETH Zurich 计算机视觉实验室</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 02</span>
+    <span class="reading-step-note">论文概述</span>
+  </div>
+  <h2>论文概述</h2>
+  <div class="reading-card-content"><ul><li>这篇论文要解决的是：如何直接从 RGB 视频中学习短时空表示，同时把单帧静态外观与跨帧时间关系分开、显式建模，避免普通 3D 卷积把两类信息联合且隐式地混在一个操作中。</li><li>具体使用场景是视频动作分类：先在大规模 Kinetics 上从零训练 RGB 模型，再把学到的时空表示微调到较小的 UCF101 与 HMDB51；方法还可嵌入 TSN 以补充长时建模。</li><li>论文真正检验的问题是：SMART 的双分支与平方池化关系建模是否比普通时空卷积更有效，堆叠 SMART 是否能形成分层时空表示，以及这种表示能否与 TSN 互补并迁移到新数据集。</li><li><strong>研究背景</strong>：视频可视为静态图像序列随时间演化；作者把单帧静态外观与跨帧时间关系视为视频分类的两种关键视觉线索，因此有效架构应同时捕捉二者。</li><li><strong>核心痛点</strong>：双流 CNN 需要训练两套网络并预先计算光流；3D CNN 虽能直接从堆叠 RGB 体积学习，性能仍弱于双流，其从 2D 卷积直接扩展到 3D 是否能有效建模外观和关系也不明确；2D CNN 叠加时间模型偏向粗粒度长时结构，缺少局部时空窗口内的细粒度关系表示能力。</li><li><strong>任务定义</strong>：输入是连续 RGB 帧组成的视频体积；输出是视频动作类别。短时模块要分别提取单帧空间结构与多帧时间变换关系，再把两支特征压缩成供分类头使用的联合表示。</li><li><strong>研究目标</strong>：设计可替换 C3D-ResNet18 中时空卷积的通用 SMART 块，通过堆叠获得多尺度、分层的外观—关系表示，并检验它在 Kinetics 及向 UCF101、HMDB51 迁移时的有效性。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 03</span>
+    <span class="reading-step-note">核心贡献</span>
+  </div>
+  <h2>核心贡献</h2>
+  <div class="reading-card-content"><ul><li>提出 SMART 基本块：用外观分支与关系分支，从 RGB 中分开且显式地建模单帧外观和跨帧关系。</li><li>以 C3D-ResNet18 为骨架堆叠多个 SMART 块构成 ARTNet，使不同层在不同尺度上学习由局部短时到更粗长程的外观—关系表示，并可端到端优化。</li><li>在仅用 RGB、Kinetics 从零训练的公平设置下系统验证 ARTNet，并把 Kinetics 表示微调到 UCF101 与 HMDB51，考察跨数据集迁移泛化。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 04</span>
+    <span class="reading-step-note">方法描述</span>
+  </div>
+  <h2>方法描述</h2>
+  <div class="reading-card-content"><ul><li><strong>所属模块</strong>：SMART 是可替代普通时空卷积的基本计算单元：外观支路负责逐帧空间线索，关系支路负责连续帧间变换；ARTNet 把多个 SMART 堆入 C3D-ResNet18，使早层刻画局部短时结构、后层逐渐覆盖更粗和更长程的结构。</li><li><strong>输入与表示</strong>：输入为视频体积 V∈R^{W×H×T×C}。外观支路输出逐帧空间特征 F，关系支路先产生隐藏响应 U、再汇聚为变换码 Z；两支具有相同的时空尺寸，拼接后的 [F,Z] 被压缩为输出体积 H。</li><li><strong>模型结构</strong>：ARTNet-ResNet18 以 C3D-ResNet18 实例化。浅替换版 ARTNet-ResNet18(s) 只把首个时空卷积换成 SMART；深替换版 ARTNet-ResNet18(d) 在多个残差阶段共替换七个时空卷积，从而在多个尺度学习外观和关系。</li><li><strong>数据流</strong>：外观路径对 V 逐帧卷积，随后做 BN 与 ReLU 得到 F；关系路径对连续帧做时空卷积，经 BN、逐元素平方、跨通道局部池化，再经 BN 与 ReLU 得到 Z；最后把 F 和 Z 按通道拼接，以逐点卷积做 reduction，并经 BN、ReLU 输出 H。</li><li><strong>关键技术</strong>：关系建模不用两帧特征的简单线性拼接，而用跨帧滤波响应的乘法交互来弱化变换码对具体外观的依赖；三阶权重张量经因子化降低参数量，平方能量结构把乘法交互改写为常规网络操作。关系支路以监督反向传播学习，并与外观支路共同组成可逐层堆叠的 SMART。</li><li><strong>公式与超参数</strong>：线性拼接基线为 z_k=Σ_i w^x_{ik}x_i+Σ_j w^y_{jk}y_j；作者改用外积二次型 z_k=Σ_{ij}w_{ijk}x_i y_j，并把 W 因子化为三个矩阵，得到 z_k=Σ_f w^z_{kf}(w_f^{xT}x)(w_f^{yT}y)，再以平方能量单元实现。SMART 默认两支的时空尺寸、stride 与空间核一致，C_s=C_t；关系码通道数为隐藏单元的一半，即 C_t=2C&#x27;_t，局部组大小为 2、固定池化权重为 0.5，融合输出满足 C_f=C_s。训练 batch size 为 256、momentum 为 0.9、初始学习率为 0.1，验证损失饱和时除以 10；Kinetics 共训练 250, 000 次迭代，dropout 为 0.2。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 05</span>
+    <span class="reading-step-note">数据集与资源</span>
+  </div>
+  <h2>数据集与资源</h2>
+  <div class="reading-card-content"><ul><li><strong>数据集</strong>：Kinetics：含 400 个动作类别，每类至少 400 个视频；约 240, 000 个训练、20, 000 个验证和 40, 000 个测试视频。</li><li><strong>数据集</strong>：UCF101：含 101 个动作类别和 13, 320 个视频片段，按官方三个训练/测试划分报告平均准确率。</li><li><strong>数据集</strong>：HMDB51：含 51 个动作类别和 6, 766 个视频，按原始三个训练/测试划分报告平均准确率。</li><li><strong>规模与划分</strong>：Kinetics 按训练、验证、测试集使用，训练集用于从零学习；UCF101 与 HMDB51 规模较小，均遵循各自官方三个划分，并从 Kinetics 学到的表示微调。</li><li><strong>模型</strong>：架构以 C3D-ResNet18 为骨架；C3D-ResNet18 为 33.37 M 参数、19.58 G FLOPs，ARTNet-ResNet18(s) 为 33.39 M/19.97 G，ARTNet-ResNet18(d) 为 35.20 M/23.70 G，分类头是 400-d 全连接层。论文报告的是这些整网规模，没有另行使用或报告基础模型参数规模。</li><li><strong>硬件</strong>：正文的 Implementation details、训练与测试流程、实验表和结论均未报告训练或推理 GPU、CPU 的型号、数量及算力配置。</li><li><strong>代码</strong>：论文首页脚注明确给出代码地址：<a href="https://github.com/wanglimin/ARTNet" target="_blank" rel="noopener noreferrer">https://github.com/wanglimin/ARTNet</a>。</li><li><strong>训练平台</strong>：平台检查：实验围绕 Kinetics、UCF101、HMDB51 离线视频分类基准展开；实验设置与结论均未报告仿真器、机器人或实车平台。</li></ul></div>
+</section>
+<section class="reading-card reading-card-section">
+  <div class="reading-card-topline">
+    <span class="reading-step">Card 06</span>
+    <span class="reading-step-note">评估与结果</span>
+  </div>
+  <h2>评估与结果</h2>
+  <div class="reading-card-content"><ul><li><strong>评估基准</strong>：Kinetics：主要分析平台；只用 RGB，在训练集从零训练，并分别报告验证集与测试集结果。</li><li><strong>评估基准</strong>：UCF101：从 Kinetics 模型微调，遵循官方三个训练/测试划分取平均，检验表示迁移。</li><li><strong>评估基准</strong>：HMDB51：从 Kinetics 模型微调，遵循原始三个训练/测试划分取平均，检验表示迁移。</li><li><strong>评估指标</strong>：Kinetics 使用 Top-1、Top-5 准确率及二者平均值 Avg，均为越高越好。</li><li><strong>评估指标</strong>：UCF101 与 HMDB51 使用三个划分上的平均分类准确率，越高越好。</li><li><strong>对比方法</strong>：构件与深度对比：C2D-ResNet18、C3D-ResNet18 与 C3D-ResNet34、Relation-ResNet18(s/d) 与 ARTNet-ResNet18(s/d)。</li><li><strong>对比方法</strong>：输入与时间范围对比：RGB、光流、双流融合，以及 ARTNet 有无 TSN 长时建模。</li><li><strong>对比方法</strong>：同期方法对比：Kinetics 上的 ConvNet+LSTM、Two Stream Spatial、C3D、TSN Spatial、RGB-I3D，以及 UCF101/HMDB51 上按预训练数据分组的方法。</li><li><strong>关键结果</strong>：Kinetics 验证集仅用 RGB、从零训练时，ARTNet-ResNet18(d) 的 Avg 为 78.7%，对应 C3D-ResNet18 为 75.7%；指标越高越好。</li><li><strong>关键结果</strong>：公平的仅 RGB、Kinetics 从零训练比较中，ARTNet with TSN 的 Avg 在验证集为 80.0%、测试集为 78.7%，均为越高越好。</li><li><strong>关键结果</strong>：Kinetics 验证集上，单流 RGB ARTNet 的 Avg 为 78.7%，已高于双流 C3D 的 78.2%；双流 ARTNet 进一步达到 80.4%，均为越高越好。</li><li><strong>关键结果</strong>：Kinetics 预训练后用 TSN 微调，ARTNet 在 UCF101/HMDB51 上达到 94.3%/70.9%，而同骨架 C3D 为 89.8%/62.1%；均是三个划分平均准确率，越高越好。</li><li><strong>消融实验</strong>：构件消融的 Kinetics 验证 Avg：C2D 为 71.9%、C3D 为 75.7%、Relation(s) 为 77.2%、SMART(s) 为 77.4%，显示显式关系分支及与外观分支融合均带来提升；越高越好。</li><li><strong>消融实验</strong>：堆叠消融中，ARTNet(s) 的 Avg 为 77.4%，ARTNet(d) 为 78.7%；Relation(s) 为 77.2%，Relation(d) 反而为 76.9%，说明高层仍需保留外观建模；越高越好。</li><li><strong>消融实验</strong>：TSN 消融的 Kinetics 验证 Avg：RGB 从 78.7% 到 80.0%，Flow 从 71.0% 到 71.9%，Fusion 从 80.4% 到 81.4%；均为越高越好，表明短时 ARTNet 与长时 TSN 互补。</li><li><strong>实验条件</strong>：Kinetics 主实验只用 RGB 并从训练集随机初始化；训练时把帧缩放到 128×170，再随机裁剪 112×112×16 体积。测试时均匀取 25 个 128×170×16 clips，每个生成 10 个 112×112×16 crops，对总计 250 个体积的预测取平均。UCF101/HMDB51 则在 TSN 框架下微调 Kinetics 模型，segment number 设为 2。</li></ul></div>
+</section></article>
+        <aside id="detail-toc" class="detail-toc hidden" aria-label="内容目录">
+          <p class="detail-toc-title">阅读目录</p>
+          <nav id="detail-toc-nav" class="detail-toc-nav"></nav>
+        </aside>
+      </div>
+      <nav class="paper-nav"><a class="paper-nav-link paper-nav-prev" href="../../papers/1712.08416/"><span class="paper-nav-label">← 上一篇</span><span class="paper-nav-title">On the Integration of Optical Flow and Action Recognition</span></a>
+      <a class="paper-nav-link paper-nav-next" href="../../papers/1708.05038/"><span class="paper-nav-label">下一篇 →</span><span class="paper-nav-title">ConvNet Architecture Search for Spatiotemporal Feature Learning</span></a></nav>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>论文原文统一通过 <a href="https://www.alphaxiv.org" target="_blank" rel="noopener noreferrer">AlphaXiv</a> 阅读，阅读卡片由本地静态站点生成器构建。</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/theme.js"></script>
+    <script src="../../assets/media.js"></script>
+    <script src="../../assets/analytics.js"></script>
+    <script src="../../assets/paper.js"></script>
+  </body>
+</html>
